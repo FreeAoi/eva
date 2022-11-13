@@ -1,0 +1,50 @@
+$schema: 'https://moonrepo.dev/schemas/global-project.json'
+fileGroups:
+    configs:
+        - '*.{js,json}'
+    sources:
+        - 'src/**/*'
+        - 'types/**/*'
+        - '**/*.{ts,tsx}'
+    tests:
+        - 'tests/**/*.test.*'
+        - '**/__tests__/**/*'
+    assets:
+        - 'assets/**/*'
+        - 'images/**/*'
+        - 'static/**/*'
+        - '**/*.{scss,css}'
+        - '**/*.mdx'
+
+tasks:
+    lint:
+        command:
+            - eslint
+
+        args:
+            - '.'
+
+        deps: []
+
+        inputs:
+            - '@globs(sources)'
+
+        type: 'node'
+    prettier:
+        command:
+            - 'prettier'
+
+            - '--config'
+            - '@in(1)'
+
+            - '--ignore-path'
+            - '@in(0)'
+
+            - '--write'
+            - '**/*.{tsx,ts}'
+
+        inputs:
+            - '/.prettierignore'
+            - '/.prettierrc.json'
+
+        type: 'node'

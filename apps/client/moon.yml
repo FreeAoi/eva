@@ -1,0 +1,44 @@
+type: 'application'
+language: 'typescript'
+
+project:
+    name: 'eva-uni-client'
+    description: 'eva-uni-client'
+    owner: 'freeaoi'
+    channel: '#evauni'
+    maintainers: []
+
+fileGroups:
+    next:
+        - 'pages/**/*'
+        - 'public/**/*'
+        - 'src/**/*'
+        - 'next-env.d.ts'
+        - 'next.config.*'
+
+tasks:
+    # Development server
+    dev:
+        command: 'next dev'
+        local: true
+
+    # Production build (SSR)
+    build:
+        command: 'next build'
+        inputs:
+            - '@group(next)'
+
+    # Production build (SSG)
+    export:
+        command: 'next export -o ./build'
+        deps:
+            - '~:build'
+        inputs:
+            - '@group(next)'
+        outputs:
+            - 'build'
+
+    # Serve the build
+    start:
+        command: 'next start'
+        local: true

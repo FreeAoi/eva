@@ -1,0 +1,21 @@
+{
+	"name": "eva-uni-backend",
+	"version": "1.0.0",
+	"description": "",
+	"license": "ISC",
+	"dependencies": {
+		"@nestjs/common": "^9.2.0",
+		"@nestjs/core": "^9.2.0",
+		"@nestjs/platform-fastify": "^9.2.0",
+		"reflect-metadata": "^0.1.13",
+		"rxjs": "^7.5.7",
+		"typescript": "^4.8.4"
+	},
+	"devDependencies": {
+		"@swc/cli": "^0.1.57",
+		"@swc/core": "^1.3.14"
+	},
+	"engines": {
+		"node": "18.12.0"
+	}
+}

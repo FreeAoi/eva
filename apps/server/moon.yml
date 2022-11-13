@@ -1,0 +1,17 @@
+type: 'application'
+language: 'typescript'
+
+project:
+  name: 'eva-uni'
+  description: 'eva-uni'
+  owner: 'freeaoi'
+  channel: '#evauni'
+  maintainers: []
+
+tasks:
+  build:
+    command: 'swc src -d build'
+    inputs:
+      - 'src/**/*'
+    outputs:
+      - 'build'

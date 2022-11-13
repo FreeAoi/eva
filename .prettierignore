@@ -1,0 +1,7 @@
+node_modules/
+build/
+.next/
+*.min.js
+*.map
+*.snap
+*.js
