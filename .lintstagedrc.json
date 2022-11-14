@@ -1,0 +1,4 @@
+{
+    "$schema": "http://json.schemastore.org/lintstagedrc.schema",
+	"*.{tsx,ts}": "eslint --fix --ext ts,tsx"
+}

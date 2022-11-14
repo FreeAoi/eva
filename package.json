@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "moon": "moon"
+    "lint": "moon run :lint",
+    "moon": "moon",
+    "prepare": "husky install",
+    "prettier": "moon run :prettier"
   },
   "workspaces": [
     "apps/*",
@@ -15,6 +18,8 @@
     "eslint": "^8.27.0",
     "eslint-config-moon": "^1.2.0",
     "eslint-config-next": "^13.0.3",
+    "husky": "^8.0.2",
+    "lint-staged": "^13.0.3",
     "prettier": "^2.7.1",
     "tsconfig-moon": "^1.1.0",
     "typescript": "^4.8.4"
