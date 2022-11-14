@@ -4,7 +4,6 @@ fileGroups:
         - '*.{js,json}'
     sources:
         - 'src/**/*'
-        - 'types/**/*'
         - '**/*.{ts,tsx}'
     tests:
         - 'tests/**/*.test.*'
@@ -35,16 +34,12 @@ tasks:
             - 'prettier'
 
             - '--config'
-            - '@in(1)'
-
-            - '--ignore-path'
             - '@in(0)'
 
             - '--write'
             - '**/*.{tsx,ts}'
 
         inputs:
-            - '/.prettierignore'
             - '/.prettierrc.json'
 
         type: 'node'
