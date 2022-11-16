@@ -121,7 +121,6 @@ export default function LoginScreen() {
                                     About
                                 </a>
                             </p>
-
                         </div>
                     </form>
                 </div>

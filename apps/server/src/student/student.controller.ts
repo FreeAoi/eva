@@ -4,7 +4,7 @@ import { StudentService } from './student.service';
 
 @Controller('student')
 class StudentController {
-    constructor(private studentService: StudentService) { }
+    constructor(private studentService: StudentService) {}
 
     @Get(':id')
     getStudent(@Query('id') id: string) {

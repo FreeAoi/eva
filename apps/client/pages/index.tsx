@@ -105,8 +105,7 @@ export default function Home() {
                 </div>
             </main>
 
-            <footer className="bg-blue-900 p-6">
-            </footer>
+            <footer className="bg-blue-900 p-6"></footer>
         </div>
     );
 }
