@@ -15,3 +15,6 @@ tasks:
       - 'src/**/*'
     outputs:
       - 'build'
+
+  run:
+    command: 'node build/index.js'

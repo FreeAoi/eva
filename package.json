@@ -9,8 +9,7 @@
     "prettier": "moon run :prettier"
   },
   "workspaces": [
-    "apps/*",
-    "packages/*"
+    "apps/*"
   ],
   "license": "ISC",
   "devDependencies": {
@@ -26,5 +25,8 @@
   },
   "engines": {
     "node": "18.12.0"
+  },
+  "dependencies": {
+    "jsonwebtoken": "^8.5.1"
   }
 }

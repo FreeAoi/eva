@@ -2,7 +2,8 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "module": "CommonJS",
-    "outDir": "build"
+    "outDir": "build",
+    "strictPropertyInitialization": false
   },
   "include": [
     "src"

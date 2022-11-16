@@ -1,15 +1,30 @@
 {
-	"$schema": "http://json.schemastore.org/swcrc",
-	"jsc": {
-		"parser": {
-			"syntax": "typescript",
-			"decorators": true,
-			"dynamicImport": true
-		},
-		"target": "es2022"
-	},
-	"module": {
-		"type": "commonjs"
-	},
-	"minify": true
+    "sourceMaps": "inline",
+    "module": {
+        "type": "commonjs",
+        "strict": true,
+        "strictMode": true,
+        "noInterop": false
+    },
+    "jsc": {
+        "externalHelpers": false,
+        "target": "es2022",
+        "loose": true,
+        "parser": {
+            "syntax": "typescript",
+            "tsx": false,
+            "decorators": true,
+            "dynamicImport": true
+        },
+        "minify": {
+            "compress": false,
+            "mangle": false
+        },
+        "transform": {
+            "legacyDecorator": true,
+            "decoratorMetadata": true
+        },
+        "keepClassNames": true
+    },
+    "minify": true
 }
