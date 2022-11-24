@@ -1,4 +1,4 @@
 {
     "$schema": "http://json.schemastore.org/lintstagedrc.schema",
-	"*.{tsx,ts}": ["npm run prettier", "eslint --fix --ext ts,tsx"]
+	"*.{tsx,ts}": ["prettier --write **/*.{tsx,ts}", "eslint --fix --ext ts,tsx"]
 }

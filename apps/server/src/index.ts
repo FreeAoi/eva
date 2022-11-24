@@ -1,10 +1,14 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
+console.log(process.env);
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import {
     FastifyAdapter,
     NestFastifyApplication
 } from '@nestjs/platform-fastify';
-import AppModule from './app.module';
+import AppModule from './app/app.module';
 
 async function bootstrap() {
     const app = await NestFactory.create<NestFastifyApplication>(
@@ -13,6 +17,7 @@ async function bootstrap() {
     );
 
     app.useGlobalPipes(new ValidationPipe());
+    app.setGlobalPrefix('api');
 
     const port = process.env.PORT ?? 3000;
     await app.listen(port);

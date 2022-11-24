@@ -7,6 +7,4 @@ import { PrismaService } from './prisma.service';
     providers: [PrismaService],
     exports: [PrismaService]
 })
-class PrismaModule {}
-
-export default PrismaModule;
+export class PrismaModule {}
