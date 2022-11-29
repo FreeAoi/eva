@@ -4,7 +4,6 @@ import { useRouter } from 'next/router';
 
 export default function Nav() {
     const router = useRouter();
-    console.log(router.pathname, router.asPath);
     return (
         <nav className="flex items-center justify-between flex-wrap bg-blue-900 p-4">
             <div className="flex items-center text-white mr-6">
@@ -13,7 +12,7 @@ export default function Nav() {
                     Virtual
                 </span>
             </div>
-            {!['/login', '/register'].includes(router.pathname) && (
+            {router.pathname != 'login' && (
                 <div>
                     <Link
                         href="/login"

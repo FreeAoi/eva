@@ -16,5 +16,11 @@ tasks:
     outputs:
       - 'build'
 
-  run:
+  dev:
+    command: 'nodemon --config nodemon.json'
+    inputs:
+      - 'src/index'
+    local: true
+
+  start:
     command: 'node build/index.js'
