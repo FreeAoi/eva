@@ -4,7 +4,7 @@ import Nav from '../components/nav';
 
 export default function Home() {
     return (
-        <div className="overflow-hidden">
+        <main className="overflow-hidden">
             <Head>
                 <title>Virtual</title>
                 <link rel="icon" href="/favicon.ico" />
@@ -12,7 +12,7 @@ export default function Home() {
 
             <Nav />
 
-            <main className="p-3 h-screen">
+            <div className="p-3 h-screen">
                 <div className="flex">
                     <div className="w-1/12 bg-blue-900 p-2">
                         <h1 className="text-white text-center font-bold">
@@ -103,9 +103,9 @@ export default function Home() {
                         </div>
                     </div>
                 </div>
-            </main>
+            </div>
 
             <footer className="bg-blue-900 p-6"></footer>
-        </div>
+        </main>
     );
 }

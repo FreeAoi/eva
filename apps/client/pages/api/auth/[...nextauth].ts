@@ -2,7 +2,6 @@ import NextAuth, { NextAuthOptions } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 
 export const AuthOptions: NextAuthOptions = {
-    secret: 'secret',
     session: {
         strategy: 'jwt',
         maxAge: 60 * 60
@@ -27,24 +26,37 @@ export const AuthOptions: NextAuthOptions = {
                 });
 
                 const data = await user.json();
-                if (data.error) {
-                    throw new Error(data.error);
-                }
-                return data.access_token;
+                if (data.error) throw new Error(data.error);
+
+                const student = await (
+                    await fetch('http://localhost:3001/api/student', {
+                        headers: {
+                            Authorization: `Bearer ${data.access_token}`
+                        }
+                    })
+                ).json();
+
+                return {
+                    id: student.id,
+                    name: student.name,
+                    email: student.email,
+                    accessToken: data.access_token
+                };
             }
         })
     ],
     callbacks: {
-        jwt: async ({ token, user }) => {
+        jwt: ({ token, user }) => {
             if (user) {
-                token.accessToken = user;
+                token.user = user;
             }
             return token;
         },
-        session: async ({ session, token }) => {
-            if (token.accessToken) {
-                session.user = token.accessToken;
+        session: ({ session, token }) => {
+            if (token.user) {
+                session.user = token.user;
             }
+            console.log(session);
             return session;
         }
     }

@@ -23,25 +23,25 @@ export class AppController {
     @Post('login')
     async loginStudent(@Body() student: LoginDTO) {
         const std = await this.studentService.getStudentByEmail(student.email);
-        if (!std) {
+        if (!std)
             throw new HttpException({ error: 'Estudiante no encontrado' }, 404);
-        }
         const cmp = await this.studentService.comparePassword(
             student.password,
             std.password
         );
-        if (!cmp) {
+        if (!cmp)
             throw new HttpException({ error: 'Contraseña incorrecta' }, 401);
-        }
-        const token = await this.authService.genAccToken(std);
-        console.log(token);
-        return token;
+        return await this.authService.genAccToken(std);
     }
 
     @UseGuards(AuthGuard('jwt'))
-    @Get()
+    @Get('student/courses')
     async getStudent(@Request() req: Req) {
-        return req.user;
-        console.log(req.user);
+        if (!req.user)
+            throw new HttpException(
+                { error: 'No se ha encontrado el estudiante' },
+                404
+            );
+        return await this.studentService.getStudentCourses(req.user.id);
     }
 }

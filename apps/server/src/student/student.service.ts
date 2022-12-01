@@ -25,4 +25,15 @@ export class StudentService {
     async comparePassword(password: string, hash: string) {
         return await bcrypt.compare(password, hash);
     }
+
+    async getStudentCourses(id: string) {
+        return await this.prisma.student.findUnique({
+            where: {
+                id
+            },
+            select: {
+                courses: true
+            }
+        });
+    }
 }

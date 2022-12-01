@@ -1,9 +1,12 @@
+import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
 export default function Nav() {
     const router = useRouter();
+    const { status, data } = useSession();
+
     return (
         <nav className="flex items-center justify-between flex-wrap bg-blue-900 p-4">
             <div className="flex items-center text-white mr-6">
@@ -12,7 +15,21 @@ export default function Nav() {
                     Virtual
                 </span>
             </div>
-            {router.pathname != 'login' && (
+            {status === 'authenticated' && (
+                <Link className="flex items-center text-white mr-6" href="/my">
+                    <Image
+                        src="/avatar.png"
+                        alt="avatar"
+                        className="rounded-full"
+                        width={35}
+                        height={35}
+                    />
+                    <span className="font-normal text-base tracking-tight ml-2">
+                        {data.user.name}
+                    </span>
+                </Link>
+            )}
+            {router.pathname != 'login' && status == 'unauthenticated' && (
                 <div>
                     <Link
                         href="/login"

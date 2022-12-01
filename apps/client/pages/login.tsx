@@ -27,11 +27,10 @@ export default function LoginScreen() {
         } else {
             router.push('/my');
         }
-        console.log(data);
     };
 
     return (
-        <div>
+        <main>
             <Head>
                 <title>Virtual</title>
                 <link rel="icon" href="/favicon.ico" />
@@ -86,6 +85,6 @@ export default function LoginScreen() {
                     </div>
                 </div>
             </div>
-        </div>
+        </main>
     );
 }

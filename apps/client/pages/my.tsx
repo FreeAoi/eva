@@ -1,51 +1,35 @@
 import type { GetServerSidePropsContext } from 'next';
-import { unstable_getServerSession } from 'next-auth';
+import { getToken } from 'next-auth/jwt';
 import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
-import { AuthOptions } from './api/auth/[...nextauth]';
+import Head from 'next/head';
+import Nav from '../components/nav';
 
-export default function MyScreen(props: any) {
-    const router = useRouter();
-    const { status } = useSession({
-        required: true,
-        onUnauthenticated() {
-            router.push('/login');
-        }
-    });
+interface DataProps {
+    courses: string[];
+}
 
-    if (status === 'loading') {
-        return <div>Loading...</div>;
-    }
-
-    console.log(props);
-
+export default function MyScreen(props: { data: DataProps }) {
+    const { data } = useSession();
+    console.log(props.data.courses);
     return (
-        <div>
-            <h1>My Screen</h1>
-            <p>My name is {props.data.name}</p>
-        </div>
+        <main>
+            <Head>
+                <title>Virtual</title>
+                <link rel="icon" href="/favicon.ico" />
+            </Head>
+
+            <Nav />
+        </main>
     );
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-    const session = await unstable_getServerSession(
-        context.req,
-        context.res,
-        AuthOptions
-    );
-    if (!session) {
-        return {
-            redirect: {
-                destination: '/',
-                permanent: false
-            }
-        };
-    }
+    const session = await getToken({ req: context.req });
 
     const data = await (
-        await fetch('http://localhost:3001/api', {
+        await fetch('http://localhost:3001/api/student/courses', {
             headers: {
-                Authorization: `Bearer ${session?.user}`
+                Authorization: `Bearer ${session?.user.accessToken}`
             }
         })
     ).json();
