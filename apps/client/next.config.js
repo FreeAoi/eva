@@ -8,15 +8,7 @@ const nextConfig = {
 	typescript: {
 		ignoreBuildErrors: true,
 	},
-	compress: true,
-	// async rewrites() {
-	// 	return [
-	// 	  {
-	// 		source: '/api/:slug*',
-	// 		destination: 'http://localhost:3001/api/:slug*',
-	// 	  },
-	// 	]
-	// },
+	compress: true
 };
 
 module.exports = nextConfig;
