@@ -9,7 +9,13 @@ export default function Nav() {
     return (
         <nav className="flex items-center justify-between bg-blue-900 p-4 w-auto">
             <div className="flex items-center text-white mr-6">
-                <Image src="/logoUNI.png" alt="logo" width={50} height={50} />
+                <Image
+                    priority
+                    src="/logoUNI.png"
+                    alt="logo"
+                    width={50}
+                    height={50}
+                />
                 <span className="font-semibold text-xl tracking-tight ml-2">
                     Virtual
                 </span>

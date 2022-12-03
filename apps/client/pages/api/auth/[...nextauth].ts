@@ -36,8 +36,6 @@ export const AuthOptions: NextAuthOptions = {
                     })
                 ).json();
 
-                console.log(student);
-
                 return {
                     id: student.id,
                     name: student.name,
@@ -52,11 +50,9 @@ export const AuthOptions: NextAuthOptions = {
             if (user) {
                 token.user = user;
             }
-            console.log('token', token);
             return token;
         },
         session: ({ session, token }) => {
-            console.log('session', token);
             if (token.user) {
                 session.user = token.user;
             }
