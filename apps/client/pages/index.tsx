@@ -33,6 +33,7 @@ export default function Home() {
                             width={650}
                             height={200}
                             className="md:w-full lg:w-auto"
+                            decoding="async"
                         />
                     </div>
 
