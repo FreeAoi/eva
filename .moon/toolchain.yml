@@ -1,0 +1,12 @@
+node:
+  version: '18.12.1'
+  packageManager: 'npm'
+  addEnginesConstraint: true
+  dedupeOnLockfileChange: true
+  syncProjectWorkspaceDependencies: true
+
+typescript:
+  createMissingConfig: false
+  routeOutDirToCache: false
+  syncProjectReferences: false
+  syncProjectReferencesToPaths: false

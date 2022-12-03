@@ -1,19 +1,16 @@
 import Head from 'next/head';
 import Image from 'next/image';
-import Nav from '../components/nav';
 
 export default function Home() {
     return (
-        <main className="overflow-hidden">
+        <main>
             <Head>
                 <title>Virtual</title>
                 <link rel="icon" href="/favicon.ico" />
             </Head>
 
-            <Nav />
-
             <div className="p-3 h-screen">
-                <div className="flex">
+                <div className="hidden lg:flex mb-4">
                     <div className="w-1/12 bg-blue-900 p-2">
                         <h1 className="text-white text-center font-bold">
                             ANUNCIOS
@@ -26,22 +23,21 @@ export default function Home() {
                     </div>
                 </div>
 
-                <div className="flex mt-5 h-full">
-                    <div className="w-9/12 flex justify-center items-center h-3/4">
+                <div className="flex h-3/4">
+                    {/** flex items-center justify-center */}
+                    <div className="w-full h-full lg:w-9/12 lg:flex items-center justify-center">
                         <Image
                             src="/PagPpal.png"
                             alt="pagPpal"
-                            width={800}
+                            width={650}
                             height={200}
-                            className="w-auto"
+                            className="md:w-full lg:w-auto"
                         />
                     </div>
 
-                    <div className="w-3/12">
-                        {/* dotted line */}
-                        <hr className="border-2 border-dotted border-gray-500" />
+                    <div className="hidden w-3/12 border-l border-slate-300 px-2 ml-2 lg:block">
                         <div className="flex justify-between items-center">
-                            <h1 className="text-indigo-900 text-3xl">
+                            <h1 className="text-indigo-900 text-2xl">
                                 Navegación
                             </h1>
                             <svg
@@ -104,8 +100,6 @@ export default function Home() {
                     </div>
                 </div>
             </div>
-
-            <footer className="bg-blue-900 p-6"></footer>
         </main>
     );
 }

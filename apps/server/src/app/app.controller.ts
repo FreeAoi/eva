@@ -35,13 +35,29 @@ export class AppController {
     }
 
     @UseGuards(AuthGuard('jwt'))
-    @Get('student/courses')
+    @Get('student')
     async getStudent(@Request() req: Req) {
         if (!req.user)
             throw new HttpException(
                 { error: 'No se ha encontrado el estudiante' },
                 404
             );
+        return await this.studentService.getStudentById(req.user.id);
+    }
+
+    @UseGuards(AuthGuard('jwt'))
+    @Get('student/courses')
+    async getStudentCourses(@Request() req: Req) {
+        if (!req.user)
+            throw new HttpException(
+                { error: 'No se ha encontrado el estudiante' },
+                404
+            );
         return await this.studentService.getStudentCourses(req.user.id);
+    }
+
+    @Get('student/courses/a')
+    async setCourse() {
+        return await this.studentService.setCourse();
     }
 }

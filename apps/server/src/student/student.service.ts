@@ -36,4 +36,22 @@ export class StudentService {
             }
         });
     }
+
+    async setCourse() {
+        return await this.prisma.student.update({
+            where: {
+                id: '2022-0381U'
+            },
+            data: {
+                courses: {
+                    create: [
+                        { name: 'Redaccion Tecanica' },
+                        { name: 'Programacion 1' },
+                        { name: 'Concepto de lenguaje' },
+                        { name: 'Calculo Integral' }
+                    ]
+                }
+            }
+        });
+    }
 }
