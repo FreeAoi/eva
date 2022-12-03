@@ -6,7 +6,6 @@ import { useRouter } from 'next/router';
 export default function Nav() {
     const router = useRouter();
     const { status, data } = useSession();
-
     return (
         <nav className="flex items-center justify-between flex-wrap bg-blue-900 p-4">
             <div className="flex items-center text-white mr-6">

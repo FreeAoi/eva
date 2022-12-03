@@ -1,6 +1,5 @@
 import Head from 'next/head';
 import React, { useState } from 'react';
-import Nav from '../components/nav';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
@@ -36,20 +35,18 @@ export default function LoginScreen() {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
 
-            <Nav />
-
             <div className="flex items-center justify-center h-screen">
-                <div className="w-full max-w-md">
-                    <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+                <div className="w-5/6 h-4/6 sm:max-w-sm">
+                    <div className="bg-white shadow-md rounded p-7 border-x border-y border-slate-300">
                         <div className="mb-4">
                             <label
-                                className="block text-gray-700 text-sm font-bold mb-2"
+                                className="block text-gray-600 text-sm font-bold mb-1"
                                 htmlFor="email"
                             >
-                                Email
+                                Correo electronico
                             </label>
                             <input
-                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                className="transition duration-150 focus:border-indigo-500 focus:ring-indigo-500 mb-4 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                 id="email"
                                 type="email"
                                 placeholder="Email"
@@ -58,16 +55,16 @@ export default function LoginScreen() {
                             />
 
                             <label
-                                className="block text-gray-700 text-sm font-bold mb-2"
+                                className="block text-gray-600 text-sm font-bold mb-1"
                                 htmlFor="password"
                             >
-                                Password
+                                Contraseña
                             </label>
                             <input
-                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+                                className="transition duration-150 focus:border-indigo-500 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-4 leading-tight focus:outline-none focus:shadow-outline"
                                 id="password"
                                 type="password"
-                                placeholder="******************"
+                                placeholder="***************"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                             />
@@ -76,10 +73,10 @@ export default function LoginScreen() {
                             </p>
 
                             <button
-                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                                className="transition duration-500 bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full"
                                 onClick={submitHandler}
                             >
-                                Sign In
+                                Iniciar sesión
                             </button>
                         </div>
                     </div>
