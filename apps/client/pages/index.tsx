@@ -1,5 +1,6 @@
 import Head from 'next/head';
 import Image from 'next/image';
+import PagPal from '../public/PagPpal.png';
 
 export default function Home() {
     return (
@@ -28,7 +29,7 @@ export default function Home() {
                     <div className="w-full h-full lg:w-9/12 lg:flex items-center justify-center">
                         <Image
                             priority
-                            src="/PagPpal.png"
+                            src={PagPal}
                             alt="pagPpal"
                             width={650}
                             height={200}

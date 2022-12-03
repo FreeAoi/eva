@@ -20,8 +20,7 @@ async function bootstrap() {
     app.useGlobalPipes(new ValidationPipe());
     app.setGlobalPrefix('api');
 
-    const port = process.env.PORT ?? 3001;
-    await app.listen(port);
+    await app.listen(process.env.PORT ?? 3000, '0.0.0.0');
 }
 
 bootstrap();
