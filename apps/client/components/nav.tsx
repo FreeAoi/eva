@@ -7,7 +7,7 @@ export default function Nav() {
     const router = useRouter();
     const { status, data } = useSession();
     return (
-        <nav className="flex items-center justify-between flex-wrap bg-blue-900 p-4">
+        <nav className="flex items-center justify-between bg-blue-900 p-4 w-auto">
             <div className="flex items-center text-white mr-6">
                 <Image src="/logoUNI.png" alt="logo" width={50} height={50} />
                 <span className="font-semibold text-xl tracking-tight ml-2">
@@ -19,9 +19,9 @@ export default function Nav() {
                     <Image
                         src="/avatar.png"
                         alt="avatar"
-                        className="rounded-full"
-                        width={35}
-                        height={35}
+                        className="rounded-full w-auto h-auto"
+                        width={30}
+                        height={30}
                     />
                     <span className="font-normal text-base tracking-tight ml-2">
                         {data.user.name}

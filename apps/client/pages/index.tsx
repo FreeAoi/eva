@@ -27,6 +27,7 @@ export default function Home() {
                     {/** flex items-center justify-center */}
                     <div className="w-full h-full lg:w-9/12 lg:flex items-center justify-center">
                         <Image
+                            priority
                             src="/PagPpal.png"
                             alt="pagPpal"
                             width={650}
