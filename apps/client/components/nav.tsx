@@ -7,14 +7,15 @@ export default function Nav() {
     const router = useRouter();
     const { status, data } = useSession();
     return (
-        <nav className="flex items-center justify-between bg-blue-900 p-4 w-auto">
+        <nav className="flex items-center justify-between bg-blue-900 p-4">
             <div className="flex items-center text-white mr-6">
                 <Image
                     priority
                     src="/logoUNI.png"
                     alt="logo"
-                    width={50}
-                    height={50}
+                    width={35}
+                    height={35}
+                    className="w-auto"
                 />
                 <span className="font-semibold text-xl tracking-tight ml-2">
                     Virtual
