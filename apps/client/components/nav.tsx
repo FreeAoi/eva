@@ -15,6 +15,7 @@ export default function Nav() {
                     alt="logo"
                     width={45}
                     height={45}
+                    decoding="async"
                 />
                 <span className="font-semibold text-xl tracking-tight ml-2 text-white">
                     Virtual
