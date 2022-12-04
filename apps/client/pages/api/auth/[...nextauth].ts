@@ -14,7 +14,7 @@ export const AuthOptions: NextAuthOptions = {
                 password: {}
             },
             async authorize(credentials) {
-                const user = await fetch('http://localhost:3001/api/login', {
+                const user = await fetch(`${process.env.API_URL}/auth/login`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -29,7 +29,7 @@ export const AuthOptions: NextAuthOptions = {
                 if (data.error) throw new Error(data.error);
 
                 const student = await (
-                    await fetch('http://localhost:3001/api/student', {
+                    await fetch(`${process.env.API_URL}/student`, {
                         headers: {
                             Authorization: `Bearer ${data.access_token}`
                         }
@@ -40,6 +40,8 @@ export const AuthOptions: NextAuthOptions = {
                     id: student.id,
                     name: student.name,
                     email: student.email,
+                    role: student.role,
+                    career: student.career,
                     accessToken: data.access_token
                 };
             }

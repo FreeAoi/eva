@@ -2,6 +2,7 @@ import { Fragment } from 'react';
 import { Menu, Transition } from '@headlessui/react';
 import Image from 'next/image';
 import Link from 'next/link';
+import type { Roles } from '../types/next-auth';
 
 function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(' ');
@@ -9,6 +10,7 @@ function classNames(...classes: string[]) {
 
 interface Props {
     name: string;
+    role: Roles;
 }
 
 export default function MyDropdown(data: Props) {
@@ -85,6 +87,23 @@ export default function MyDropdown(data: Props) {
                                 </a>
                             )}
                         </Menu.Item>
+                        {data.role === 'ADMIN' && (
+                            <Menu.Item>
+                                {({ active }) => (
+                                    <Link
+                                        href="/admin"
+                                        className={classNames(
+                                            active
+                                                ? 'bg-gray-100 text-gray-900'
+                                                : 'text-gray-700',
+                                            'block px-4 py-2 text-sm'
+                                        )}
+                                    >
+                                        Admin
+                                    </Link>
+                                )}
+                            </Menu.Item>
+                        )}
                     </div>
                 </Menu.Items>
             </Transition>

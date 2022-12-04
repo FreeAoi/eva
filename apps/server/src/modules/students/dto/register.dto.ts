@@ -12,7 +12,7 @@ export default class RegisterDTO {
     name: string;
 
     @IsNotEmpty()
-    carrer: string;
+    career: string;
 
     @IsNotEmpty()
     role: string;

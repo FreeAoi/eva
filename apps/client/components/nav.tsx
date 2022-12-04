@@ -17,7 +17,7 @@ export default function Nav() {
                 </span>
             </div>
             {status === 'authenticated' && (
-                <MyDropdown name={data.user.name as string} />
+                <MyDropdown name={data.user.name} role={data.user.role} />
                 // <Link className="flex items-center text-white mr-6" href="/my">
                 //     <Image
                 //         src="/avatar.png"

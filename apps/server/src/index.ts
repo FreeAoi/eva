@@ -16,11 +16,13 @@ async function bootstrap() {
         new FastifyAdapter()
     );
 
-    app.use(morgan('dev'));
+    app.use(morgan('combined'));
     app.useGlobalPipes(new ValidationPipe());
     app.setGlobalPrefix('api');
+    app.enableCors();
 
-    await app.listen(process.env.PORT ?? 3000, '0.0.0.0');
+    const port = process.env.PORT ?? 3001;
+    await app.listen(port, '::');
 }
 
 bootstrap();

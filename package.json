@@ -3,10 +3,12 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
+    "client:dev": "moon run client:dev",
     "lint": "moon run :lint",
     "moon": "moon",
     "prepare": "husky install",
-    "prettier": "moon run :prettier"
+    "prettier": "moon run :prettier",
+    "server:dev": "moon run server:dev"
   },
   "workspaces": [
     "apps/*"
