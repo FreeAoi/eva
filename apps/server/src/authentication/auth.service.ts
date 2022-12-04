@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Student } from '@prisma/client';
-import { StudentService } from '../student/student.service';
+import { StudentService } from '../modules/students/student.service';
 
 @Injectable()
 export class AuthService {

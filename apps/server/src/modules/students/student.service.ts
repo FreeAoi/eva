@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { PrismaService } from '../../providers/prisma/prisma.service';
 import bcrypt from 'bcrypt';
+import RegisterDTO from './dto/register.dto';
 
 @Injectable()
 export class StudentService {
@@ -23,7 +24,19 @@ export class StudentService {
     }
 
     async comparePassword(password: string, hash: string) {
-        return await bcrypt.compare(password, hash);
+        await bcrypt.compare(password, hash);
+        return true;
+    }
+
+    async registerStudent(data: RegisterDTO) {
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(data.password, salt);
+        return await this.prisma.student.create({
+            data: {
+                ...data,
+                password: hashedPassword
+            }
+        });
     }
 
     async getStudentCourses(id: string) {

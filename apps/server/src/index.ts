@@ -7,7 +7,7 @@ import {
     FastifyAdapter,
     NestFastifyApplication
 } from '@nestjs/platform-fastify';
-import AppModule from './app/app.module';
+import AppModule from './app.module';
 import morgan from 'morgan';
 
 async function bootstrap() {
@@ -16,12 +16,13 @@ async function bootstrap() {
         new FastifyAdapter()
     );
 
-    app.use(morgan('dev'));
+    app.use(morgan('combined'));
     app.useGlobalPipes(new ValidationPipe());
     app.setGlobalPrefix('api');
+    app.enableCors();
 
-    console.log(process.env.PORT);
-    await app.listen(process.env.PORT ?? 3000, '0.0.0.0');
+    const port = process.env.PORT ?? 3001;
+    await app.listen(port, '::');
 }
 
 bootstrap();
