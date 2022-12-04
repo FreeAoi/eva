@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import logoUNI from '../public/logoUNI.png';
+import MyDropdown from './profileDropdown';
 
 export default function Nav() {
     const router = useRouter();
@@ -16,18 +17,19 @@ export default function Nav() {
                 </span>
             </div>
             {status === 'authenticated' && (
-                <Link className="flex items-center text-white mr-6" href="/my">
-                    <Image
-                        src="/avatar.png"
-                        alt="avatar"
-                        className="rounded-full w-auto h-auto"
-                        width={30}
-                        height={30}
-                    />
-                    <span className="font-normal text-base tracking-tight ml-2">
-                        {data.user.name}
-                    </span>
-                </Link>
+                <MyDropdown name={data.user.name as string} />
+                // <Link className="flex items-center text-white mr-6" href="/my">
+                //     <Image
+                //         src="/avatar.png"
+                //         alt="avatar"
+                //         className="rounded-full w-auto h-auto"
+                //         width={30}
+                //         height={30}
+                //     />
+                //     <span className="font-normal text-base tracking-tight ml-2">
+                //         {data.user.name}
+                //     </span>
+                // </Link>
             )}
             {router.pathname != 'login' && status == 'unauthenticated' && (
                 <div>
