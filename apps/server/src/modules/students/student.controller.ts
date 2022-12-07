@@ -34,6 +34,21 @@ export class StudentController {
     @Roles(Role.ADMIN)
     @UseGuards(AuthGuard('jwt'), RolesGuard)
     async registerStudent(@Body() student: RegisterDTO) {
+        const studentEmail = await this.studentService.getStudentByEmail(
+            student.email
+        );
+        if (studentEmail)
+            throw new HttpException(
+                { error: 'Ese email de estudiante ya existe' },
+                400
+            );
+
+        const studentId = await this.studentService.getStudentById(student.id);
+        if (studentId)
+            throw new HttpException(
+                { error: 'Ese Id de estudiante ya existe' },
+                400
+            );
         return await this.studentService.registerStudent(student);
     }
 

@@ -74,8 +74,9 @@ export default function MyDropdown(data: Props) {
                         </Menu.Item>
                         <Menu.Item>
                             {({ active }) => (
-                                <a
-                                    href="#"
+                                <Link
+                                    // href="/api/auth/signout"
+                                    href="/api/auth/signout"
                                     className={classNames(
                                         active
                                             ? 'bg-gray-100 text-gray-900'
@@ -83,8 +84,8 @@ export default function MyDropdown(data: Props) {
                                         'block px-4 py-2 text-sm'
                                     )}
                                 >
-                                    License
-                                </a>
+                                    Sign Out
+                                </Link>
                             )}
                         </Menu.Item>
                         {data.role === 'ADMIN' && (

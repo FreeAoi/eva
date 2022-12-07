@@ -40,6 +40,7 @@ export class StudentService {
     }
 
     async getStudentCourses(id: string) {
+        id.substring(0, 4);
         return await this.prisma.student.findUnique({
             where: {
                 id
