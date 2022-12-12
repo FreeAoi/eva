@@ -138,7 +138,7 @@ describe('App', () => {
             });
     });
 
-    it('/DELETE delete course', () => {
+    /*it('/DELETE delete course', () => {
         return app
             .inject({
                 method: 'DELETE',
@@ -158,7 +158,7 @@ describe('App', () => {
                     courseCode: expect.any(String)
                 });
             });
-    });
+    });*/
 
     afterAll(async () => {
         await app.close();

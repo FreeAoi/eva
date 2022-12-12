@@ -3,8 +3,8 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./data.db"
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model Career {
@@ -42,11 +42,17 @@ model Student {
   password    String
   firstName   String
   lastName    String
-  role        String        @default("STUDENT")
+  role          Role     @default(STUDENT)
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
   careerId    Int?
   career      Career?       @relation(fields: [careerId], references: [id])
   performance Performance[]
   course      Course[]
+}
+
+enum Role {
+  STUDENT
+  TEACHER
+  ADMIN
 }

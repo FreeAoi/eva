@@ -6,7 +6,7 @@ fileGroups:
         - 'src/**/*'
         - '**/*.{ts,tsx}'
     tests:
-        - 'tests/**/*.test.*'
+        - 'tests/**/*.tests.*'
         - '**/__tests__/**/*'
     assets:
         - 'assets/**/*'
