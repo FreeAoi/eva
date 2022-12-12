@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Student } from '@prisma/client';
-import { StudentService } from '../modules/students/student.service';
+import { StudentsService } from '../modules/students/students.service';
 
 @Injectable()
 export class AuthService {
     constructor(
-        private studentService: StudentService,
+        private studentsService: StudentsService,
         private jwtService: JwtService
     ) {}
 
@@ -14,7 +14,7 @@ export class AuthService {
         email: string,
         password: string
     ): Promise<Student | null> {
-        const student = await this.studentService.getStudentByEmail(email);
+        const student = await this.studentsService.getStudentByEmail(email);
         if (student && student.password === password) {
             return student;
         }

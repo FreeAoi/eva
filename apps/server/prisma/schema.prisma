@@ -7,30 +7,46 @@ datasource db {
   url      = "file:./data.db"
 }
 
-model Courses {
-  id        Int      @id @default(autoincrement())
-  name      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model Career {
+  id         Int       @id @default(autoincrement())
+  careerName String
+  Course     Course[]
+  Student    Student[]
+}
 
-  note Int @default(0)
+model Course {
+  id          Int           @id @default(autoincrement())
+  courseCode  String
+  courseName  String
+  credits     Int
+  instructor  String
+  careerId    Int?
+  career      Career?       @relation(fields: [careerId], references: [id])
+  performance Performance[]
+  student     Student[]
+}
 
-  studentId String?
-  Student   Student? @relation(fields: [studentId], references: [id])
+model Performance {
+  studentId String
+  courseId  Int
+  note      Int
+  course    Course  @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@id([studentId, courseId])
 }
 
 model Student {
-  id        String    @id
-  
-  name      String
-  email     String    @unique
-  password  String
-
-  role      String    @default("STUDENT")
-  career    String
-
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-
-  courses   Courses[]
+  id          String        @id
+  email       String        @unique
+  password    String
+  firstName   String
+  lastName    String
+  role        String        @default("STUDENT")
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  careerId    Int?
+  career      Career?       @relation(fields: [careerId], references: [id])
+  performance Performance[]
+  course      Course[]
 }

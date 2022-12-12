@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
 import { AuthModule } from './authentication/auth.module';
-import { StudentModule } from './modules/students/student.module';
+import { StudentsModule } from './modules/students/students.module';
+import { CoursesModule } from './modules/courses/courses.module';
 
 @Module({
-    imports: [StudentModule, AuthModule],
+    imports: [StudentsModule, AuthModule, CoursesModule],
     controllers: [],
     providers: []
 })

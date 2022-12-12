@@ -9,10 +9,13 @@ export default class RegisterDTO {
     password: string;
 
     @IsNotEmpty()
-    name: string;
+    firstName: string;
 
     @IsNotEmpty()
-    career: string;
+    lastName: string;
+
+    @IsNotEmpty()
+    careerId: number;
 
     @IsNotEmpty()
     role: string;
