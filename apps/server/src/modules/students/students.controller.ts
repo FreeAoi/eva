@@ -31,7 +31,6 @@ export class StudentController {
     }
 
     @Put('create')
-    // add guard
     @Roles(Role.ADMIN)
     @UseGuards(AuthGuard('jwt'), RolesGuard)
     async registerStudent(@Body() student: RegisterDTO) {

@@ -9,6 +9,7 @@ import {
 } from '@nestjs/platform-fastify';
 import AppModule from './app.module';
 import morgan from 'morgan';
+import { AppClusterService } from './cluster';
 
 async function bootstrap() {
     const app = await NestFactory.create<NestFastifyApplication>(
@@ -25,4 +26,4 @@ async function bootstrap() {
     await app.listen(port, '::');
 }
 
-bootstrap();
+AppClusterService.clusterize(bootstrap);

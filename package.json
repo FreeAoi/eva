@@ -8,6 +8,7 @@
     "moon": "moon",
     "prepare": "husky install",
     "prettier": "moon run :prettier",
+    "server": "moon run server:build && moon run server:start",
     "server:dev": "moon run server:dev"
   },
   "workspaces": [
