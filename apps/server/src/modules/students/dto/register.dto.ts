@@ -1,6 +1,11 @@
 /* eslint-disable indent */
 import { IsEmail, IsNotEmpty } from 'class-validator';
 
+enum Role {
+    ADMIN = 'ADMIN',
+    STUDENT = 'STUDENT'
+}
+
 export default class RegisterDTO {
     @IsEmail()
     email: string;
@@ -18,7 +23,7 @@ export default class RegisterDTO {
     careerId: number;
 
     @IsNotEmpty()
-    role: string;
+    role: Role;
 
     @IsNotEmpty()
     id: string;

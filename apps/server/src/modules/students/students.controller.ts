@@ -19,15 +19,15 @@ import { Role } from '../../common/constants/roles.enum';
 export class StudentController {
     constructor(private studentsService: StudentsService) {}
 
-    @UseGuards(AuthGuard('jwt'))
     @Get()
+    @UseGuards(AuthGuard('jwt'))
     async getStudent(@Request() req: Req) {
         if (!req.user)
             throw new HttpException(
                 { error: 'No se ha encontrado el estudiante' },
                 404
             );
-        return await this.studentsService.getStudentById(req.user.id);
+        return this.studentsService.getStudentById(req.user.id);
     }
 
     @Put('create')
