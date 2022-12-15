@@ -3,10 +3,10 @@ import { IsNotEmpty } from 'class-validator';
 
 export class CreateCourseDTO {
     @IsNotEmpty()
-    courseName: string;
+    id: string;
 
     @IsNotEmpty()
-    courseCode: string;
+    name: string;
 
     @IsNotEmpty()
     credits: number;

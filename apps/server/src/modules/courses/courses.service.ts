@@ -1,16 +1,20 @@
-import { Injectable } from '@nestjs/common';
+import { CACHE_MANAGER, Inject, Injectable } from '@nestjs/common';
 import { PrismaService } from '../../providers/prisma/prisma.service';
 import { CreateCourseDTO } from './dto/create-course.dto';
 import { UpdateCourseDTO } from './dto/update-course.dto';
+import { Cache } from 'cache-manager';
 @Injectable()
 export class CoursesService {
-    constructor(private prisma: PrismaService) {}
+    constructor(
+        private prisma: PrismaService,
+        @Inject(CACHE_MANAGER) private cacheManager: Cache
+    ) {}
 
     createCourse(data: CreateCourseDTO) {
         return this.prisma.course.create({
             data: {
-                courseName: data.courseName,
-                courseCode: data.courseCode,
+                name: data.name,
+                id: data.id,
                 credits: data.credits,
                 instructor: data.instructor,
                 career: {
@@ -25,7 +29,7 @@ export class CoursesService {
     getStudentCourses(id: string) {
         return this.prisma.course.findMany({
             where: {
-                student: {
+                students: {
                     some: {
                         id
                     }
@@ -33,15 +37,13 @@ export class CoursesService {
             }
         });
     }
-
     updateCourse(data: UpdateCourseDTO) {
         return this.prisma.course.update({
             where: {
                 id: data.id
             },
             data: {
-                courseName: data.courseName,
-                courseCode: data.courseCode,
+                name: data.name,
                 credits: data.credits,
                 instructor: data.instructor,
                 career: {
@@ -53,12 +55,12 @@ export class CoursesService {
         });
     }
 
-    async addStudentToCourse(courseId: number, studentId: string) {
+    async addStudentToCourse(courseId: string, studentId: string) {
         // check if student is already in course
         const course = await this.prisma.course.findFirst({
             where: {
                 id: courseId,
-                student: {
+                students: {
                     some: {
                         id: studentId
                     }
@@ -72,12 +74,12 @@ export class CoursesService {
                     id: courseId
                 },
                 data: {
-                    student: {
+                    students: {
                         connect: {
                             id: studentId
                         }
                     },
-                    performance: {
+                    performances: {
                         create: {
                             student: {
                                 connect: {
@@ -95,7 +97,7 @@ export class CoursesService {
     }
 
     updateStudentNote(data: {
-        courseId: number;
+        courseId: string;
         studentId: string;
         note: number;
     }) {
@@ -112,11 +114,19 @@ export class CoursesService {
         });
     }
 
-    deleteCourse(courseId: number) {
-        return this.prisma.course.delete({
-            where: {
-                id: courseId
-            }
-        });
+    async getCourseData(courseId: string) {
+        const course = this.cacheManager.get(courseId.toString());
+
+        if (!course) {
+            const course = await this.prisma.course.findFirst({
+                where: {
+                    id: courseId
+                }
+            });
+            await this.cacheManager.set(courseId.toString(), course);
+            return course;
+        }
+
+        return course;
     }
 }

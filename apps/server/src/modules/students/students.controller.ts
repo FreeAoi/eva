@@ -4,16 +4,16 @@ import {
     Get,
     HttpException,
     Put,
-    Request,
     UseGuards
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { StudentsService } from './students.service';
-import { Request as Req } from 'express';
 import RegisterDTO from './dto/register.dto';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/user-roles.decorator';
 import { Role } from '../../common/constants/roles.enum';
+import { CurrentUser } from '../../common/decorators/user-current.decorator';
+import { JWTPayload } from '../../authentication/interfaces/jwt-payload.interface';
 
 @Controller('students')
 export class StudentController {
@@ -21,13 +21,8 @@ export class StudentController {
 
     @Get()
     @UseGuards(AuthGuard('jwt'))
-    async getStudent(@Request() req: Req) {
-        if (!req.user)
-            throw new HttpException(
-                { error: 'No se ha encontrado el estudiante' },
-                404
-            );
-        return this.studentsService.getStudentById(req.user.id);
+    async getStudent(@CurrentUser() user: JWTPayload) {
+        return this.studentsService.getStudentByEmail(user.email);
     }
 
     @Put('create')
@@ -43,12 +38,6 @@ export class StudentController {
                 400
             );
 
-        const studentId = await this.studentsService.getStudentById(student.id);
-        if (studentId)
-            throw new HttpException(
-                { error: 'Ese Id de estudiante ya existe' },
-                400
-            );
         return await this.studentsService.registerStudent(student);
     }
 }

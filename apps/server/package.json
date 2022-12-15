@@ -19,6 +19,7 @@
 		"dotenv": "^16.0.3",
 		"morgan": "^1.10.0",
 		"nodemon": "^2.0.20",
+		"passport": "^0.6.0",
 		"passport-jwt": "^4.0.0",
 		"prisma": "^4.7.1",
 		"redis": "^3.1.2",
@@ -41,5 +42,8 @@
 	},
 	"engines": {
 		"node": "18.12.0"
+	},
+	"prisma": {
+		"seed": "swc prisma/seed.ts --out-dir build/prisma && node build/prisma/seed.js"
 	}
 }

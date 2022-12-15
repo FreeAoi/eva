@@ -3,6 +3,7 @@ import { PrismaService } from '../../providers/prisma/prisma.service';
 import { Cache } from 'cache-manager';
 import bcrypt from 'bcrypt';
 import RegisterDTO from './dto/register.dto';
+import { Student } from '@prisma/client';
 
 @Injectable()
 export class StudentsService {
@@ -10,23 +11,9 @@ export class StudentsService {
         private prisma: PrismaService,
         @Inject(CACHE_MANAGER) private cacheManager: Cache
     ) {}
-    async getStudentById(id: string) {
-        const student = await this.cacheManager.get(id);
-        if (!student) {
-            const student = await this.prisma.student.findUnique({
-                where: {
-                    id
-                }
-            });
-            await this.cacheManager.set(id, student);
-            return student;
-        } else {
-            return student;
-        }
-    }
 
     async getStudentByEmail(email: string) {
-        const student = await this.cacheManager.get(email);
+        const student = (await this.cacheManager.get(email)) as Student;
         if (!student) {
             const student = await this.prisma.student.findUnique({
                 where: {
@@ -49,7 +36,7 @@ export class StudentsService {
         const { password, careerId, ...rest } = data;
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
-        return await this.prisma.student.create({
+        const student = await this.prisma.student.create({
             data: {
                 ...rest,
                 password: hashedPassword,
@@ -60,5 +47,7 @@ export class StudentsService {
                 }
             }
         });
+        await this.cacheManager.set(student.email, student);
+        return student;
     }
 }

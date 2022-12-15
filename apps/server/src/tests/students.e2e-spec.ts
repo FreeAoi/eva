@@ -9,8 +9,6 @@ import { user, course } from './app.fixture';
 describe('App', () => {
     let app: NestFastifyApplication;
     let JWToken: string;
-    let courseId: number;
-
     beforeAll(async () => {
         const module = await Test.createTestingModule({
             imports: [AppModule]
@@ -74,10 +72,10 @@ describe('App', () => {
             });
     });
 
-    it('/POST create course', () => {
+    it('/PUT create course', () => {
         return app
             .inject({
-                method: 'POST',
+                method: 'PUT',
                 url: '/api/courses/create',
                 headers: {
                     Authorization: `Bearer ${JWToken}`
@@ -85,13 +83,11 @@ describe('App', () => {
                 payload: course
             })
             .then((response) => {
-                expect(response.statusCode).toBe(201);
+                expect(response.statusCode).toBe(200);
                 expect(JSON.parse(response.body)).toMatchObject({
-                    id: expect.any(Number),
-                    courseName: expect.any(String),
-                    courseCode: expect.any(String)
+                    id: course.id,
+                    name: course.name
                 });
-                courseId = JSON.parse(response.body).id;
             });
     });
 
@@ -104,16 +100,15 @@ describe('App', () => {
                     Authorization: `Bearer ${JWToken}`
                 },
                 payload: {
-                    courseId: courseId,
+                    courseId: course.id,
                     studentId: '2022-0381U'
                 }
             })
             .then((response) => {
                 expect(response.statusCode).toBe(200);
                 expect(JSON.parse(response.body)).toMatchObject({
-                    id: courseId,
-                    courseName: expect.any(String),
-                    courseCode: expect.any(String)
+                    id: course.id,
+                    name: course.name
                 });
             });
     });
@@ -127,7 +122,7 @@ describe('App', () => {
                     Authorization: `Bearer ${JWToken}`
                 },
                 payload: {
-                    courseId: courseId,
+                    courseId: course.id,
                     studentId: '2022-0381U',
                     note: 10
                 }
@@ -137,28 +132,6 @@ describe('App', () => {
                 expect(JSON.parse(response.body)).toBeDefined();
             });
     });
-
-    /*it('/DELETE delete course', () => {
-        return app
-            .inject({
-                method: 'DELETE',
-                url: '/api/courses/delete',
-                headers: {
-                    Authorization: `Bearer ${JWToken}`
-                },
-                payload: {
-                    courseId: courseId
-                }
-            })
-            .then((response) => {
-                expect(response.statusCode).toBe(200);
-                expect(JSON.parse(response.body)).toMatchObject({
-                    id: courseId,
-                    courseName: expect.any(String),
-                    courseCode: expect.any(String)
-                });
-            });
-    });*/
 
     afterAll(async () => {
         await app.close();

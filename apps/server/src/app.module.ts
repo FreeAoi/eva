@@ -2,10 +2,12 @@ import { Module, CacheModule } from '@nestjs/common';
 import { AuthModule } from './authentication/auth.module';
 import { StudentsModule } from './modules/students/students.module';
 import { CoursesModule } from './modules/courses/courses.module';
+import { PrismaModule } from './providers/prisma/prisma.module';
 import { redisStore } from 'cache-manager-redis-store';
 
 @Module({
     imports: [
+        PrismaModule,
         StudentsModule,
         AuthModule,
         CoursesModule,

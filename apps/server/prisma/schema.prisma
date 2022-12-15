@@ -8,27 +8,29 @@ datasource db {
 }
 
 model Career {
-  id         Int       @id @default(autoincrement())
-  careerName String
-  Course     Course[]
-  Student    Student[]
+  id       Int       @id @default(autoincrement())
+  name     String
+  courses  Course[]
+  students Student[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Course {
-  id          Int           @id @default(autoincrement())
-  courseCode  String
-  courseName  String
-  credits     Int
-  instructor  String
-  careerId    Int?
-  career      Career?       @relation(fields: [careerId], references: [id])
-  performance Performance[]
-  student     Student[]
+  id           String        @id
+  name         String
+  credits      Int
+  instructor   String
+  careerId     Int?
+  career       Career?       @relation(fields: [careerId], references: [id])
+  performances Performance[]
+  students     Student[]
 }
 
 model Performance {
   studentId String
-  courseId  Int
+  courseId  String
   note      Int
   course    Course  @relation(fields: [courseId], references: [id], onDelete: Cascade)
   student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
@@ -37,22 +39,22 @@ model Performance {
 }
 
 model Student {
-  id          String        @id
-  email       String        @unique
-  password    String
-  firstName   String
-  lastName    String
-  role          Role     @default(STUDENT)
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  careerId    Int?
-  career      Career?       @relation(fields: [careerId], references: [id])
-  performance Performance[]
-  course      Course[]
+  id           String        @id
+  email        String        @unique
+  password     String
+  firstName    String
+  lastName     String
+  role         Role          @default(STUDENT)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  careerId     Int?
+  career       Career?       @relation(fields: [careerId], references: [id])
+  performances Performance[]
+  courses      Course[]
 }
 
 enum Role {
   STUDENT
-  TEACHER
   ADMIN
+  TEACHER
 }
