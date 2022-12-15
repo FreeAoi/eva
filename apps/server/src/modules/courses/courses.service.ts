@@ -37,6 +37,7 @@ export class CoursesService {
             }
         });
     }
+
     updateCourse(data: UpdateCourseDTO) {
         return this.prisma.course.update({
             where: {

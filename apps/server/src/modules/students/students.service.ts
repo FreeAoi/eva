@@ -20,6 +20,8 @@ export class StudentsService {
                     email
                 }
             });
+            if (!student) return null;
+
             await this.cacheManager.set(email, student);
             return student;
         } else {
