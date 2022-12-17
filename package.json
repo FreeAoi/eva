@@ -8,6 +8,7 @@
     "moon": "moon",
     "prepare": "husky install",
     "prettier": "moon run :prettier",
+    "server": "moon run server:build && moon run server:start",
     "server:dev": "moon run server:dev"
   },
   "workspaces": [
@@ -22,7 +23,6 @@
     "husky": "^8.0.2",
     "lint-staged": "^13.0.4",
     "prettier": "^2.8.0",
-    "prisma": "^4.7.1",
     "tsconfig-moon": "^1.2.1",
     "typescript": "^4.9.3"
   },

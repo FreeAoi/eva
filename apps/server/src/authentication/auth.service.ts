@@ -1,30 +1,38 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Student } from '@prisma/client';
-import { StudentService } from '../modules/students/student.service';
+import { StudentsService } from '../modules/students/students.service';
+import { JWTPayload } from './interfaces/jwt-payload.interface';
 
 @Injectable()
 export class AuthService {
     constructor(
-        private studentService: StudentService,
-        private jwtService: JwtService
+        private jwtService: JwtService,
+        private studentsService: StudentsService
     ) {}
 
-    async validateStudent(
-        email: string,
-        password: string
-    ): Promise<Student | null> {
-        const student = await this.studentService.getStudentByEmail(email);
-        if (student && student.password === password) {
-            return student;
-        }
-        return null;
-    }
-
     async genAccToken(student: Student) {
-        const payload = { email: student.email, sub: student.id };
+        const payload: JWTPayload = {
+            email: student.email,
+            id: student.id,
+            role: student.role
+        };
         return {
             access_token: this.jwtService.sign(payload)
         };
+    }
+
+    async validateStudent(email: string, password: string) {
+        const student = await this.studentsService.getStudentByEmail(email);
+        if (
+            student &&
+            (await this.studentsService.comparePassword(
+                password,
+                student.password
+            ))
+        ) {
+            return student;
+        }
+        return null;
     }
 }

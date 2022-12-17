@@ -1,36 +1,60 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./data.db"
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
-model Courses {
-  id        Int       @id @default(autoincrement())
-  name      String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-
-  Student   Student? @relation(fields: [studentId], references: [id])
-  studentId String?
-}
-
-model Student {
-  id String @id
-
+model Career {
+  id       Int       @id @default(autoincrement())
   name     String
-  email    String @unique
-  password String
-  role     String @default("STUDENT")
-  career   String
+  courses  Course[]
+  students Student[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
 
-  courses Courses[]
+model Course {
+  id           String        @id
+  name         String
+  credits      Int
+  instructor   String
+  careerId     Int?
+  career       Career?       @relation(fields: [careerId], references: [id])
+  performances Performance[]
+  students     Student[]
+}
+
+model Performance {
+  studentId String
+  courseId  String
+  note      Int
+  course    Course  @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@id([studentId, courseId])
+}
+
+model Student {
+  id           String        @id
+  email        String        @unique
+  password     String
+  firstName    String
+  lastName     String
+  role         Role          @default(STUDENT)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  careerId     Int?
+  career       Career?       @relation(fields: [careerId], references: [id])
+  performances Performance[]
+  courses      Course[]
+}
+
+enum Role {
+  STUDENT
+  ADMIN
+  TEACHER
 }
