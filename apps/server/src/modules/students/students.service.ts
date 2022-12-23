@@ -13,7 +13,9 @@ export class StudentsService {
     ) {}
 
     async getStudentByEmail(email: string) {
-        const student = (await this.cacheManager.get(email)) as Student;
+        const student = (await this.cacheManager.get(email)) as
+            | Student
+            | undefined;
         if (!student) {
             const student = await this.prisma.student.findUnique({
                 where: {
@@ -21,7 +23,6 @@ export class StudentsService {
                 }
             });
             if (!student) return null;
-
             await this.cacheManager.set(email, student);
             return student;
         } else {
@@ -36,7 +37,7 @@ export class StudentsService {
 
     async registerStudent(data: RegisterDTO) {
         const { password, careerId, ...rest } = data;
-        const salt = await bcrypt.genSalt(10);
+        const salt = await bcrypt.genSalt(5);
         const hashedPassword = await bcrypt.hash(password, salt);
         const student = await this.prisma.student.create({
             data: {

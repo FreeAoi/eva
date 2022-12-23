@@ -2,6 +2,11 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
+    // delete all existing data
+    await prisma.student.deleteMany();
+    await prisma.career.deleteMany();
+    await prisma.course.deleteMany();
+
     const career = await prisma.career.create({
         data: {
             name: 'Ingeniería en computacion'

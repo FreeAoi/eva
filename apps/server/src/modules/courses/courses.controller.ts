@@ -16,21 +16,23 @@ export class CoursesController {
     @Put('create')
     @Roles(Role.ADMIN)
     @UseGuards(AuthGuard('jwt'), RolesGuard)
-    createCourse(@Body() data: CreateCourseDTO) {
+    async createCourse(@Body() data: CreateCourseDTO) {
         return this.coursesService.createCourse(data);
     }
 
     @Patch('update')
     @Roles(Role.ADMIN)
     @UseGuards(AuthGuard('jwt'), RolesGuard)
-    updateCourse(@Body() data: UpdateCourseDTO) {
+    async updateCourse(@Body() data: UpdateCourseDTO) {
         return this.coursesService.updateCourse(data);
     }
 
     @Put('add-student')
     @Roles(Role.ADMIN)
     @UseGuards(AuthGuard('jwt'), RolesGuard)
-    addStudentToCourse(@Body() data: { courseId: string; studentId: string }) {
+    async addStudentToCourse(
+        @Body() data: { courseId: string; studentId: string }
+    ) {
         return this.coursesService.addStudentToCourse(
             data.courseId,
             data.studentId
@@ -40,7 +42,7 @@ export class CoursesController {
     @Patch('update-note')
     @Roles(Role.ADMIN, Role.TEACHER)
     @UseGuards(AuthGuard('jwt'), RolesGuard)
-    updateStudentNote(
+    async updateStudentNote(
         @Body() data: { courseId: string; studentId: string; note: number }
     ) {
         return this.coursesService.updateStudentNote(data);
@@ -48,13 +50,13 @@ export class CoursesController {
 
     @Get(':courseId')
     @UseGuards(AuthGuard('jwt'))
-    getCourseData(@Body() data: { courseId: string }) {
+    async getCourseData(@Body() data: { courseId: string }) {
         return this.coursesService.getCourseData(data.courseId);
     }
 
     @Get('student')
     @UseGuards(AuthGuard('jwt'))
-    getStudentCourses(@CurrentUser() user: JWTPayload) {
+    async getStudentCourses(@CurrentUser() user: JWTPayload) {
         return this.coursesService.getStudentCourses(user.id);
     }
 }

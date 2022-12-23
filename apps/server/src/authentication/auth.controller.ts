@@ -12,7 +12,6 @@ export default class AuthController {
             student.email,
             student.password
         );
-        console.log(validatedStudent + ' validatedStudent');
         if (!validatedStudent)
             throw new HttpException('Invalid credentials', 401);
         return this.authService.genAccToken(validatedStudent);

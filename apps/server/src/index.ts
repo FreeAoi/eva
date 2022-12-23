@@ -10,6 +10,7 @@ import {
 import AppModule from './app.module';
 import { AppClusterService } from './cluster';
 import morgan from 'morgan';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
     const app = await NestFactory.create<NestFastifyApplication>(
@@ -21,6 +22,19 @@ async function bootstrap() {
     app.useGlobalPipes(new ValidationPipe());
     app.setGlobalPrefix('api');
     app.enableCors();
+
+    if (process.env.NODE_ENV === 'development') {
+        const config = new DocumentBuilder()
+            .setTitle('EVA API')
+            .setDescription('The EVA API documentation')
+            .build();
+
+        const document = SwaggerModule.createDocument(app, config);
+        SwaggerModule.setup('api/docs', app, document, {
+            explorer: true,
+            customCssUrl: '../assets/theme-flattop.css'
+        });
+    }
 
     const port = process.env.PORT ?? 3001;
     await app.listen(port, '::');
