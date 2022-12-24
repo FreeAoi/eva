@@ -4,6 +4,7 @@ import {
     Get,
     HttpException,
     Put,
+    Query,
     UseGuards
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
@@ -20,10 +21,26 @@ import { Student } from '@prisma/client';
 export class StudentController {
     constructor(private studentsService: StudentsService) {}
 
-    @Get()
+    @Get('student')
     @UseGuards(AuthGuard('jwt'))
-    async getStudent(@CurrentUser() user: JWTPayload): Promise<Student | null> {
-        return this.studentsService.getStudentByEmail(user.email);
+    async getStudent(
+        @Query('email') email?: string,
+        @Query('id') id?: string
+    ): Promise<Student | null> {
+        if (email) return this.studentsService.getStudentByEmail(email);
+        // else if (id) return this.studentsService.getStudentById(id);
+        return null;
+    }
+
+    @Get('me')
+    @UseGuards(AuthGuard('jwt'))
+    async getMe(
+        @CurrentUser() user: JWTPayload,
+        @Query('email') studentEmail?: string
+    ): Promise<Student | null> {
+        return this.studentsService.getStudentByEmail(
+            studentEmail ?? user.email
+        );
     }
 
     @Put('create')

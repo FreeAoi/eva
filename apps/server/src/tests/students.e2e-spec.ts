@@ -32,7 +32,7 @@ describe('App', () => {
 
     it('/GET student no authorized', () => {
         return app
-            .inject({ method: 'GET', url: '/api/students' })
+            .inject({ method: 'GET', url: '/api/students/me' })
             .then((response) => {
                 expect(response.statusCode).toBe(401);
                 expect(JSON.parse(response.body)).toEqual({
@@ -46,7 +46,7 @@ describe('App', () => {
         return app
             .inject({
                 method: 'GET',
-                url: '/api/students',
+                url: '/api/students/me',
                 headers: {
                     Authorization: `Bearer ${JWToken}`
                 }

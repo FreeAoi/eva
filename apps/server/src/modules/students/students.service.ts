@@ -12,7 +12,12 @@ export class StudentsService {
         @Inject(CACHE_MANAGER) private cacheManager: Cache
     ) {}
 
+    async getStudentById(id: string) {
+        // search in redis a email with has id
+    }
+
     async getStudentByEmail(email: string) {
+        console.log(email);
         const student = (await this.cacheManager.get(email)) as
             | Student
             | undefined;
