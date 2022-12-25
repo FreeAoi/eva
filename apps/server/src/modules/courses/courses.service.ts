@@ -1,17 +1,21 @@
-import { CACHE_MANAGER, Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../providers/prisma/prisma.service';
 import { CreateCourseDTO } from './dto/create-course.dto';
 import { UpdateCourseDTO } from './dto/update-course.dto';
-import { Cache } from 'cache-manager';
+import { CacheService } from '../cache/cache.service';
 @Injectable()
 export class CoursesService {
-    constructor(
-        private prisma: PrismaService,
-        @Inject(CACHE_MANAGER) private cacheManager: Cache
-    ) {}
+    constructor(private prisma: PrismaService, private cache: CacheService) {}
 
-    createCourse(data: CreateCourseDTO) {
-        return this.prisma.course.create({
+    async createCourse(data: CreateCourseDTO) {
+        // return 1: Course exists _or_ 0: Course doesn't exist
+        const cachedCourse = await this.cache.hexists(
+            `course:${data.id}`,
+            'id'
+        );
+        if (cachedCourse === 1) return { error: 'Course already exists' };
+
+        const course = await this.prisma.course.create({
             data: {
                 name: data.name,
                 id: data.id,
@@ -24,80 +28,57 @@ export class CoursesService {
                 }
             }
         });
-    }
 
-    getStudentCourses(id: string) {
-        return this.prisma.course.findMany({
-            where: {
-                students: {
-                    some: {
-                        id
-                    }
-                }
-            }
-        });
+        await this.cache.hset(`course:${course.id}`, course);
+        return course;
     }
 
     updateCourse(data: UpdateCourseDTO) {
+        const { removeStudents, addStudents, id, careerId, ...rest } = data;
+
         return this.prisma.course.update({
             where: {
-                id: data.id
+                id: id
             },
             data: {
-                name: data.name,
-                credits: data.credits,
-                instructor: data.instructor,
-                career: {
-                    connect: {
-                        id: data.careerId
-                    }
-                }
-            }
-        });
-    }
-
-    async addStudentToCourse(courseId: string, studentId: string) {
-        // check if student is already in course
-        const course = await this.prisma.course.findFirst({
-            where: {
-                id: courseId,
-                students: {
-                    some: {
-                        id: studentId
-                    }
-                }
-            }
-        });
-
-        if (!course) {
-            return this.prisma.course.update({
-                where: {
-                    id: courseId
-                },
-                data: {
-                    students: {
+                ...rest,
+                ...(careerId && {
+                    career: {
                         connect: {
-                            id: studentId
+                            id: careerId
                         }
+                    }
+                }),
+                ...(addStudents && {
+                    students: {
+                        connect: addStudents.map((id) => ({ id }))
                     },
                     performances: {
-                        create: {
+                        create: addStudents.map((id) => ({
                             student: {
                                 connect: {
-                                    id: studentId
+                                    id
                                 }
                             },
                             note: 0
-                        }
+                        }))
                     }
-                }
-            });
-        } else {
-            return course;
-        }
+                }),
+                ...(removeStudents && {
+                    students: {
+                        disconnect: removeStudents.map((id) => ({ id }))
+                    },
+                    performances: {
+                        deleteMany: removeStudents.map((id) => ({
+                            studentId: id
+                        }))
+                    }
+                })
+            }
+        });
     }
 
-    updateStudentNote(data: {
+    updateStudentQualification(data: {
         courseId: string;
         studentId: string;
         note: number;
@@ -113,21 +94,5 @@ export class CoursesService {
                 note: data.note
             }
         });
-    }
-
-    async getCourseData(courseId: string) {
-        const course = this.cacheManager.get(courseId.toString());
-
-        if (!course) {
-            const course = await this.prisma.course.findFirst({
-                where: {
-                    id: courseId
-                }
-            });
-            await this.cacheManager.set(courseId.toString(), course);
-            return course;
-        }
-
-        return course;
     }
 }

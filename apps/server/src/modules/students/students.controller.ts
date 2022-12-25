@@ -23,32 +23,22 @@ export class StudentController {
 
     @Get('student')
     @UseGuards(AuthGuard('jwt'))
-    async getStudent(
-        @Query('email') email?: string,
-        @Query('id') id?: string
-    ): Promise<Student | null> {
-        if (email) return this.studentsService.getStudentByEmail(email);
-        // else if (id) return this.studentsService.getStudentById(id);
-        return null;
+    async getStudent(@Query('id') id: string) {
+        return this.studentsService.getStudentById(id);
     }
 
     @Get('me')
     @UseGuards(AuthGuard('jwt'))
-    async getMe(
-        @CurrentUser() user: JWTPayload,
-        @Query('email') studentEmail?: string
-    ): Promise<Student | null> {
-        return this.studentsService.getStudentByEmail(
-            studentEmail ?? user.email
-        );
+    async getMe(@CurrentUser() user: JWTPayload) {
+        return this.studentsService.getStudentById(user.id);
     }
 
     @Put('create')
     @Roles(Role.ADMIN)
     @UseGuards(AuthGuard('jwt'), RolesGuard)
     async registerStudent(@Body() student: RegisterDTO): Promise<Student> {
-        const studentEmail = await this.studentsService.getStudentByEmail(
-            student.email
+        const studentEmail = await this.studentsService.getStudentById(
+            student.id
         );
         console.log(studentEmail);
         if (studentEmail)

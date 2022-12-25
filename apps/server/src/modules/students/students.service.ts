@@ -1,38 +1,63 @@
-import { CACHE_MANAGER, Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../providers/prisma/prisma.service';
-import { Cache } from 'cache-manager';
-import bcrypt from 'bcrypt';
+import { CacheService } from '../cache/cache.service';
 import RegisterDTO from './dto/register.dto';
-import { Student } from '@prisma/client';
+import bcrypt from 'bcrypt';
 
 @Injectable()
 export class StudentsService {
-    constructor(
-        private prisma: PrismaService,
-        @Inject(CACHE_MANAGER) private cacheManager: Cache
-    ) {}
+    constructor(private prisma: PrismaService, private cache: CacheService) {}
 
     async getStudentById(id: string) {
-        // search in redis a email with has id
+        const cachedStudent = await this.cache.hgetall(`student:${id}`);
+
+        if (Object.keys(cachedStudent).length === 0) {
+            const student = await this.prisma.student.findUnique({
+                where: {
+                    id
+                }
+            });
+            if (!student) return null;
+            await Promise.all([
+                this.cache.hset(`student:${student.id}`, student),
+                this.cache.zadd(
+                    'student.emails',
+                    0,
+                    `${student.email}:${student.id}`
+                )
+            ]);
+            return student;
+        }
+
+        return cachedStudent;
     }
 
     async getStudentByEmail(email: string) {
-        console.log(email);
-        const student = (await this.cacheManager.get(email)) as
-            | Student
-            | undefined;
-        if (!student) {
+        // Search for the student in the cache and return email:id pair
+        const cachedStudent = await this.cache.zrangebylex(
+            'student.emails',
+            `[${email}`,
+            `[${email}\xff`
+        );
+
+        if (cachedStudent.length === 0) {
             const student = await this.prisma.student.findUnique({
                 where: {
                     email
                 }
             });
             if (!student) return null;
-            await this.cacheManager.set(email, student);
-            return student;
-        } else {
+            await this.cache.hset(`student:${student.id}`, student);
+            await this.cache.zadd(
+                'student.emails',
+                0,
+                `${student.email}:${student.id}`
+            );
             return student;
         }
+
+        const studentId = cachedStudent[0].split(':')[1];
+        return this.getStudentById(studentId);
     }
 
     async comparePassword(password: string, hash: string) {
@@ -55,7 +80,16 @@ export class StudentsService {
                 }
             }
         });
-        await this.cacheManager.set(student.email, student);
+
+        await Promise.all([
+            this.cache.hset(`student:${student.id}`, student),
+            this.cache.zadd(
+                'student.emails',
+                0,
+                `${student.email}:${student.id}`
+            )
+        ]);
+
         return student;
     }
 }

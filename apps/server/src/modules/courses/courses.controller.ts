@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Patch, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Patch, Put, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { CreateCourseDTO } from './dto/create-course.dto';
 import { CoursesService } from './courses.service';
@@ -6,8 +6,6 @@ import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/user-roles.decorator';
 import { Role } from '../../common/constants/roles.enum';
 import { UpdateCourseDTO } from './dto/update-course.dto';
-import { CurrentUser } from '../../common/decorators/user-current.decorator';
-import { JWTPayload } from '../../authentication/interfaces/jwt-payload.interface';
 
 @Controller('courses')
 export class CoursesController {
@@ -27,36 +25,12 @@ export class CoursesController {
         return this.coursesService.updateCourse(data);
     }
 
-    @Put('add-student')
+    @Patch('update/qualification')
     @Roles(Role.ADMIN)
     @UseGuards(AuthGuard('jwt'), RolesGuard)
-    async addStudentToCourse(
-        @Body() data: { courseId: string; studentId: string }
-    ) {
-        return this.coursesService.addStudentToCourse(
-            data.courseId,
-            data.studentId
-        );
-    }
-
-    @Patch('update-note')
-    @Roles(Role.ADMIN, Role.TEACHER)
-    @UseGuards(AuthGuard('jwt'), RolesGuard)
-    async updateStudentNote(
+    async updateStudentInCourse(
         @Body() data: { courseId: string; studentId: string; note: number }
     ) {
-        return this.coursesService.updateStudentNote(data);
-    }
-
-    @Get(':courseId')
-    @UseGuards(AuthGuard('jwt'))
-    async getCourseData(@Body() data: { courseId: string }) {
-        return this.coursesService.getCourseData(data.courseId);
-    }
-
-    @Get('student')
-    @UseGuards(AuthGuard('jwt'))
-    async getStudentCourses(@CurrentUser() user: JWTPayload) {
-        return this.coursesService.getStudentCourses(user.id);
+        return this.coursesService.updateStudentQualification(data);
     }
 }
