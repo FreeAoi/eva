@@ -11,8 +11,6 @@ Although my university uses Moodle as LMS, I didn't care and wanted to reinvent 
 # Features
 Teachers can assign homework and evaluate them; students can submit this homework for review and check their grades.
 
-> Very soon: A chat system with the teacher
-
 # Screenshot
 ![Main page](https://media.discordapp.net/attachments/982436046056857620/1053187774393634856/image.png?width=936&height=454)
 

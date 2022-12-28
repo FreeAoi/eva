@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../providers/prisma/prisma.service';
 import { CacheService } from '../cache/cache.service';
-import RegisterDTO from './dto/register.dto';
 import bcrypt from 'bcrypt';
 
+import type RegisterDTO from './dto/register.dto';
+
 @Injectable()
-export class StudentsService {
+export class StudentService {
     constructor(private prisma: PrismaService, private cache: CacheService) {}
 
     async getStudentById(id: string) {

@@ -1,14 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { Student } from '@prisma/client';
-import { StudentsService } from '../modules/students/students.service';
-import { JWTPayload } from './interfaces/jwt-payload.interface';
-
+import { StudentService } from '../modules/student/student.service';
+import type { JWTPayload } from './interfaces/jwt-payload.interface';
+import type { Student } from '@prisma/client';
 @Injectable()
 export class AuthService {
     constructor(
         private jwtService: JwtService,
-        private studentsService: StudentsService
+        private studentsService: StudentService
     ) {}
 
     async genAccToken(student: Student) {

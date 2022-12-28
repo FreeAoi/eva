@@ -5,10 +5,13 @@ import {
 } from '@nestjs/platform-fastify';
 import AppModule from '../app.module';
 import { user, course } from './app.fixture';
+import type { UpdateCourseDTO } from '../modules/course/dto/update-course.dto';
 
 describe('App', () => {
     let app: NestFastifyApplication;
     let JWToken: string;
+    const courseId = (Math.random() + 1).toString(36).substring(7);
+
     beforeAll(async () => {
         const module = await Test.createTestingModule({
             imports: [AppModule]
@@ -32,8 +35,9 @@ describe('App', () => {
 
     it('/GET student no authorized', () => {
         return app
-            .inject({ method: 'GET', url: '/api/students/me' })
+            .inject({ method: 'GET', url: '/api/student/me' })
             .then((response) => {
+                console.log(response);
                 expect(response.statusCode).toBe(401);
                 expect(JSON.parse(response.body)).toEqual({
                     statusCode: 401,
@@ -46,7 +50,7 @@ describe('App', () => {
         return app
             .inject({
                 method: 'GET',
-                url: '/api/students/me',
+                url: '/api/student/me',
                 headers: {
                     Authorization: `Bearer ${JWToken}`
                 }
@@ -57,57 +61,45 @@ describe('App', () => {
             });
     });
 
-    it('/GET student courses', () => {
+    it('/POST create course', () => {
         return app
             .inject({
-                method: 'GET',
-                url: '/api/courses/student',
-                headers: {
-                    Authorization: `Bearer ${JWToken}`
-                }
-            })
-            .then((response) => {
-                expect(response.statusCode).toBe(200);
-                expect(JSON.parse(response.body)).toBeDefined();
-            });
-    });
-
-    it('/PUT create course', () => {
-        return app
-            .inject({
-                method: 'PUT',
-                url: '/api/courses/create',
+                method: 'POST',
+                url: '/api/course/create',
                 headers: {
                     Authorization: `Bearer ${JWToken}`
                 },
-                payload: course
+                payload: {
+                    ...course,
+                    courseId: courseId
+                }
             })
             .then((response) => {
-                expect(response.statusCode).toBe(200);
+                expect(response.statusCode).toBe(201);
                 expect(JSON.parse(response.body)).toMatchObject({
-                    id: course.id,
+                    id: courseId,
                     name: course.name
                 });
             });
     });
 
-    it('/PUT add student to course', () => {
+    it('/PATCH add student to course', () => {
         return app
             .inject({
-                method: 'PUT',
-                url: '/api/courses/add-student',
+                method: 'PATCH',
+                url: '/api/course/update',
                 headers: {
                     Authorization: `Bearer ${JWToken}`
                 },
-                payload: {
-                    courseId: course.id,
-                    studentId: '2022-0381U'
+                payload: <UpdateCourseDTO>{
+                    courseId: courseId,
+                    addStudents: ['2022-0381U']
                 }
             })
             .then((response) => {
                 expect(response.statusCode).toBe(200);
                 expect(JSON.parse(response.body)).toMatchObject({
-                    id: course.id,
+                    id: courseId,
                     name: course.name
                 });
             });
@@ -117,14 +109,14 @@ describe('App', () => {
         return app
             .inject({
                 method: 'PATCH',
-                url: '/api/courses/update-note',
+                url: '/api/course/update/qualification',
                 headers: {
                     Authorization: `Bearer ${JWToken}`
                 },
                 payload: {
-                    courseId: course.id,
+                    courseId: courseId,
                     studentId: '2022-0381U',
-                    note: 10
+                    qualification: 10
                 }
             })
             .then((response) => {

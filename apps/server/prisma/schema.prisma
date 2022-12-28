@@ -17,21 +17,62 @@ model Career {
   updatedAt DateTime @updatedAt
 }
 
-model Course {
-  id           String        @id
-  name         String
-  credits      Int
-  instructor   String
-  careerId     Int?
-  career       Career?       @relation(fields: [careerId], references: [id])
-  performances Performance[]
-  students     Student[]
+model Task {
+  id          Int    @id @default(autoincrement())
+  title       String
+  description String
+
+  maxScore  Int
+  completed Boolean @default(false)
+
+  courseId String
+  course   Course @relation(fields: [courseId], references: [id])
+
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+  qualifications TaskQualification[]
+  attachments    TaskAttachment[]
 }
 
-model Performance {
+model TaskAttachment {
+  id     Int    @id @default(autoincrement())
+  name   String
+  url    String
+  taskId Int
+  task   Task   @relation(fields: [taskId], references: [id])
+}
+
+model TaskQualification {
+  id Int @id @default(autoincrement())
+
+  taskId Int
+  task   Task @relation(fields: [taskId], references: [id])
+
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id])
+
+  score Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Course {
+  id             String          @id
+  name           String
+  credits        Int
+  instructor     String
+  careerId       Int?
+  career         Career?         @relation(fields: [careerId], references: [id])
+  tasks          Task[]
+  qualifications Qualification[]
+  students       Student[]
+}
+
+model Qualification {
   studentId String
   courseId  String
-  note      Int
+  value     Int
   course    Course  @relation(fields: [courseId], references: [id], onDelete: Cascade)
   student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
@@ -39,18 +80,19 @@ model Performance {
 }
 
 model Student {
-  id           String        @id
-  email        String        @unique
-  password     String
-  firstName    String
-  lastName     String
-  role         Role          @default(STUDENT)
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  careerId     Int?
-  career       Career?       @relation(fields: [careerId], references: [id])
-  performances Performance[]
-  courses      Course[]
+  id                String              @id
+  email             String              @unique
+  password          String
+  firstName         String
+  lastName          String
+  role              Role                @default(STUDENT)
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  careerId          Int?
+  career            Career?             @relation(fields: [careerId], references: [id])
+  qualifications    Qualification[]
+  courses           Course[]
+  TaskQualification TaskQualification[]
 }
 
 enum Role {

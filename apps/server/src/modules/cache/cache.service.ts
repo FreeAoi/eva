@@ -1,6 +1,6 @@
 import ioredis from 'ioredis';
 import { Injectable, Inject } from '@nestjs/common';
-import { CacheModuleOptions } from './cache.interface';
+import type { CacheModuleOptions } from './cache.interface';
 
 @Injectable()
 export class CacheService extends ioredis {

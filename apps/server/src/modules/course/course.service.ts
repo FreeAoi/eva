@@ -1,16 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../providers/prisma/prisma.service';
-import { CreateCourseDTO } from './dto/create-course.dto';
-import { UpdateCourseDTO } from './dto/update-course.dto';
 import { CacheService } from '../cache/cache.service';
+import type { CreateTaskDTO } from '../task/dto/create-task.dto';
+import type { CreateCourseDTO } from './dto/create-course.dto';
+import type { UpdateCourseDTO } from './dto/update-course.dto';
+
 @Injectable()
-export class CoursesService {
+export class CourseService {
     constructor(private prisma: PrismaService, private cache: CacheService) {}
 
     async createCourse(data: CreateCourseDTO) {
         // return 1: Course exists _or_ 0: Course doesn't exist
         const cachedCourse = await this.cache.hexists(
-            `course:${data.id}`,
+            `course:${data.courseId}`,
             'id'
         );
         if (cachedCourse === 1) return { error: 'Course already exists' };
@@ -18,7 +20,7 @@ export class CoursesService {
         const course = await this.prisma.course.create({
             data: {
                 name: data.name,
-                id: data.id,
+                id: data.courseId,
                 credits: data.credits,
                 instructor: data.instructor,
                 career: {
@@ -33,12 +35,14 @@ export class CoursesService {
         return course;
     }
 
+    // TODO: Add cache
     updateCourse(data: UpdateCourseDTO) {
-        const { removeStudents, addStudents, id, careerId, ...rest } = data;
+        const { removeStudents, addStudents, courseId, careerId, ...rest } =
+            data;
 
         return this.prisma.course.update({
             where: {
-                id: id
+                id: courseId
             },
             data: {
                 ...rest,
@@ -53,14 +57,14 @@ export class CoursesService {
                     students: {
                         connect: addStudents.map((id) => ({ id }))
                     },
-                    performances: {
+                    qualifications: {
                         create: addStudents.map((id) => ({
                             student: {
                                 connect: {
                                     id
                                 }
                             },
-                            note: 0
+                            value: 0
                         }))
                     }
                 }),
@@ -68,7 +72,7 @@ export class CoursesService {
                     students: {
                         disconnect: removeStudents.map((id) => ({ id }))
                     },
-                    performances: {
+                    qualifications: {
                         deleteMany: removeStudents.map((id) => ({
                             studentId: id
                         }))
@@ -78,12 +82,13 @@ export class CoursesService {
         });
     }
 
+    // TODO: Add cache
     updateStudentQualification(data: {
         courseId: string;
         studentId: string;
-        note: number;
+        qualification: number;
     }) {
-        return this.prisma.performance.update({
+        return this.prisma.qualification.update({
             where: {
                 studentId_courseId: {
                     courseId: data.courseId,
@@ -91,7 +96,18 @@ export class CoursesService {
                 }
             },
             data: {
-                note: data.note
+                value: data.qualification
+            }
+        });
+    }
+
+    createTask(data: CreateTaskDTO) {
+        return this.prisma.task.create({
+            data: {
+                courseId: data.courseId,
+                description: data.description,
+                title: data.title,
+                maxScore: data.maxScore
             }
         });
     }

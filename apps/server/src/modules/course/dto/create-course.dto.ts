@@ -1,7 +1,7 @@
 /* eslint-disable indent */
 
 export class CreateCourseDTO {
-    id: string;
+    courseId: string;
 
     name: string;
 

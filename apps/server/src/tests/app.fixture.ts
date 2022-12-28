@@ -6,7 +6,6 @@ export const user = {
 
 export const course = {
     name: 'Beautiful course',
-    id: 'BEAU',
     credits: 5,
     instructor: 'Beautiful instructor',
     careerId: 1

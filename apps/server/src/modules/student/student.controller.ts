@@ -3,25 +3,25 @@ import {
     Controller,
     Get,
     HttpException,
-    Put,
+    Post,
     Query,
     UseGuards
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { StudentsService } from './students.service';
+import { StudentService } from './student.service';
 import RegisterDTO from './dto/register.dto';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/user-roles.decorator';
 import { Role } from '../../common/constants/roles.enum';
 import { CurrentUser } from '../../common/decorators/user-current.decorator';
-import { JWTPayload } from '../../authentication/interfaces/jwt-payload.interface';
-import { Student } from '@prisma/client';
+import type { JWTPayload } from '../../authentication/interfaces/jwt-payload.interface';
+import type { Student } from '@prisma/client';
 
-@Controller('students')
+@Controller('student')
 export class StudentController {
-    constructor(private studentsService: StudentsService) {}
+    constructor(private studentsService: StudentService) {}
 
-    @Get('student')
+    @Get()
     @UseGuards(AuthGuard('jwt'))
     async getStudent(@Query('id') id: string) {
         return this.studentsService.getStudentById(id);
@@ -33,7 +33,7 @@ export class StudentController {
         return this.studentsService.getStudentById(user.id);
     }
 
-    @Put('create')
+    @Post('create')
     @Roles(Role.ADMIN)
     @UseGuards(AuthGuard('jwt'), RolesGuard)
     async registerStudent(@Body() student: RegisterDTO): Promise<Student> {
