@@ -28,21 +28,25 @@ model Task {
   courseId String
   course   Course @relation(fields: [courseId], references: [id])
 
-  createdAt      DateTime            @default(now())
-  updatedAt      DateTime            @updatedAt
-  qualifications TaskQualification[]
-  attachments    TaskAttachment[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  submissions TaskSubmission[]
+  attachments TaskAttachment[]
 }
 
 model TaskAttachment {
-  id     Int    @id @default(autoincrement())
-  name   String
-  url    String
-  taskId Int
-  task   Task   @relation(fields: [taskId], references: [id])
+  id               Int             @id @default(autoincrement())
+  name             String
+  url              String
+  
+  taskId           Int?
+  task             Task?            @relation(fields: [taskId], references: [id])
+
+  TaskSubmission   TaskSubmission? @relation(fields: [taskSubmissionId], references: [id])
+  taskSubmissionId Int?
 }
 
-model TaskQualification {
+model TaskSubmission {
   id Int @id @default(autoincrement())
 
   taskId Int
@@ -50,6 +54,8 @@ model TaskQualification {
 
   studentId String
   student   Student @relation(fields: [studentId], references: [id])
+
+  attachments TaskAttachment[]
 
   score Int
 
@@ -80,19 +86,19 @@ model Qualification {
 }
 
 model Student {
-  id                String              @id
-  email             String              @unique
-  password          String
-  firstName         String
-  lastName          String
-  role              Role                @default(STUDENT)
-  createdAt         DateTime            @default(now())
-  updatedAt         DateTime            @updatedAt
-  careerId          Int?
-  career            Career?             @relation(fields: [careerId], references: [id])
-  qualifications    Qualification[]
-  courses           Course[]
-  TaskQualification TaskQualification[]
+  id             String           @id
+  email          String           @unique
+  password       String
+  firstName      String
+  lastName       String
+  role           Role             @default(STUDENT)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  careerId       Int?
+  career         Career?          @relation(fields: [careerId], references: [id])
+  qualifications Qualification[]
+  courses        Course[]
+  submissions    TaskSubmission[]
 }
 
 enum Role {

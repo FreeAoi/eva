@@ -5,9 +5,9 @@ import {
 } from '@nestjs/platform-fastify';
 import AppModule from '../app.module';
 import { user, course } from './app.fixture';
-import type { UpdateCourseDTO } from '../modules/course/dto/update-course.dto';
 
-describe('App', () => {
+// TODO: add tests for the rest of the endpoints
+describe('App (e2e)', () => {
     let app: NestFastifyApplication;
     let JWToken: string;
     const courseId = (Math.random() + 1).toString(36).substring(7);
@@ -91,7 +91,7 @@ describe('App', () => {
                 headers: {
                     Authorization: `Bearer ${JWToken}`
                 },
-                payload: <UpdateCourseDTO>{
+                payload: {
                     courseId: courseId,
                     addStudents: ['2022-0381U']
                 }

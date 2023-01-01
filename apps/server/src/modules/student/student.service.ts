@@ -3,7 +3,7 @@ import { PrismaService } from '../../providers/prisma/prisma.service';
 import { CacheService } from '../cache/cache.service';
 import bcrypt from 'bcrypt';
 
-import type RegisterDTO from './dto/register.dto';
+import type { RegisterDTO } from './dto/register.dto';
 
 @Injectable()
 export class StudentService {
@@ -48,12 +48,10 @@ export class StudentService {
                 }
             });
             if (!student) return null;
-            await this.cache.hset(`student:${student.id}`, student);
-            await this.cache.zadd(
-                'student.emails',
-                0,
-                `${student.email}:${student.id}`
-            );
+            await Promise.all([
+                this.cache.hset(`student:${student.id}`, student),
+                this.cache.zadd('student.emails', 0, `${student.email}`)
+            ]);
             return student;
         }
 

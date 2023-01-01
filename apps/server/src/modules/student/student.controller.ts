@@ -3,13 +3,14 @@ import {
     Controller,
     Get,
     HttpException,
+    Patch,
     Post,
     Query,
     UseGuards
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { StudentService } from './student.service';
-import RegisterDTO from './dto/register.dto';
+import { RegisterDTO } from './dto/register.dto';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/user-roles.decorator';
 import { Role } from '../../common/constants/roles.enum';

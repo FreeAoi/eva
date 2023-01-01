@@ -1,12 +1,8 @@
 /* eslint-disable indent */
 import { IsEmail, IsNotEmpty } from 'class-validator';
+import type { Role } from '../../../common/constants/roles.enum';
 
-enum Role {
-    ADMIN = 'ADMIN',
-    STUDENT = 'STUDENT'
-}
-
-export default class RegisterDTO {
+export class RegisterDTO {
     @IsEmail()
     email: string;
 
