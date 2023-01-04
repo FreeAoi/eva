@@ -15,7 +15,7 @@ export class CourseService {
             `course:${data.courseId}`,
             'id'
         );
-        if (cachedCourse === 1) return { error: 'Course already exists' };
+        if (cachedCourse) return { error: 'Course already exists' };
 
         const course = await this.prisma.course.create({
             data: {

@@ -4,64 +4,36 @@ import { CacheService } from '../cache/cache.service';
 import bcrypt from 'bcrypt';
 
 import type { RegisterDTO } from './dto/register.dto';
+import type { Student } from '@prisma/client';
 
 @Injectable()
 export class StudentService {
     constructor(private prisma: PrismaService, private cache: CacheService) {}
 
-    async getStudentById(id: string) {
-        const cachedStudent = await this.cache.hgetall(`student:${id}`);
+    async getStudent<T extends boolean>(
+        opts: { email?: string; id?: string },
+        omitPassword: T = true as T
+    ): Promise<
+        T extends true ? Omit<Student, 'password'> | null : Student | null
+    > {
+        let student = await this.cache.getStudent(opts);
 
-        if (Object.keys(cachedStudent).length === 0) {
-            const student = await this.prisma.student.findUnique({
-                where: {
-                    id
-                }
+        if (!student) {
+            const { email, id } = opts;
+            const where = email ? { email } : { id };
+            student = await this.prisma.student.findUnique({
+                where
             });
+
             if (!student) return null;
-            await Promise.all([
-                this.cache.hset(`student:${student.id}`, student),
-                this.cache.zadd(
-                    'student.emails',
-                    0,
-                    `${student.email}:${student.id}`
-                )
-            ]);
-            return student;
+            await this.cache.setStudent(student.email, student.id, student);
+        }
+        if (omitPassword) {
+            const { password, ...rest } = student;
+            return rest as never;
         }
 
-        return cachedStudent;
-    }
-
-    async getStudentByEmail(email: string) {
-        // Search for the student in the cache and return email:id pair
-        const cachedStudent = await this.cache.zrangebylex(
-            'student.emails',
-            `[${email}`,
-            `[${email}\xff`
-        );
-
-        if (cachedStudent.length === 0) {
-            const student = await this.prisma.student.findUnique({
-                where: {
-                    email
-                }
-            });
-            if (!student) return null;
-            await Promise.all([
-                this.cache.hset(`student:${student.id}`, student),
-                this.cache.zadd('student.emails', 0, `${student.email}`)
-            ]);
-            return student;
-        }
-
-        const studentId = cachedStudent[0].split(':')[1];
-        return this.getStudentById(studentId);
-    }
-
-    async comparePassword(password: string, hash: string) {
-        await bcrypt.compare(password, hash);
-        return true;
+        return student;
     }
 
     async registerStudent(data: RegisterDTO) {

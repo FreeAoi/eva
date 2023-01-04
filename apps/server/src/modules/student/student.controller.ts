@@ -3,7 +3,6 @@ import {
     Controller,
     Get,
     HttpException,
-    Patch,
     Post,
     Query,
     UseGuards
@@ -25,23 +24,22 @@ export class StudentController {
     @Get()
     @UseGuards(AuthGuard('jwt'))
     async getStudent(@Query('id') id: string) {
-        return this.studentsService.getStudentById(id);
+        return this.studentsService.getStudent({ id });
     }
 
     @Get('me')
     @UseGuards(AuthGuard('jwt'))
     async getMe(@CurrentUser() user: JWTPayload) {
-        return this.studentsService.getStudentById(user.id);
+        return this.studentsService.getStudent({ id: user.id });
     }
 
     @Post('create')
     @Roles(Role.ADMIN)
     @UseGuards(AuthGuard('jwt'), RolesGuard)
     async registerStudent(@Body() student: RegisterDTO): Promise<Student> {
-        const studentEmail = await this.studentsService.getStudentById(
-            student.id
-        );
-        console.log(studentEmail);
+        const studentEmail = await this.studentsService.getStudent({
+            email: student.email
+        });
         if (studentEmail)
             throw new HttpException(
                 { error: 'Ese email de estudiante ya existe' },

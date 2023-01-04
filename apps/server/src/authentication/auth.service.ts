@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { StudentService } from '../modules/student/student.service';
 import type { JWTPayload } from './interfaces/jwt-payload.interface';
 import type { Student } from '@prisma/client';
+import bcrypt from 'bcrypt';
 @Injectable()
 export class AuthService {
     constructor(
@@ -21,14 +22,15 @@ export class AuthService {
         };
     }
 
+    async comparePassword(password: string, hash: string) {
+        return await bcrypt.compare(password, hash);
+    }
+
     async validateStudent(email: string, password: string) {
-        const student = await this.studentsService.getStudentByEmail(email);
+        const student = await this.studentsService.getStudent({ email }, false);
         if (
             student &&
-            (await this.studentsService.comparePassword(
-                password,
-                student.password
-            ))
+            (await this.comparePassword(password, student.password))
         ) {
             return student;
         }

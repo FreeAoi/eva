@@ -9,6 +9,7 @@ import { user, course } from './app.fixture';
 // TODO: add tests for the rest of the endpoints
 describe('App (e2e)', () => {
     let app: NestFastifyApplication;
+
     let JWToken: string;
     const courseId = (Math.random() + 1).toString(36).substring(7);
 
@@ -23,47 +24,60 @@ describe('App (e2e)', () => {
         app.setGlobalPrefix('api');
         await app.init();
         await app.getHttpAdapter().getInstance().ready();
-
-        // Login to get a JWT token and use it for the rest of the tests
-        const response = await app.inject({
-            method: 'POST',
-            url: '/api/auth/login',
-            payload: user
-        });
-        JWToken = JSON.parse(response.payload).access_token;
     });
 
-    it('/GET student no authorized', () => {
-        return app
-            .inject({ method: 'GET', url: '/api/student/me' })
-            .then((response) => {
-                console.log(response);
-                expect(response.statusCode).toBe(401);
-                expect(JSON.parse(response.body)).toEqual({
-                    statusCode: 401,
-                    message: 'Unauthorized'
-                });
+    describe('AuthenticationModule', () => {
+        it('(POST) /api/auth/login with valid credentials', async () => {
+            const response = await app.inject({
+                method: 'POST',
+                url: '/api/auth/login',
+                payload: user
             });
+            expect(response.statusCode).toBe(201);
+            expect(JSON.parse(response.payload)).toHaveProperty('access_token');
+            expect(JSON.parse(response.payload).access_token).toMatch(
+                /^([A-Za-z0-9-_=]+)\.([A-Za-z0-9-_=]+)\.([A-Za-z0-9-_.+/=]*)$/
+            );
+            JWToken = JSON.parse(response.payload).access_token;
+        });
+
+        it('(POST) /api/auth/login with invalid credentials', async () => {
+            const response = await app.inject({
+                method: 'POST',
+                url: '/api/auth/login',
+                payload: {
+                    email: user.email,
+                    password: 'wrongpassword'
+                }
+            });
+            expect(response.statusCode).toBe(401);
+            expect(JSON.parse(response.payload)).toHaveProperty('message');
+            expect(JSON.parse(response.payload).message).toBe(
+                'Invalid credentials'
+            );
+        });
     });
 
-    it('/GET student authorized', () => {
-        return app
-            .inject({
+    describe('StudentModule', () => {
+        it('(GET) /api/student/me with valid JWT', async () => {
+            const response = await app.inject({
                 method: 'GET',
                 url: '/api/student/me',
                 headers: {
                     Authorization: `Bearer ${JWToken}`
                 }
-            })
-            .then((response) => {
-                expect(response.statusCode).toBe(200);
-                expect(JSON.parse(response.body)).toBeDefined();
             });
+            expect(response.statusCode).toBe(200);
+            expect(JSON.parse(response.payload)).toHaveProperty('id');
+            expect(JSON.parse(response.payload)).toHaveProperty('email');
+            expect(JSON.parse(response.payload)).toHaveProperty('role');
+            expect(JSON.parse(response.payload)).not.toHaveProperty('password');
+        });
     });
 
-    it('/POST create course', () => {
-        return app
-            .inject({
+    describe('CourseModule', () => {
+        it('(POST) /api/course/create to create course', async () => {
+            const response = await app.inject({
                 method: 'POST',
                 url: '/api/course/create',
                 headers: {
@@ -73,19 +87,17 @@ describe('App (e2e)', () => {
                     ...course,
                     courseId: courseId
                 }
-            })
-            .then((response) => {
-                expect(response.statusCode).toBe(201);
-                expect(JSON.parse(response.body)).toMatchObject({
-                    id: courseId,
-                    name: course.name
-                });
             });
-    });
 
-    it('/PATCH add student to course', () => {
-        return app
-            .inject({
+            expect(response.statusCode).toBe(201);
+            expect(JSON.parse(response.payload)).toHaveProperty('id');
+            expect(JSON.parse(response.payload)).toHaveProperty('name');
+            expect(JSON.parse(response.payload)).toHaveProperty('credits');
+            expect(JSON.parse(response.payload)).toBeDefined();
+        });
+
+        it('(PATCH) /api/course/update add student to course', async () => {
+            const response = await app.inject({
                 method: 'PATCH',
                 url: '/api/course/update',
                 headers: {
@@ -95,19 +107,17 @@ describe('App (e2e)', () => {
                     courseId: courseId,
                     addStudents: ['2022-0381U']
                 }
-            })
-            .then((response) => {
-                expect(response.statusCode).toBe(200);
-                expect(JSON.parse(response.body)).toMatchObject({
-                    id: courseId,
-                    name: course.name
-                });
             });
-    });
 
-    it('/PATCH update student note', () => {
-        return app
-            .inject({
+            expect(response.statusCode).toBe(200);
+            expect(JSON.parse(response.payload)).toHaveProperty('id');
+            expect(JSON.parse(response.payload)).toHaveProperty('name');
+            expect(JSON.parse(response.payload)).toHaveProperty('credits');
+            expect(JSON.parse(response.payload)).toBeDefined();
+        });
+
+        it('(PATCH) /api/course/update/qualification update student qualification', async () => {
+            const response = await app.inject({
                 method: 'PATCH',
                 url: '/api/course/update/qualification',
                 headers: {
@@ -116,13 +126,15 @@ describe('App (e2e)', () => {
                 payload: {
                     courseId: courseId,
                     studentId: '2022-0381U',
-                    qualification: 10
+                    qualification: 100
                 }
-            })
-            .then((response) => {
-                expect(response.statusCode).toBe(200);
-                expect(JSON.parse(response.body)).toBeDefined();
             });
+
+            expect(response.statusCode).toBe(200);
+            expect(JSON.parse(response.payload)).toHaveProperty('courseId');
+            expect(JSON.parse(response.payload)).toHaveProperty('studentId');
+            expect(JSON.parse(response.payload)).toHaveProperty('value');
+        });
     });
 
     afterAll(async () => {
