@@ -5,12 +5,14 @@ import {
 } from '@nestjs/platform-fastify';
 import AppModule from '../app.module';
 import { user, course } from './app.fixture';
+import type { CreateTaskDTO } from '../modules/task/dto/create-task.dto';
 
-// TODO: add tests for the rest of the endpoints
 describe('App (e2e)', () => {
     let app: NestFastifyApplication;
 
     let JWToken: string;
+    let taskId: number;
+
     const courseId = (Math.random() + 1).toString(36).substring(7);
 
     beforeAll(async () => {
@@ -90,7 +92,7 @@ describe('App (e2e)', () => {
             });
 
             expect(response.statusCode).toBe(201);
-            expect(JSON.parse(response.payload)).toHaveProperty('id');
+            expect(JSON.parse(response.payload).id).toBe(courseId);
             expect(JSON.parse(response.payload)).toHaveProperty('name');
             expect(JSON.parse(response.payload)).toHaveProperty('credits');
             expect(JSON.parse(response.payload)).toBeDefined();
@@ -115,25 +117,48 @@ describe('App (e2e)', () => {
             expect(JSON.parse(response.payload)).toHaveProperty('credits');
             expect(JSON.parse(response.payload)).toBeDefined();
         });
+    });
 
-        it('(PATCH) /api/course/update/qualification update student qualification', async () => {
+    describe('TaskModule', () => {
+        it('(POST) /api/course/:courseId/task/create to create task', async () => {
             const response = await app.inject({
-                method: 'PATCH',
-                url: '/api/course/update/qualification',
+                method: 'POST',
+                url: `/api/course/${courseId}/task/create`,
                 headers: {
                     Authorization: `Bearer ${JWToken}`
                 },
-                payload: {
-                    courseId: courseId,
-                    studentId: '2022-0381U',
-                    qualification: 100
+                payload: <CreateTaskDTO>{
+                    name: 'Beautiful task',
+                    description: 'Beautiful description',
+                    title: 'Beautiful title',
+                    maxScore: 5
                 }
             });
 
-            expect(response.statusCode).toBe(200);
-            expect(JSON.parse(response.payload)).toHaveProperty('courseId');
-            expect(JSON.parse(response.payload)).toHaveProperty('studentId');
-            expect(JSON.parse(response.payload)).toHaveProperty('value');
+            expect(response.statusCode).toBe(201);
+            expect(JSON.parse(response.payload)).toHaveProperty('id');
+            expect(JSON.parse(response.payload)).toHaveProperty('name');
+            expect(JSON.parse(response.payload)).toHaveProperty('description');
+            expect(JSON.parse(response.payload)).toBeDefined();
+            taskId = JSON.parse(response.payload).id;
+        });
+
+        it('(POST) /api/course/:courseId/task/:taskId/attachement/create to create attachement', async () => {
+            const response = await app.inject({
+                method: 'POST',
+                url: `/api/course/${courseId}/task/${taskId}/attachement/create`,
+                headers: {
+                    Authorization: `Bearer ${JWToken}`,
+                    'Content-Type': 'multipart/form-data'
+                },
+                payload: {}
+            });
+
+            expect(response.statusCode).toBe(201);
+            expect(JSON.parse(response.payload)).toHaveProperty('id');
+            expect(JSON.parse(response.payload)).toHaveProperty('name');
+            expect(JSON.parse(response.payload)).toHaveProperty('description');
+            expect(JSON.parse(response.payload)).toBeDefined();
         });
     });
 

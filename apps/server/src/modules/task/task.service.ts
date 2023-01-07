@@ -2,9 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../providers/prisma/prisma.service';
 import { InjectQueue } from '@nestjs/bull';
 import type { CreateTaskDTO } from './dto/create-task.dto';
-import type { MultipartFile } from '@fastify/multipart';
 import type { Queue } from 'bull';
-import type { EvaluateTaskDTO } from './dto/evaluate-task.dto';
+import type { FileUpload } from '../../common/interceptors/files.interceptor';
 
 @Injectable()
 export class TaskService {
@@ -12,62 +11,41 @@ export class TaskService {
         private prismaService: PrismaService,
         @InjectQueue('upload') private upload: Queue
     ) {}
-    createTask(data: CreateTaskDTO) {
-        return this.prismaService.task.create({
+    async createTask(
+        data: CreateTaskDTO,
+        files: FileUpload[],
+        courseId: string
+    ) {
+        const task = await this.prismaService.task.create({
             data: {
                 title: data.title,
                 description: data.description,
                 course: {
                     connect: {
-                        id: data.courseId
+                        id: courseId
                     }
                 },
                 maxScore: data.maxScore
             }
         });
-    }
 
-    getTasksByCourse(courseId: string) {
-        return this.prismaService.task.findMany({
-            where: {
-                courseId
-            }
-        });
-    }
-
-    async createAttachment(
-        taskId: number,
-        files: Record<string, MultipartFile>
-    ) {
-        await this.upload.add(
-            'attachment',
-            {
-                attachments: Object.values(files).map((file) => ({
-                    filename: file.filename,
-                    buffer: file.file.read()
-                })),
-                taskId
-            },
-            {
-                removeOnComplete: true
-            }
-        );
-
-        return this.prismaService.task.update({
-            where: {
-                id: taskId
-            },
-            data: {
-                attachments: {
-                    createMany: {
-                        data: Object.keys(files).map((file) => ({
-                            name: files[file].filename,
-                            url: `${process.env.R2_PUBLIC_URL}/assignment_${taskId}/${files[file].filename}`
-                        }))
-                    }
+        if (files.length > 0) {
+            await this.upload.add(
+                'attachment',
+                {
+                    attachments: files.map((file) => ({
+                        filename: file.filename,
+                        buffer: file.stream
+                    })),
+                    taskId: task.id
+                },
+                {
+                    removeOnComplete: true
                 }
-            }
-        });
+            );
+        }
+
+        return task;
     }
 
     // TODO: ADD cache and refactor this shit
@@ -80,7 +58,7 @@ export class TaskService {
         taskId: number;
         courseId: string;
         studentId: string;
-        files: Record<string, MultipartFile>;
+        files: FileUpload[];
     }) {
         // check if the task is in the course
         const course = await this.prismaService.course.findUnique({
@@ -113,12 +91,16 @@ export class TaskService {
             return 'Student not found';
         }
 
+        if (files.length === 0) {
+            return 'No files found';
+        }
+
         await this.upload.add(
             'attachment',
             {
                 attachments: Object.values(files).map((file) => ({
                     filename: file.filename,
-                    buffer: file.file.read()
+                    buffer: file.stream
                 })),
                 taskId,
                 studentId
@@ -128,32 +110,10 @@ export class TaskService {
             }
         );
 
-        return this.prismaService.taskSubmission.create({
-            data: {
-                task: {
-                    connect: {
-                        id: taskId
-                    }
-                },
-                student: {
-                    connect: {
-                        id: studentId
-                    }
-                },
-                attachments: {
-                    createMany: {
-                        data: Object.keys(files).map((file) => ({
-                            name: files[file].filename,
-                            url: `${process.env.R2_PUBLIC_URL}/assignment_${taskId}/${studentId}/${files[file].filename}`
-                        }))
-                    }
-                },
-                score: 0
-            }
-        });
+        return 'Task submitted for evaluation';
     }
 
-    async evaluateSubmission(data: EvaluateTaskDTO) {
+    async evaluateSubmission() {
         // search for the submission
     }
 }

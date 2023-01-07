@@ -23,13 +23,14 @@ model Task {
   description String
 
   maxScore  Int
-  completed Boolean @default(false)
 
   courseId String
   course   Course @relation(fields: [courseId], references: [id])
 
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
+  //dueDate     DateTime
+
   submissions TaskSubmission[]
   attachments TaskAttachment[]
 }
@@ -71,18 +72,7 @@ model Course {
   careerId       Int?
   career         Career?         @relation(fields: [careerId], references: [id])
   tasks          Task[]
-  qualifications Qualification[]
   students       Student[]
-}
-
-model Qualification {
-  studentId String
-  courseId  String
-  value     Int
-  course    Course  @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
-
-  @@id([studentId, courseId])
 }
 
 model Student {
@@ -96,7 +86,6 @@ model Student {
   updatedAt      DateTime         @updatedAt
   careerId       Int?
   career         Career?          @relation(fields: [careerId], references: [id])
-  qualifications Qualification[]
   courses        Course[]
   submissions    TaskSubmission[]
 }

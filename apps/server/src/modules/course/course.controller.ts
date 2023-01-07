@@ -7,7 +7,7 @@ import { Roles } from '../../common/decorators/user-roles.decorator';
 import { Role } from '../../common/constants/roles.enum';
 import { UpdateCourseDTO } from './dto/update-course.dto';
 
-@Controller('course')
+@Controller()
 export class CourseController {
     constructor(private readonly coursesService: CourseService) {}
 
@@ -23,19 +23,5 @@ export class CourseController {
     @UseGuards(AuthGuard('jwt'), RolesGuard)
     async updateCourse(@Body() data: UpdateCourseDTO) {
         return this.coursesService.updateCourse(data);
-    }
-
-    @Patch('update/qualification')
-    @Roles(Role.ADMIN)
-    @UseGuards(AuthGuard('jwt'), RolesGuard)
-    async updateStudentInCourse(
-        @Body()
-            data: {
-            courseId: string;
-            studentId: string;
-            qualification: number;
-        }
-    ) {
-        return this.coursesService.updateStudentQualification(data);
     }
 }

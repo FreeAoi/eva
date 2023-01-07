@@ -8,7 +8,7 @@ import AppModule from './app.module';
 import { AppClusterService } from './cluster';
 import morgan from 'morgan';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import FastifyMP from '@fastify/multipart';
+import fastifyMultipart from '@fastify/multipart';
 import type { NestFastifyApplication } from '@nestjs/platform-fastify';
 
 async function bootstrap() {
@@ -17,9 +17,13 @@ async function bootstrap() {
         new FastifyAdapter()
     );
 
+    await app.register(fastifyMultipart);
     app.use(morgan('dev'));
-    await app.register(FastifyMP);
-    app.useGlobalPipes(new ValidationPipe());
+    app.useGlobalPipes(
+        new ValidationPipe({
+            transform: true
+        })
+    );
     app.setGlobalPrefix('api');
     app.enableCors();
 

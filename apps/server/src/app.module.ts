@@ -7,14 +7,26 @@ import { CacheModule } from './modules/cache/cache.module';
 import { StorageModule } from './modules/storage/storage.module';
 import { TaskModule } from './modules/task/task.module';
 import { BullModule } from '@nestjs/bull';
+import { RouterModule } from '@nestjs/core';
 
 @Module({
     imports: [
+        CourseModule,
+        RouterModule.register([
+            {
+                path: 'course',
+                module: CourseModule,
+                children: [
+                    {
+                        path: ':courseId',
+                        module: TaskModule
+                    }
+                ]
+            }
+        ]),
         PrismaModule,
         StudentModule,
         AuthModule,
-        CourseModule,
-        TaskModule,
         BullModule.forRoot({
             redis: {
                 host: 'localhost',

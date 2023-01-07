@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../providers/prisma/prisma.service';
 import { CacheService } from '../cache/cache.service';
-import type { CreateTaskDTO } from '../task/dto/create-task.dto';
 import type { CreateCourseDTO } from './dto/create-course.dto';
 import type { UpdateCourseDTO } from './dto/update-course.dto';
 
@@ -78,36 +77,6 @@ export class CourseService {
                         }))
                     }
                 })
-            }
-        });
-    }
-
-    // TODO: Add cache
-    updateStudentQualification(data: {
-        courseId: string;
-        studentId: string;
-        qualification: number;
-    }) {
-        return this.prisma.qualification.update({
-            where: {
-                studentId_courseId: {
-                    courseId: data.courseId,
-                    studentId: data.studentId
-                }
-            },
-            data: {
-                value: data.qualification
-            }
-        });
-    }
-
-    createTask(data: CreateTaskDTO) {
-        return this.prisma.task.create({
-            data: {
-                courseId: data.courseId,
-                description: data.description,
-                title: data.title,
-                maxScore: data.maxScore
             }
         });
     }
