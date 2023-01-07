@@ -18,7 +18,7 @@ export function FilesInterceptor(): Type<NestInterceptor> {
             const ctx = context.switchToHttp();
             const request = ctx.getRequest<FastifyRequest>();
 
-            const files = [];
+            const files: FileUpload[] = [];
             const body: Record<string, unknown> = {};
             for await (const part of request.parts()) {
                 if ((part as MultipartFile).file) {
