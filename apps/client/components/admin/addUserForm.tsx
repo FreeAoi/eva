@@ -20,24 +20,21 @@ export default function addUserForm() {
             return;
         }
 
-        const data = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/student/register`,
-            {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${session?.user.accessToken}`
-                },
-                body: JSON.stringify({
-                    id,
-                    name,
-                    email,
-                    password,
-                    career,
-                    role
-                })
-            }
-        );
+        const data = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/student/register`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${session?.user.accessToken}`
+            },
+            body: JSON.stringify({
+                id,
+                name,
+                email,
+                password,
+                career,
+                role
+            })
+        });
 
         const res = await data.json();
         if (res.error) {
@@ -56,9 +53,7 @@ export default function addUserForm() {
             {error && (
                 <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
                     <strong className="font-bold">Error</strong>
-                    <span className="block sm:inline px-1 text-sm">
-                        {error}
-                    </span>
+                    <span className="block sm:inline px-1 text-sm">{error}</span>
                 </div>
             )}
             {success && (
@@ -80,10 +75,7 @@ export default function addUserForm() {
                                 className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:border-indigo-500"
                                 onChange={(e) => setId(e.target.value)}
                             />
-                            <label
-                                htmlFor="name"
-                                className="text-sm font-medium text-gray-700"
-                            >
+                            <label htmlFor="name" className="text-sm font-medium text-gray-700">
                                 Nombre
                             </label>
                             <input
@@ -92,32 +84,24 @@ export default function addUserForm() {
                                 onChange={(e) => setName(e.target.value)}
                             />
 
-                            <label className="text-sm font-medium text-gray-700">
-                                Email
-                            </label>
+                            <label className="text-sm font-medium text-gray-700">Email</label>
                             <input
                                 type="email"
                                 className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:border-indigo-500"
                                 onChange={(e) => setEmail(e.target.value)}
                             />
 
-                            <label className="text-sm font-medium text-gray-700">
-                                Contraseña
-                            </label>
+                            <label className="text-sm font-medium text-gray-700">Contraseña</label>
                             <input
                                 type="password"
                                 className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:border-indigo-500"
                                 onChange={(e) => setPassword(e.target.value)}
                             />
 
-                            <label className="text-sm font-medium text-gray-700">
-                                Rol
-                            </label>
+                            <label className="text-sm font-medium text-gray-700">Rol</label>
                             <select
                                 className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:border-indigo-500"
-                                onChange={(e) =>
-                                    setRole(e.target.value.toUpperCase())
-                                }
+                                onChange={(e) => setRole(e.target.value.toUpperCase())}
                             >
                                 <option value="student">Student</option>
                                 <option value="teacher">Teacher</option>
@@ -128,9 +112,7 @@ export default function addUserForm() {
                 <div className="w-full lg:w-2/5">
                     <div className="flex flex-col space-y-4">
                         <div className="flex flex-col space-y-1">
-                            <label className="text-sm font-medium text-gray-700">
-                                Carrera
-                            </label>
+                            <label className="text-sm font-medium text-gray-700">Carrera</label>
                             <input
                                 id="career"
                                 className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:border-indigo-500"

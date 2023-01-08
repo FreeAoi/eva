@@ -17,27 +17,18 @@ export class CacheService extends ioredis {
         ]);
     }
 
-    async getStudent(opts: {
-        email?: string;
-        id?: string;
-    }): Promise<Student | null> {
+    async getStudent(opts: { email?: string; id?: string }): Promise<Student | null> {
         const { email, id } = opts;
         let studentId: string | undefined = id;
 
         if (email) {
-            const cachedId = await this.zrangebylex(
-                'student:emails',
-                `[${email}`,
-                `[${email}\xff`
-            );
+            const cachedId = await this.zrangebylex('student:emails', `[${email}`, `[${email}\xff`);
 
             if (cachedId.length === 0) return null; // Student not found
             studentId = cachedId[0].split(':')[1];
         }
 
-        const cachedStudent = (await this.hgetall(
-            `student:${studentId}`
-        )) as unknown as Student;
+        const cachedStudent = (await this.hgetall(`student:${studentId}`)) as unknown as Student;
         return Object.keys(cachedStudent).length === 0 ? null : cachedStudent;
     }
 }

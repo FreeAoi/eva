@@ -68,9 +68,7 @@ export default function LoginScreen() {
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                             />
-                            <p className="text-red-500 text-xs italic">
-                                {error}
-                            </p>
+                            <p className="text-red-500 text-xs italic">{error}</p>
 
                             <button
                                 className="transition duration-500 bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full"

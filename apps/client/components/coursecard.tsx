@@ -12,9 +12,7 @@ export default function CourseCard(props: CourseCardProps) {
                 <div className="relative w-full h-4/6 bgtest"></div>
                 <div className="p-1 px-2 py-3">
                     <p className="text-slate-500 text-xs">{props.career}</p>
-                    <h1 className="text-sm text-black font-regular">
-                        {props.name}
-                    </h1>
+                    <h1 className="text-sm text-black font-regular">{props.name}</h1>
                 </div>
             </Link>
         </div>

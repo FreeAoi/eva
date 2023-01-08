@@ -6,10 +6,7 @@ import type { Student } from '@prisma/client';
 import bcrypt from 'bcrypt';
 @Injectable()
 export class AuthService {
-    constructor(
-        private jwtService: JwtService,
-        private studentsService: StudentService
-    ) {}
+    constructor(private jwtService: JwtService, private studentsService: StudentService) {}
 
     async genAccToken(student: Student) {
         const payload: JWTPayload = {
@@ -28,10 +25,7 @@ export class AuthService {
 
     async validateStudent(email: string, password: string) {
         const student = await this.studentsService.getStudent({ email }, false);
-        if (
-            student &&
-            (await this.comparePassword(password, student.password))
-        ) {
+        if (student && (await this.comparePassword(password, student.password))) {
             return student;
         }
         return null;

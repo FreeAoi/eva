@@ -13,14 +13,10 @@ export default function Home() {
             <div className="p-3 h-screen">
                 <div className="hidden lg:flex mb-4">
                     <div className="w-1/12 bg-blue-900 p-2">
-                        <h1 className="text-white text-center font-bold">
-                            ANUNCIOS
-                        </h1>
+                        <h1 className="text-white text-center font-bold">ANUNCIOS</h1>
                     </div>
                     <div className="w-11/12 bg-slate-200 p-2">
-                        <h2 className="text-black">
-                            No hay anuncios para mostrar
-                        </h2>
+                        <h2 className="text-black">No hay anuncios para mostrar</h2>
                     </div>
                 </div>
 
@@ -39,9 +35,7 @@ export default function Home() {
 
                     <div className="hidden w-3/12 border-l border-slate-300 px-2 ml-2 lg:block">
                         <div className="flex justify-between items-center">
-                            <h1 className="text-indigo-900 text-2xl">
-                                Navegación
-                            </h1>
+                            <h1 className="text-indigo-900 text-2xl">Navegación</h1>
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 fill="none"

@@ -13,8 +13,7 @@ export default class AuthController {
             student.email,
             student.password
         )) as Student | null;
-        if (!validatedStudent)
-            throw new HttpException('Invalid credentials', 401);
+        if (!validatedStudent) throw new HttpException('Invalid credentials', 401);
         return this.authService.genAccToken(validatedStudent);
     }
 }

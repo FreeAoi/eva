@@ -1,12 +1,4 @@
-import {
-    Body,
-    Controller,
-    Get,
-    HttpException,
-    Post,
-    Query,
-    UseGuards
-} from '@nestjs/common';
+import { Body, Controller, Get, HttpException, Post, Query, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { StudentService } from './student.service';
 import { RegisterDTO } from './dto/register.dto';
@@ -41,10 +33,7 @@ export class StudentController {
             email: student.email
         });
         if (studentEmail)
-            throw new HttpException(
-                { error: 'Ese email de estudiante ya existe' },
-                400
-            );
+            throw new HttpException({ error: 'Ese email de estudiante ya existe' }, 400);
 
         return this.studentsService.registerStudent(student);
     }

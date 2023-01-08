@@ -42,9 +42,7 @@ export default function MyScreen(props: { data: DataProps }) {
                 </div>
                 <div className="hidden lg:block w-1/5 border-l border-slate-300 px-2">
                     <div className="flex justify-between items-center">
-                        <h1 className="text-indigo-900 text-2xl font-semibold">
-                            Navegación
-                        </h1>
+                        <h1 className="text-indigo-900 text-2xl font-semibold">Navegación</h1>
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"
@@ -101,10 +99,7 @@ export default function MyScreen(props: { data: DataProps }) {
                                     />
                                 </svg>
 
-                                <Link
-                                    href="/"
-                                    className="text-indigo-900 text-base pl-2"
-                                >
+                                <Link href="/" className="text-indigo-900 text-base pl-2">
                                     Inicio del sitio
                                 </Link>
                             </li>
