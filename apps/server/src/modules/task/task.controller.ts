@@ -14,12 +14,10 @@ import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/user-roles.decorator';
 import { Role } from '../../common/constants/roles.enum';
 import { CurrentUser } from '../../common/decorators/user-current.decorator';
-import {
-    FilesInterceptor,
-    FileUpload
-} from '../../common/interceptors/files.interceptor';
+import { FilesInterceptor, FileUpload } from '../../common/interceptors/files.interceptor';
 import type { JWTPayload } from '../../authentication/interfaces/jwt-payload.interface';
 
+// ROUTE: api/course/:courseId/task
 @Controller('task')
 export class TaskController {
     constructor(private taskService: TaskService) {}

@@ -43,6 +43,7 @@
 		"@types/morgan": "^1.9.3",
 		"@types/passport-jwt": "^3.0.7",
 		"fastify": "^4.10.2",
+		"form-data": "^4.0.0",
 		"jest": "^29.3.1",
 		"prisma": "^4.8.1"
 	},

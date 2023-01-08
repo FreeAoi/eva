@@ -1,66 +1,47 @@
 import { OnQueueError, OnQueueFailed, Process, Processor } from '@nestjs/bull';
 import type { Job } from 'bull';
-import { StorageService } from '../storage/storage.service';
+import { StorageService } from '../../modules/storage/storage.service';
 import { PrismaService } from '../../providers/prisma/prisma.service';
-
-interface Attachment {
-    filename: string;
-    buffer: Buffer;
-}
-
-interface JobData {
-    attachments: Attachment[];
-    taskId: number;
-    studentId?: string;
-}
 
 @Processor('upload')
 export class UploadConsumer {
-    constructor(
-        private storageService: StorageService,
-        private prismaService: PrismaService
-    ) {}
+    constructor(private storageService: StorageService, private prismaService: PrismaService) {}
 
-    // TODO: refactor this because its too long
-    @Process('attachment')
+    @Process()
     async transcode(job: Job) {
         const { taskId, attachments, studentId } = job.data as JobData;
+        const attachmentarr: { filename: string; URI: string }[] = [];
+
         for (const attachment of attachments) {
             const URI = studentId
                 ? `assignment_${taskId}/${studentId}/${attachment.filename}`
                 : `assignment_${taskId}/${attachment.filename}`;
-            await this.storageService.uploadFile(
-                Buffer.from(attachment.buffer),
-                URI
-            );
+            await this.storageService.uploadFile(Buffer.from(attachment.buffer), URI);
+            attachmentarr.push({ filename: attachment.filename, URI });
         }
 
-        if (studentId) this.createSubmission(taskId, studentId, attachments);
-        else await this.updateTask(taskId, attachments);
+        if (studentId) this.createSubmissionAttachment(taskId, attachmentarr, studentId);
+        else this.createTaskAttachment(taskId, attachmentarr);
     }
 
-    private async updateTask(taskId: number, attachments: Attachment[]) {
-        await this.prismaService.task.update({
-            where: {
-                id: taskId
-            },
-            data: {
-                attachments: {
-                    createMany: {
-                        data: attachments.map((attachment) => ({
-                            name: attachment.filename,
-                            url: `${process.env.R2_PUBLIC_URL}/assignment_${taskId}/${attachment.filename}`
-                        }))
+    private createTaskAttachment(taskId: number, attachments: { filename: string; URI: string }[]) {
+        return this.prismaService.taskAttachment.createMany({
+            data: attachments.map((attachment) => ({
+                task: {
+                    connect: {
+                        id: taskId
                     }
-                }
-            }
+                },
+                name: attachment.filename,
+                url: attachment.URI
+            }))
         });
     }
 
-    private createSubmission(
+    private createSubmissionAttachment(
         taskId: number,
-        studentId: string,
-        attachments: Attachment[]
+        attachments: { filename: string; URI: string }[],
+        studentId: string
     ) {
         this.prismaService.taskSubmission.create({
             data: {
@@ -78,7 +59,7 @@ export class UploadConsumer {
                     createMany: {
                         data: attachments.map((attachment) => ({
                             name: attachment.filename,
-                            url: `${process.env.R2_PUBLIC_URL}/assignment_${taskId}/${studentId}/${attachment.filename}`
+                            url: attachment.URI
                         }))
                     }
                 },
@@ -97,4 +78,13 @@ export class UploadConsumer {
         console.log(job);
         console.log(error);
     }
+}
+
+interface JobData {
+    attachments: {
+        filename: string;
+        buffer: Buffer;
+    }[];
+    taskId: number;
+    studentId?: string;
 }

@@ -10,10 +10,7 @@ export class CourseService {
 
     async createCourse(data: CreateCourseDTO) {
         // return 1: Course exists _or_ 0: Course doesn't exist
-        const cachedCourse = await this.cache.hexists(
-            `course:${data.courseId}`,
-            'id'
-        );
+        const cachedCourse = await this.cache.hexists(`course:${data.courseId}`, 'id');
         if (cachedCourse) return { error: 'Course already exists' };
 
         const course = await this.prisma.course.create({
@@ -36,8 +33,7 @@ export class CourseService {
 
     // TODO: Add cache
     updateCourse(data: UpdateCourseDTO) {
-        const { removeStudents, addStudents, courseId, careerId, ...rest } =
-            data;
+        const { removeStudents, addStudents, courseId, careerId, ...rest } = data;
 
         return this.prisma.course.update({
             where: {
@@ -55,26 +51,11 @@ export class CourseService {
                 ...(addStudents && {
                     students: {
                         connect: addStudents.map((id) => ({ id }))
-                    },
-                    qualifications: {
-                        create: addStudents.map((id) => ({
-                            student: {
-                                connect: {
-                                    id
-                                }
-                            },
-                            value: 0
-                        }))
                     }
                 }),
                 ...(removeStudents && {
                     students: {
                         disconnect: removeStudents.map((id) => ({ id }))
-                    },
-                    qualifications: {
-                        deleteMany: removeStudents.map((id) => ({
-                            studentId: id
-                        }))
                     }
                 })
             }

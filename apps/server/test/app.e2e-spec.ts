@@ -1,17 +1,15 @@
 import { Test } from '@nestjs/testing';
-import {
-    FastifyAdapter,
-    NestFastifyApplication
-} from '@nestjs/platform-fastify';
-import AppModule from '../app.module';
+import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
+import AppModule from '../src/app.module';
+import FastifyMultipart from '@fastify/multipart';
 import { user, course } from './app.fixture';
-import type { CreateTaskDTO } from '../modules/task/dto/create-task.dto';
+import formData from 'form-data';
+import { ValidationPipe } from '@nestjs/common';
 
 describe('App (e2e)', () => {
     let app: NestFastifyApplication;
 
     let JWToken: string;
-    let taskId: number;
 
     const courseId = (Math.random() + 1).toString(36).substring(7);
 
@@ -20,10 +18,14 @@ describe('App (e2e)', () => {
             imports: [AppModule]
         }).compile();
 
-        app = module.createNestApplication<NestFastifyApplication>(
-            new FastifyAdapter()
-        );
+        app = module.createNestApplication<NestFastifyApplication>(new FastifyAdapter());
         app.setGlobalPrefix('api');
+        app.useGlobalPipes(
+            new ValidationPipe({
+                transform: true
+            })
+        );
+        await app.register(FastifyMultipart);
         await app.init();
         await app.getHttpAdapter().getInstance().ready();
     });
@@ -54,9 +56,7 @@ describe('App (e2e)', () => {
             });
             expect(response.statusCode).toBe(401);
             expect(JSON.parse(response.payload)).toHaveProperty('message');
-            expect(JSON.parse(response.payload).message).toBe(
-                'Invalid credentials'
-            );
+            expect(JSON.parse(response.payload).message).toBe('Invalid credentials');
         });
     });
 
@@ -121,44 +121,26 @@ describe('App (e2e)', () => {
 
     describe('TaskModule', () => {
         it('(POST) /api/course/:courseId/task/create to create task', async () => {
+            const form = new formData();
+            form.append('title', 'Test Task');
+            form.append('description', 'Test Task Description');
+            form.append('maxScore', 5);
+
             const response = await app.inject({
                 method: 'POST',
                 url: `/api/course/${courseId}/task/create`,
                 headers: {
-                    Authorization: `Bearer ${JWToken}`
-                },
-                payload: <CreateTaskDTO>{
-                    name: 'Beautiful task',
-                    description: 'Beautiful description',
-                    title: 'Beautiful title',
-                    maxScore: 5
-                }
-            });
-
-            expect(response.statusCode).toBe(201);
-            expect(JSON.parse(response.payload)).toHaveProperty('id');
-            expect(JSON.parse(response.payload)).toHaveProperty('name');
-            expect(JSON.parse(response.payload)).toHaveProperty('description');
-            expect(JSON.parse(response.payload)).toBeDefined();
-            taskId = JSON.parse(response.payload).id;
-        });
-
-        it('(POST) /api/course/:courseId/task/:taskId/attachement/create to create attachement', async () => {
-            const response = await app.inject({
-                method: 'POST',
-                url: `/api/course/${courseId}/task/${taskId}/attachement/create`,
-                headers: {
                     Authorization: `Bearer ${JWToken}`,
-                    'Content-Type': 'multipart/form-data'
+                    ...form.getHeaders()
                 },
-                payload: {}
+                payload: form
             });
 
             expect(response.statusCode).toBe(201);
             expect(JSON.parse(response.payload)).toHaveProperty('id');
-            expect(JSON.parse(response.payload)).toHaveProperty('name');
+            expect(JSON.parse(response.payload)).toHaveProperty('title');
             expect(JSON.parse(response.payload)).toHaveProperty('description');
-            expect(JSON.parse(response.payload)).toBeDefined();
+            expect(JSON.parse(response.payload)).toHaveProperty('maxScore');
         });
     });
 

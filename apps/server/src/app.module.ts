@@ -4,7 +4,6 @@ import { StudentModule } from './modules/student/student.module';
 import { CourseModule } from './modules/course/course.module';
 import { PrismaModule } from './providers/prisma/prisma.module';
 import { CacheModule } from './modules/cache/cache.module';
-import { StorageModule } from './modules/storage/storage.module';
 import { TaskModule } from './modules/task/task.module';
 import { BullModule } from '@nestjs/bull';
 import { RouterModule } from '@nestjs/core';
@@ -12,6 +11,9 @@ import { RouterModule } from '@nestjs/core';
 @Module({
     imports: [
         CourseModule,
+        PrismaModule,
+        StudentModule,
+        AuthModule,
         RouterModule.register([
             {
                 path: 'course',
@@ -24,9 +26,6 @@ import { RouterModule } from '@nestjs/core';
                 ]
             }
         ]),
-        PrismaModule,
-        StudentModule,
-        AuthModule,
         BullModule.forRoot({
             redis: {
                 host: 'localhost',
@@ -36,14 +35,6 @@ import { RouterModule } from '@nestjs/core';
         CacheModule.register({
             host: 'localhost',
             port: 6379
-        }),
-        StorageModule.register({
-            region: 'auto',
-            endpoint: process.env.R2_ENDPOINT,
-            credentials: {
-                accessKeyId: process.env.R2_KEY_ID,
-                secretAccessKey: process.env.R2_SECREY_KEY
-            }
         })
     ],
     controllers: [],

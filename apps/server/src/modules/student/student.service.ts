@@ -13,9 +13,7 @@ export class StudentService {
     async getStudent<T extends boolean>(
         opts: { email?: string; id?: string },
         omitPassword: T = true as T
-    ): Promise<
-        T extends true ? Omit<Student, 'password'> | null : Student | null
-    > {
+    ): Promise<T extends true ? Omit<Student, 'password'> | null : Student | null> {
         let student = await this.cache.getStudent(opts);
 
         if (!student) {
@@ -54,11 +52,7 @@ export class StudentService {
 
         await Promise.all([
             this.cache.hset(`student:${student.id}`, student),
-            this.cache.zadd(
-                'student.emails',
-                0,
-                `${student.email}:${student.id}`
-            )
+            this.cache.zadd('student.emails', 0, `${student.email}:${student.id}`)
         ]);
 
         return student;

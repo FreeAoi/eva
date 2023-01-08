@@ -1,21 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../providers/prisma/prisma.service';
-import { InjectQueue } from '@nestjs/bull';
 import type { CreateTaskDTO } from './dto/create-task.dto';
-import type { Queue } from 'bull';
 import type { FileUpload } from '../../common/interceptors/files.interceptor';
+import { UploadProducer } from '../../jobs/producers/upload.producer';
 
 @Injectable()
 export class TaskService {
-    constructor(
-        private prismaService: PrismaService,
-        @InjectQueue('upload') private upload: Queue
-    ) {}
-    async createTask(
-        data: CreateTaskDTO,
-        files: FileUpload[],
-        courseId: string
-    ) {
+    constructor(private prismaService: PrismaService, private upload: UploadProducer) {}
+    async createTask(data: CreateTaskDTO, files: FileUpload[], courseId: string) {
         const task = await this.prismaService.task.create({
             data: {
                 title: data.title,
@@ -29,21 +21,7 @@ export class TaskService {
             }
         });
 
-        if (files.length > 0) {
-            await this.upload.add(
-                'attachment',
-                {
-                    attachments: files.map((file) => ({
-                        filename: file.filename,
-                        buffer: file.stream
-                    })),
-                    taskId: task.id
-                },
-                {
-                    removeOnComplete: true
-                }
-            );
-        }
+        if (files.length > 0) await this.upload.uploadAttachments(files, task.id);
 
         return task;
     }
@@ -95,20 +73,7 @@ export class TaskService {
             return 'No files found';
         }
 
-        await this.upload.add(
-            'attachment',
-            {
-                attachments: Object.values(files).map((file) => ({
-                    filename: file.filename,
-                    buffer: file.stream
-                })),
-                taskId,
-                studentId
-            },
-            {
-                removeOnComplete: true
-            }
-        );
+        await this.upload.uploadAttachments(files, taskId, studentId);
 
         return 'Task submitted for evaluation';
     }

@@ -1,16 +1,11 @@
 import { Module } from '@nestjs/common';
 import { TaskController } from './task.controller';
 import { TaskService } from './task.service';
-import { BullModule } from '@nestjs/bull';
-import { UploadConsumer } from './upload.processor';
+import { JobsModule } from '../../jobs/jobs.module';
 
 @Module({
-    imports: [
-        BullModule.registerQueue({
-            name: 'upload'
-        })
-    ],
+    imports: [JobsModule],
     controllers: [TaskController],
-    providers: [TaskService, UploadConsumer]
+    providers: [TaskService]
 })
 export class TaskModule {}
