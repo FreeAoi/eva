@@ -1,13 +1,14 @@
 import { Global, Module } from '@nestjs/common';
-import { CacheService } from './cache.service';
-import type { CacheModuleOptions } from './cache.interface';
+import { CacheService } from './redis.service';
 import type { DynamicModule } from '@nestjs/common';
+import type { RedisOptions } from 'ioredis';
+
 @Global()
 @Module({})
-export class CacheModule {
-    static register(options: CacheModuleOptions): DynamicModule {
+export class RedisModule {
+    static forRoot(options: RedisOptions): DynamicModule {
         return {
-            module: CacheModule,
+            module: RedisModule,
             providers: [
                 {
                     provide: 'OPTIONS',

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../providers/prisma/prisma.service';
-import { CacheService } from '../cache/cache.service';
+import { PrismaService } from '../../providers/database/prisma.service';
+import { CacheService } from '../../providers/cache/redis.service';
 import type { CreateCourseDTO } from './dto/create-course.dto';
 import type { UpdateCourseDTO } from './dto/update-course.dto';
 

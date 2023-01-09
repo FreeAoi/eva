@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../providers/prisma/prisma.service';
+import { PrismaService } from '../../providers/database/prisma.service';
 import type { CreateTaskDTO } from './dto/create-task.dto';
 import type { FileUpload } from '../../common/interceptors/files.interceptor';
 import { UploadProducer } from '../../jobs/producers/upload.producer';

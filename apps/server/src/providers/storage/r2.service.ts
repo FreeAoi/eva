@@ -2,8 +2,8 @@ import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { PutObjectCommand, S3Client, S3ClientConfig } from '@aws-sdk/client-s3';
 
 @Injectable()
-export class StorageService extends S3Client implements OnModuleInit {
-    private readonly logger = new Logger(StorageService.name);
+export class S3Service extends S3Client implements OnModuleInit {
+    private readonly logger = new Logger(S3Service.name);
     constructor(@Inject('OPTIONS') options: S3ClientConfig) {
         super(options);
     }

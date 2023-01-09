@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../providers/prisma/prisma.service';
-import { CacheService } from '../cache/cache.service';
+import { PrismaService } from '../../providers/database/prisma.service';
+import { CacheService } from '../../providers/cache/redis.service';
 import bcrypt from 'bcrypt';
 
 import type { RegisterDTO } from './dto/register.dto';
@@ -10,6 +10,7 @@ import type { Student } from '@prisma/client';
 export class StudentService {
     constructor(private prisma: PrismaService, private cache: CacheService) {}
 
+    // TODO: refafactor this using class-transformer instead
     async getStudent<T extends boolean>(
         opts: { email?: string; id?: string },
         omitPassword: T = true as T
