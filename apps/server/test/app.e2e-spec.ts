@@ -4,7 +4,8 @@ import AppModule from '../src/app.module';
 import FastifyMultipart from '@fastify/multipart';
 import { user, course } from './app.fixture';
 import formData from 'form-data';
-import { ValidationPipe } from '@nestjs/common';
+import { BadRequestException, ValidationPipe } from '@nestjs/common';
+import { useContainer } from 'class-validator';
 
 describe('App (e2e)', () => {
     let app: NestFastifyApplication;
@@ -22,9 +23,17 @@ describe('App (e2e)', () => {
         app.setGlobalPrefix('api');
         app.useGlobalPipes(
             new ValidationPipe({
-                transform: true
+                transform: true,
+                stopAtFirstError: true,
+                whitelist: true,
+                exceptionFactory: (errors) => {
+                    const err = errors[0]?.constraints;
+                    if (!err) return new BadRequestException(errors);
+                    return new BadRequestException(Object.values(err)[0]);
+                }
             })
         );
+        useContainer(app.select(AppModule), { fallbackOnErrors: true });
         await app.register(FastifyMultipart);
         await app.init();
         await app.getHttpAdapter().getInstance().ready();
@@ -78,7 +87,7 @@ describe('App (e2e)', () => {
     });
 
     describe('CourseModule', () => {
-        it('(POST) /api/course/create to create course', async () => {
+        it('(POST) /api/course to create course', async () => {
             const response = await app.inject({
                 method: 'POST',
                 url: '/api/course/create',
@@ -98,24 +107,84 @@ describe('App (e2e)', () => {
             expect(JSON.parse(response.payload)).toBeDefined();
         });
 
-        it('(PATCH) /api/course/update add student to course', async () => {
+        it('(PATCH) /api/course/:courseId add student to course', async () => {
             const response = await app.inject({
                 method: 'PATCH',
-                url: '/api/course/update',
+                url: `/api/course/${courseId}`,
                 headers: {
                     Authorization: `Bearer ${JWToken}`
                 },
                 payload: {
-                    courseId: courseId,
-                    addStudents: ['2022-0381U']
+                    connect: ['2022-0381U']
                 }
             });
 
             expect(response.statusCode).toBe(200);
-            expect(JSON.parse(response.payload)).toHaveProperty('id');
-            expect(JSON.parse(response.payload)).toHaveProperty('name');
-            expect(JSON.parse(response.payload)).toHaveProperty('credits');
-            expect(JSON.parse(response.payload)).toBeDefined();
+            expect(JSON.parse(response.payload).added).toBe(1);
+        });
+
+        it('(PATCH) /api/course/:courseId fail with invalid student', async () => {
+            const response = await app.inject({
+                method: 'PATCH',
+                url: `/api/course/${courseId}`,
+                headers: {
+                    Authorization: `Bearer ${JWToken}`
+                },
+                payload: {
+                    connect: ['2022-0381UASD']
+                }
+            });
+            expect(response.statusCode).toBe(404);
+            expect(JSON.parse(response.payload).message).toBe(
+                'Student with id 2022-0381UASD not found'
+            );
+        });
+
+        it('(PATCH) /api/course/:courseId update course name', async () => {
+            const response = await app.inject({
+                method: 'PATCH',
+                url: `/api/course/${courseId}`,
+                headers: {
+                    Authorization: `Bearer ${JWToken}`
+                },
+                payload: {
+                    name: 'New Course Name'
+                }
+            });
+
+            expect(response.statusCode).toBe(200);
+            expect(JSON.parse(response.payload).name).toBe('New Course Name');
+        });
+
+        it('(PATCH) /api/course/:courseId fail with invalid courseId', async () => {
+            const response = await app.inject({
+                method: 'PATCH',
+                url: `/api/course/${courseId}AC`,
+                headers: {
+                    Authorization: `Bearer ${JWToken}`
+                },
+                payload: {
+                    name: 'New Course Name'
+                }
+            });
+
+            expect(response.statusCode).toBe(404);
+            expect(JSON.parse(response.payload).message).toBe('Course not found');
+        });
+
+        it('(PATCH) /api/course/:courseId remove student from course', async () => {
+            const response = await app.inject({
+                method: 'PATCH',
+                url: `/api/course/${courseId}`,
+                headers: {
+                    Authorization: `Bearer ${JWToken}`
+                },
+                payload: {
+                    disconnect: ['2022-0381U']
+                }
+            });
+            expect(response.statusCode).toBe(200);
+            expect(JSON.parse(response.payload).removed).toBe(1);
         });
     });
 

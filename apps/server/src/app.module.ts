@@ -8,6 +8,8 @@ import { TaskModule } from './modules/task/task.module';
 import { BullModule } from '@nestjs/bull';
 import { RouterModule } from '@nestjs/core';
 import { S3Module } from './providers/storage/r2.module';
+import { IsStudent } from './common/decorators/validation/studentExists';
+import { CourseExists } from './common/decorators/validation/courseExists';
 
 @Module({
     imports: [
@@ -47,7 +49,7 @@ import { S3Module } from './providers/storage/r2.module';
         })
     ],
     controllers: [],
-    providers: []
+    providers: [IsStudent, CourseExists]
 })
 class AppModule {}
 

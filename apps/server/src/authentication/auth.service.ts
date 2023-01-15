@@ -24,7 +24,7 @@ export class AuthService {
     }
 
     async validateStudent(email: string, password: string) {
-        const student = await this.studentsService.getStudent({ email }, false);
+        const student = await this.studentsService.getStudent({ email });
         if (student && (await this.comparePassword(password, student.password))) {
             return student;
         }

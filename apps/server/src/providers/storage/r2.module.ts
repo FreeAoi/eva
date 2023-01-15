@@ -1,5 +1,5 @@
 import { DynamicModule, Global, Module } from '@nestjs/common';
-import { S3Service } from './r2.service';
+import { R2Service } from './r2.service';
 import type { S3ClientConfig } from '@aws-sdk/client-s3';
 
 @Global()
@@ -13,9 +13,9 @@ export class S3Module {
                     provide: 'OPTIONS',
                     useValue: options
                 },
-                S3Service
+                R2Service
             ],
-            exports: [S3Service]
+            exports: [R2Service]
         };
     }
 }

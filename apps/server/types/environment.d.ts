@@ -4,7 +4,7 @@ declare global {
             JWT_SECRET: string;
             PORT: string;
 
-            NODE_ENV: 'DEVELOPMENT' | 'PRODUCTION';
+            NODE_ENV: 'development' | 'production';
             DATABASE_URL: string;
             R2_ENDPOINT: string;
             R2_KEY_ID: string;

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../../providers/database/prisma.service';
 import { CacheService } from '../../providers/cache/redis.service';
 import type { CreateCourseDTO } from './dto/create-course.dto';
@@ -9,9 +9,8 @@ export class CourseService {
     constructor(private prisma: PrismaService, private cache: CacheService) {}
 
     async createCourse(data: CreateCourseDTO) {
-        // return 1: Course exists _or_ 0: Course doesn't exist
-        const cachedCourse = await this.cache.hexists(`course:${data.courseId}`, 'id');
-        if (cachedCourse) return { error: 'Course already exists' };
+        const cachedCourse = await this.cache.exists(`course:${data.courseId}`);
+        if (cachedCourse) throw new BadRequestException('Course already exists');
 
         const course = await this.prisma.course.create({
             data: {
@@ -27,38 +26,31 @@ export class CourseService {
             }
         });
 
-        await this.cache.hset(`course:${course.id}`, course);
+        await this.cache.set(`course:${course.id}`, JSON.stringify(course));
         return course;
     }
 
-    // TODO: Add cache
-    updateCourse(data: UpdateCourseDTO) {
-        const { removeStudents, addStudents, courseId, careerId, ...rest } = data;
-
-        return this.prisma.course.update({
+    async updateCourse(courseId: string, data: UpdateCourseDTO) {
+        const { connect, disconnect, ...rest } = data;
+        const course = await this.prisma.course.update({
             where: {
                 id: courseId
             },
             data: {
                 ...rest,
-                ...(careerId && {
-                    career: {
-                        connect: {
-                            id: careerId
-                        }
-                    }
-                }),
-                ...(addStudents && {
-                    students: {
-                        connect: addStudents.map((id) => ({ id }))
-                    }
-                }),
-                ...(removeStudents && {
-                    students: {
-                        disconnect: removeStudents.map((id) => ({ id }))
-                    }
-                })
+                students: {
+                    connect: connect?.map((id) => ({ id })),
+                    disconnect: disconnect?.map((id) => ({ id }))
+                }
             }
         });
+
+        await this.cache.set(`course:${course.id}`, JSON.stringify(course));
+
+        return {
+            ...(connect && { added: connect.length }),
+            ...(disconnect && { removed: disconnect.length }),
+            ...course
+        };
     }
 }

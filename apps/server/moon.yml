@@ -22,5 +22,10 @@ tasks:
       - 'src/index'
     local: true
 
+  test-e2e:
+    command: 'jest --config jest.config.js --detectOpenHandles --forceExit'
+    inputs:
+      - 'test/app.e2e-spec.ts'
+
   start:
     command: 'node build/index.js'

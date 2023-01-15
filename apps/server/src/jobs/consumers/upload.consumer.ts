@@ -1,11 +1,11 @@
 import { OnQueueError, OnQueueFailed, Process, Processor } from '@nestjs/bull';
 import type { Job } from 'bull';
-import { S3Service } from '../../providers/storage/r2.service';
+import { R2Service } from '../../providers/storage/r2.service';
 import { PrismaService } from '../../providers/database/prisma.service';
 
 @Processor('upload')
 export class UploadConsumer {
-    constructor(private storageService: S3Service, private prismaService: PrismaService) {}
+    constructor(private storageService: R2Service, private prismaService: PrismaService) {}
 
     @Process()
     async transcode(job: Job) {

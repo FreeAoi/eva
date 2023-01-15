@@ -1,15 +1,23 @@
 /* eslint-disable indent */
 import { CreateCourseDTO } from './create-course.dto';
-import { IsArray, IsOptional } from 'class-validator';
-import { PartialType } from '@nestjs/swagger';
+import { IsOptional, Validate } from 'class-validator';
+import { ApiProperty, OmitType, PartialType } from '@nestjs/swagger';
+import { IsStudent } from '../../../common/decorators/validation/studentExists';
 
-export class UpdateCourseDTO extends PartialType(CreateCourseDTO) {
-    @IsArray()
+export class UpdateCourseDTO extends PartialType(
+    OmitType(CreateCourseDTO, ['careerId', 'courseId'] as const)
+) {
+    @Validate(IsStudent, {
+        each: true
+    })
     @IsOptional()
-    addStudents: string[];
+    @ApiProperty()
+    connect?: string[];
 
+    @Validate(IsStudent, {
+        each: true
+    })
     @IsOptional()
-    @IsArray()
-    removeStudents: string[];
-    // optinal fields from CreateCourseDTO
+    @ApiProperty()
+    disconnect?: string[];
 }

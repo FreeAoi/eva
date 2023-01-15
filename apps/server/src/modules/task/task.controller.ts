@@ -11,9 +11,9 @@ import { CreateTaskDTO } from './dto/create-task.dto';
 import { TaskService } from './task.service';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../../common/guards/roles.guard';
-import { Roles } from '../../common/decorators/user-roles.decorator';
+import { Roles } from '../../common/decorators/metadata/user-roles.decorator';
 import { Role } from '../../common/constants/roles.enum';
-import { CurrentUser } from '../../common/decorators/user-current.decorator';
+import { CurrentUser } from '../../common/decorators/requests/user-current.decorator';
 import { FilesInterceptor, FileUpload } from '../../common/interceptors/files.interceptor';
 import type { JWTPayload } from '../../authentication/interfaces/jwt-payload.interface';
 

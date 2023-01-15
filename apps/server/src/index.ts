@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-import { ValidationPipe } from '@nestjs/common';
+import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { FastifyAdapter } from '@nestjs/platform-fastify';
 import AppModule from './app.module';
@@ -10,6 +10,7 @@ import morgan from 'morgan';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import fastifyMultipart from '@fastify/multipart';
 import type { NestFastifyApplication } from '@nestjs/platform-fastify';
+import { useContainer } from 'class-validator';
 
 async function bootstrap() {
     const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter());
@@ -18,13 +19,23 @@ async function bootstrap() {
     app.use(morgan('dev'));
     app.useGlobalPipes(
         new ValidationPipe({
-            transform: true
+            transform: true,
+            stopAtFirstError: true,
+            whitelist: true,
+            exceptionFactory: (errors) => {
+                const err = errors[0]?.constraints;
+                if (!err) return new BadRequestException(errors);
+                return new BadRequestException(Object.values(err)[0]);
+            }
         })
     );
     app.setGlobalPrefix('api');
     app.enableCors();
 
-    if (process.env.NODE_ENV === 'DEVELOPMENT') {
+    useContainer(app.select(AppModule), { fallbackOnErrors: true });
+
+    console.log(`NODE_ENV: ${process.env.NODE_ENV}`);
+    if (process.env.NODE_ENV === 'development') {
         const config = new DocumentBuilder()
             .setTitle('EVA API')
             .setDescription('The EVA API documentation')

@@ -7,6 +7,7 @@ import { UploadProducer } from '../../jobs/producers/upload.producer';
 @Injectable()
 export class TaskService {
     constructor(private prismaService: PrismaService, private upload: UploadProducer) {}
+
     async createTask(data: CreateTaskDTO, files: FileUpload[], courseId: string) {
         const task = await this.prismaService.task.create({
             data: {
