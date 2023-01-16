@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { StudentService } from './student.service';
-import { RegisterDTO } from './dto/register.dto';
+import { RegisterStudentDTO } from './dto/register.dto';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/metadata/user-roles.decorator';
 import { Role } from '../../common/constants/roles.enum';
@@ -49,7 +49,7 @@ export class StudentController {
     @Post('create')
     @Roles(Role.ADMIN)
     @UseGuards(AuthGuard('jwt'), RolesGuard)
-    async registerStudent(@Body() student: RegisterDTO): Promise<Student> {
+    async registerStudent(@Body() student: RegisterStudentDTO): Promise<Student> {
         const studentEmail = await this.studentsService.getStudent({
             email: student.email
         });

@@ -8,6 +8,13 @@ import type { UpdateCourseDTO } from './dto/update-course.dto';
 export class CourseService {
     constructor(private prisma: PrismaService, private cache: CacheService) {}
 
+    /**
+     * Create a course
+     *
+     * @async
+     * @param {CreateCourseDTO} data data to create
+     * @returns {Promise<Course>} Created course
+     */
     async createCourse(data: CreateCourseDTO) {
         const cachedCourse = await this.cache.exists(`course:${data.courseId}`);
         if (cachedCourse) throw new BadRequestException('Course already exists');
@@ -30,8 +37,17 @@ export class CourseService {
         return course;
     }
 
+    /**
+     * Update a course
+     *
+     * @async
+     * @param {string} courseId id of the course
+     * @param {UpdateCourseDTO} data data to update
+     * @returns {Promise<Course>} Updated course
+     */
     async updateCourse(courseId: string, data: UpdateCourseDTO) {
         const { connect, disconnect, ...rest } = data;
+
         const course = await this.prisma.course.update({
             where: {
                 id: courseId
@@ -48,8 +64,8 @@ export class CourseService {
         await this.cache.set(`course:${course.id}`, JSON.stringify(course));
 
         return {
-            ...(connect && { added: connect.length }),
-            ...(disconnect && { removed: disconnect.length }),
+            added: connect?.length,
+            removed: disconnect?.length,
             ...course
         };
     }

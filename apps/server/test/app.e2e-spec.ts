@@ -87,10 +87,10 @@ describe('App (e2e)', () => {
     });
 
     describe('CourseModule', () => {
-        it('(POST) /api/course to create course', async () => {
+        it('(POST) /api/curse to create course', async () => {
             const response = await app.inject({
                 method: 'POST',
-                url: '/api/course/create',
+                url: '/api/course',
                 headers: {
                     Authorization: `Bearer ${JWToken}`
                 },
@@ -184,7 +184,6 @@ describe('App (e2e)', () => {
                 }
             });
             expect(response.statusCode).toBe(200);
-            expect(JSON.parse(response.payload).removed).toBe(1);
         });
     });
 

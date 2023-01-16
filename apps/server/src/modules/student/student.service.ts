@@ -3,7 +3,7 @@ import { PrismaService } from '../../providers/database/prisma.service';
 import { CacheService } from '../../providers/cache/redis.service';
 import bcrypt from 'bcrypt';
 
-import type { RegisterDTO } from './dto/register.dto';
+import type { RegisterStudentDTO } from './dto/register.dto';
 import type { Student } from '@prisma/client';
 
 @Injectable()
@@ -77,7 +77,7 @@ export class StudentService {
      * @param {RegisterDTO} data register data of the student
      * @returns {Promise<Student>} Student created
      */
-    async registerStudent(data: RegisterDTO) {
+    async registerStudent(data: RegisterStudentDTO) {
         const { password, careerId, ...rest } = data;
         const salt = await bcrypt.genSalt(5);
         const hashedPassword = await bcrypt.hash(password, salt);
