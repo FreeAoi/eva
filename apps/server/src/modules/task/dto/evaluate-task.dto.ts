@@ -1,13 +1,15 @@
-import { IsNumber, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsNumber } from 'class-validator';
+import { CheckTaskDTO } from './check-task.dto';
 
 /* eslint-disable indent */
-export class EvaluateTaskDTO {
+export class CheckSubmitDTO extends CheckTaskDTO {
     @IsNumber()
-    taskId: number;
+    @Type(() => Number)
+    submitId: number;
+}
 
-    @IsString()
-    studentId: number;
-
+export class UpdateSubmissionDTO {
     @IsNumber()
     score: number;
 }

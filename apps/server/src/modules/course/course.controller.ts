@@ -16,7 +16,7 @@ import {
     ApiUnauthorizedResponse
 } from '@nestjs/swagger';
 
-@Controller()
+@Controller('course')
 export class CourseController {
     constructor(private readonly coursesService: CourseService) {}
 

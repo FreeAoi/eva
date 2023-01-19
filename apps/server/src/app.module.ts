@@ -6,10 +6,10 @@ import { PrismaModule } from './providers/database/prisma.module';
 import { RedisModule } from './providers/cache/redis.module';
 import { TaskModule } from './modules/task/task.module';
 import { BullModule } from '@nestjs/bull';
-import { RouterModule } from '@nestjs/core';
 import { S3Module } from './providers/storage/r2.module';
 import { IsStudent } from './common/decorators/validation/studentExists';
 import { CourseExists } from './common/decorators/validation/courseExists';
+import { TaskExists } from './common/decorators/validation/taskExists';
 
 @Module({
     imports: [
@@ -17,18 +17,7 @@ import { CourseExists } from './common/decorators/validation/courseExists';
         PrismaModule,
         StudentModule,
         AuthModule,
-        RouterModule.register([
-            {
-                path: 'course',
-                module: CourseModule,
-                children: [
-                    {
-                        path: ':courseId',
-                        module: TaskModule
-                    }
-                ]
-            }
-        ]),
+        TaskModule,
         BullModule.forRoot({
             redis: {
                 host: 'localhost',
@@ -49,7 +38,7 @@ import { CourseExists } from './common/decorators/validation/courseExists';
         })
     ],
     controllers: [],
-    providers: [IsStudent, CourseExists]
+    providers: [IsStudent, CourseExists, TaskExists]
 })
 class AppModule {}
 

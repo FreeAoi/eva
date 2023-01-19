@@ -1,7 +1,9 @@
 import {
     Body,
     Controller,
+    Get,
     Param,
+    Patch,
     Post,
     UploadedFiles,
     UseGuards,
@@ -14,47 +16,65 @@ import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/metadata/user-roles.decorator';
 import { Role } from '../../common/constants/roles.enum';
 import { CurrentUser } from '../../common/decorators/requests/user-current.decorator';
-import { FilesInterceptor, FileUpload } from '../../common/interceptors/files.interceptor';
+import {
+    FilesInterceptor,
+    FileUpload
+} from '../../common/interceptors/files.interceptor';
+import { CheckCourseDTO } from '../course/dto/check-course.dto';
+import { CheckTaskDTO } from './dto/check-task.dto';
+import { CheckSubmitDTO, UpdateSubmissionDTO } from './dto/evaluate-task.dto';
 import type { JWTPayload } from '../../authentication/interfaces/jwt-payload.interface';
 
-// ROUTE: api/course/:courseId/task
-@Controller('task')
+@Controller('course/:courseId/task')
 export class TaskController {
     constructor(private taskService: TaskService) {}
 
-    @Post('create')
+    @Post()
     @Roles(Role.ADMIN, Role.TEACHER)
     @UseGuards(AuthGuard('jwt'), RolesGuard)
     @UseInterceptors(FilesInterceptor())
     async createTask(
         @UploadedFiles() files: FileUpload[],
         @Body() data: CreateTaskDTO,
-        @Param() params: { courseId: string }
+        @Param() params: CheckCourseDTO
     ) {
         return this.taskService.createTask(data, files, params.courseId);
     }
 
-    @Post(':taskId/submit')
+    @Get(':taskId')
     @Roles(Role.ADMIN, Role.TEACHER, Role.STUDENT)
+    @UseGuards(AuthGuard('jwt'), RolesGuard)
+    async getTask(@Param() params: CheckTaskDTO) {
+        return this.taskService.getTask(params.taskId);
+    }
+
+    @Post(':taskId/submit')
+    @Roles(Role.STUDENT)
     @UseGuards(AuthGuard('jwt'), RolesGuard)
     @UseInterceptors(FilesInterceptor())
     async submitTask(
         @UploadedFiles() files: FileUpload[],
-        @Param() params: { taskId: string; courseId: string },
+        @Param() params: CheckTaskDTO,
         @CurrentUser() user: JWTPayload
     ) {
         return this.taskService.submitTask({
-            taskId: parseInt(params.taskId),
+            taskId: params.taskId,
             studentId: user.id,
-            courseId: params.courseId,
             files
         });
     }
 
-    @Post('evaluate')
+    @Patch(':taskId/submit/:submitId')
     @Roles(Role.TEACHER)
     @UseGuards(AuthGuard('jwt'), RolesGuard)
-    async evaluateSubmission() {
-        return this.taskService.evaluateSubmission();
+    async evaluateSubmission(
+        @Param() params: CheckSubmitDTO,
+        @Body() data: UpdateSubmissionDTO
+    ) {
+        return this.taskService.evaluateSubmission({
+            submitId: params.submitId,
+            taskId: params.taskId,
+            score: data.score
+        });
     }
 }

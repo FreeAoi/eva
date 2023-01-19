@@ -1,12 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../../providers/database/prisma.service';
 import type { CreateTaskDTO } from './dto/create-task.dto';
 import type { FileUpload } from '../../common/interceptors/files.interceptor';
 import { UploadProducer } from '../../jobs/producers/upload.producer';
+import { CacheService } from '../../providers/cache/redis.service';
 
 @Injectable()
 export class TaskService {
-    constructor(private prismaService: PrismaService, private upload: UploadProducer) {}
+    constructor(
+        private prismaService: PrismaService,
+        private upload: UploadProducer,
+        private cache: CacheService
+    ) {}
 
     async createTask(data: CreateTaskDTO, files: FileUpload[], courseId: string) {
         const task = await this.prismaService.task.create({
@@ -22,64 +27,79 @@ export class TaskService {
             }
         });
 
+        console.log(task);
+
         if (files.length > 0) await this.upload.uploadAttachments(files, task.id);
 
+        await this.cache.set(`task:${task.id}`, JSON.stringify(task));
         return task;
     }
 
-    // TODO: ADD cache and refactor this shit
-    async submitTask({
-        taskId,
-        studentId,
-        courseId,
-        files
-    }: {
-        taskId: number;
-        courseId: string;
-        studentId: string;
-        files: FileUpload[];
-    }) {
-        // check if the task is in the course
-        const course = await this.prismaService.course.findUnique({
+    async getTask(taskId: number) {
+        const task = await this.cache.get(`task:${taskId}`);
+        if (task) return JSON.parse(task);
+
+        const taskFromDB = await this.prismaService.task.findUnique({
             where: {
-                id: courseId
-            },
-            include: {
-                tasks: {
-                    where: {
-                        id: taskId
-                    }
-                },
-                students: {
-                    where: {
-                        id: studentId
-                    }
-                }
+                id: taskId
             }
         });
 
-        if (!course) {
-            return 'Course not found';
-        }
+        await this.cache.set(`task:${taskId}`, JSON.stringify(taskFromDB));
+        return taskFromDB;
+    }
 
-        if (course.tasks.length === 0) {
-            return 'Task not found';
-        }
-
-        if (course.students.length === 0) {
-            return 'Student not found';
-        }
-
-        if (files.length === 0) {
-            return 'No files found';
-        }
-
+    async submitTask({
+        taskId,
+        studentId,
+        files
+    }: {
+        taskId: number;
+        studentId: string;
+        files: FileUpload[];
+    }) {
         await this.upload.uploadAttachments(files, taskId, studentId);
 
         return 'Task submitted for evaluation';
     }
 
-    async evaluateSubmission() {
-        // search for the submission
+    async evaluateSubmission({
+        submitId,
+        taskId,
+        score
+    }: {
+        submitId: number;
+        taskId: number;
+        score: number;
+    }) {
+        const task = await this.prismaService.task.findUnique({
+            where: {
+                id: taskId
+            },
+            select: {
+                submissions: {
+                    where: {
+                        id: submitId
+                    }
+                }
+            }
+        });
+
+        if (task?.submissions.length) {
+            throw new BadRequestException('Invalid submid id for the specified task');
+        }
+
+        await this.prismaService.taskSubmission.update({
+            where: {
+                id: submitId
+            },
+            data: {
+                score
+            }
+        });
+
+        return {
+            message: `Task submission ${submitId} evaluated with score ${score}`
+        };
     }
 }
