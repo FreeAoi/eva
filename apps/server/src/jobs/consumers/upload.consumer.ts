@@ -5,7 +5,10 @@ import { PrismaService } from '../../providers/database/prisma.service';
 
 @Processor('upload')
 export class UploadConsumer {
-    constructor(private storageService: R2Service, private prismaService: PrismaService) {}
+    constructor(
+        private storageService: R2Service,
+        private prismaService: PrismaService
+    ) {}
 
     @Process()
     async transcode(job: Job) {
@@ -24,7 +27,10 @@ export class UploadConsumer {
         else this.createTaskAttachment(taskId, attachmentarr);
     }
 
-    private createTaskAttachment(taskId: number, attachments: { filename: string; URI: string }[]) {
+    private createTaskAttachment(
+        taskId: number,
+        attachments: { filename: string; URI: string }[]
+    ) {
         return this.prismaService.taskAttachment.createMany({
             data: attachments.map((attachment) => ({
                 task: {

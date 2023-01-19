@@ -6,7 +6,8 @@
  */
 function isSubset(obj1: Record<string, unknown>, obj2: Record<string, unknown>): boolean {
     return Object.entries(obj1).every(
-        ([key, value]) => Object.prototype.hasOwnProperty.call(obj2, key) && obj2[key] === value
+        ([key, value]) =>
+            Object.prototype.hasOwnProperty.call(obj2, key) && obj2[key] === value
     );
 }
 

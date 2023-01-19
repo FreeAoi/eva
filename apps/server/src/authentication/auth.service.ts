@@ -6,7 +6,10 @@ import type { Student } from '@prisma/client';
 import bcrypt from 'bcrypt';
 @Injectable()
 export class AuthService {
-    constructor(private jwtService: JwtService, private studentsService: StudentService) {}
+    constructor(
+        private jwtService: JwtService,
+        private studentsService: StudentService
+    ) {}
 
     async genAccToken(student: Student) {
         const payload: JWTPayload = {

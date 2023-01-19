@@ -27,7 +27,9 @@ export default function AdminPanel() {
                                 />
                             </svg>
 
-                            <span className="ml-3 text-sm font-medium">Nuevo estudiante</span>
+                            <span className="ml-3 text-sm font-medium">
+                                Nuevo estudiante
+                            </span>
                         </a>
                     </div>
                 </div>

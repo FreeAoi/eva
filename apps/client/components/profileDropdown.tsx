@@ -25,7 +25,9 @@ export default function MyDropdown(data: Props) {
                         width={30}
                         height={30}
                     />
-                    <span className="font-normal text-base tracking-tight ml-2">{data.name}</span>
+                    <span className="font-normal text-base tracking-tight ml-2">
+                        {data.name}
+                    </span>
                 </Menu.Button>
             </div>
 
@@ -45,7 +47,9 @@ export default function MyDropdown(data: Props) {
                                 <Link
                                     href="/"
                                     className={classNames(
-                                        active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                                        active
+                                            ? 'bg-gray-100 text-gray-900'
+                                            : 'text-gray-700',
                                         'block px-4 py-2 text-sm'
                                     )}
                                 >
@@ -58,7 +62,9 @@ export default function MyDropdown(data: Props) {
                                 <a
                                     href="#"
                                     className={classNames(
-                                        active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                                        active
+                                            ? 'bg-gray-100 text-gray-900'
+                                            : 'text-gray-700',
                                         'block px-4 py-2 text-sm'
                                     )}
                                 >
@@ -72,7 +78,9 @@ export default function MyDropdown(data: Props) {
                                     // href="/api/auth/signout"
                                     href="/api/auth/signout"
                                     className={classNames(
-                                        active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                                        active
+                                            ? 'bg-gray-100 text-gray-900'
+                                            : 'text-gray-700',
                                         'block px-4 py-2 text-sm'
                                     )}
                                 >
@@ -86,7 +94,9 @@ export default function MyDropdown(data: Props) {
                                     <Link
                                         href="/admin"
                                         className={classNames(
-                                            active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                                            active
+                                                ? 'bg-gray-100 text-gray-900'
+                                                : 'text-gray-700',
                                             'block px-4 py-2 text-sm'
                                         )}
                                     >

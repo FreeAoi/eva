@@ -13,6 +13,9 @@ export class UploadProducer {
             buffer: file.stream
         }));
 
-        await this.upload.add({ attachments, taskId, studentId }, { removeOnComplete: true });
+        await this.upload.add(
+            { attachments, taskId, studentId },
+            { removeOnComplete: true }
+        );
     }
 }
