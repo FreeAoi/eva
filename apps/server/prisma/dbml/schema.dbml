@@ -1,0 +1,115 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Table Career {
+  id Int [pk, increment]
+  name String [not null]
+  courses Course [not null]
+  students Student [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Table Task {
+  id Int [pk, increment]
+  title String [not null]
+  description String [not null]
+  maxScore Int [not null]
+  courseId String [not null]
+  course Course [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  dueDate DateTime [not null]
+  submissions TaskSubmission [not null]
+  attachments TaskAttachment [not null]
+}
+
+Table TaskAttachment {
+  id Int [pk, increment]
+  name String [not null]
+  url String [not null]
+  taskId Int
+  task Task
+  TaskSubmission TaskSubmission
+  taskSubmissionId Int
+}
+
+Table TaskSubmission {
+  id Int [pk, increment]
+  taskId Int [not null]
+  task Task [not null]
+  studentId String [not null]
+  student Student [not null]
+  attachments TaskAttachment [not null]
+  score Int [not null, default: 0]
+  comment String [not null, default: '']
+  submittedAt DateTime [default: `now()`, not null]
+  qualified Boolean [not null, default: false]
+  teacherId String
+  teacher Teacher
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Table Course {
+  id String [pk]
+  name String [not null]
+  credits Int [not null]
+  careerId Int [not null]
+  career Career [not null]
+  tasks Task [not null]
+  students Student [not null]
+  teacherId String [not null]
+  teacher Teacher [not null]
+}
+
+Table Teacher {
+  id String [pk]
+  email String [unique, not null]
+  password String [not null]
+  firstName String [not null]
+  lastName String [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  active Boolean [not null, default: true]
+  courses Course [not null]
+  califiedSubmissions TaskSubmission [not null]
+}
+
+Table Student {
+  id String [pk]
+  email String [unique, not null]
+  password String [not null]
+  firstName String [not null]
+  lastName String [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  careerId Int [not null]
+  career Career [not null]
+  submissions TaskSubmission [not null]
+  courses Course [not null]
+}
+
+Table CourseToStudent {
+  studentsId String [ref: > Student.id]
+  coursesId String [ref: > Course.id]
+}
+
+Ref: Task.courseId > Course.id
+
+Ref: TaskAttachment.taskId > Task.id
+
+Ref: TaskAttachment.taskSubmissionId > TaskSubmission.id
+
+Ref: TaskSubmission.taskId > Task.id
+
+Ref: TaskSubmission.studentId > Student.id
+
+Ref: TaskSubmission.teacherId > Teacher.id
+
+Ref: Course.careerId > Career.id
+
+Ref: Course.teacherId > Teacher.id
+
+Ref: Student.careerId > Career.id

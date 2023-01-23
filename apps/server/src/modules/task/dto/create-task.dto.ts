@@ -1,5 +1,5 @@
 /* eslint-disable indent */
-import { IsInt, IsString } from 'class-validator';
+import { IsDate, IsInt, IsString } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class CreateTaskDTO {
@@ -12,4 +12,8 @@ export class CreateTaskDTO {
     @IsInt()
     @Type(() => Number)
     maxScore: number;
+
+    @IsDate()
+    @Type(() => Date)
+    dueDate: Date;
 }

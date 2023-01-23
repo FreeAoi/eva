@@ -1,5 +1,5 @@
 /* eslint-disable indent */
-import type { Role, Student } from '@prisma/client';
+import type { Student } from '@prisma/client';
 import { Exclude } from 'class-transformer';
 
 export class StudentDTO implements Student {
@@ -8,12 +8,11 @@ export class StudentDTO implements Student {
 
     firstName: string;
     lastName: string;
-    role: Role;
     createdAt: Date;
     updatedAt: Date;
 
     @Exclude()
-    careerId: number | null;
+    careerId: number;
 
     @Exclude()
     password: string;

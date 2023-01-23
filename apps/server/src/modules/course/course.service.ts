@@ -24,10 +24,14 @@ export class CourseService {
                 name: data.name,
                 id: data.courseId,
                 credits: data.credits,
-                instructor: data.instructor,
                 career: {
                     connect: {
                         id: data.careerId
+                    }
+                },
+                teacher: {
+                    connect: {
+                        id: data.teacherId
                     }
                 }
             }

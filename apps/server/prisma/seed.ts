@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { genSaltSync, hashSync } from 'bcrypt';
 const prisma = new PrismaClient();
 
 async function main() {
@@ -8,6 +9,8 @@ async function main() {
         }
     });
 
+    const salt = genSaltSync(2);
+
     const student = await prisma.student.create({
         data: {
             career: {
@@ -16,15 +19,25 @@ async function main() {
                 }
             },
             email: 'beautiful@gmail.com',
-            password: 'superpassword',
+            password: hashSync('superpassword', salt),
             firstName: 'Rodolfo',
             lastName: 'Gonzalez',
-            id: '2022-0381U',
-            role: 'ADMIN'
+            id: '2022-0381U'
         }
     });
 
-    console.log({ career, student });
+    const teacher = await prisma.teacher.create({
+        data: {
+            email: 'email@gmail.com',
+            password: hashSync('superpassword', salt),
+            firstName: 'Rodolfo',
+            lastName: 'Gonzalez',
+            id: '2022-0381U',
+            active: true
+        }
+    });
+
+    console.log({ career, student, teacher });
 }
 
 main()

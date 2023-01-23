@@ -31,10 +31,10 @@ export class CreateCourseDTO {
     @IsString()
     @IsNotEmpty()
     @ApiProperty({
-        description: 'Course instructor',
-        example: 'John Doe'
+        description: 'Course instructor id',
+        example: '2022-0381A'
     })
-    instructor: string;
+    teacherId: string;
 
     @IsNumber()
     @IsNotEmpty()

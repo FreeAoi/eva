@@ -23,7 +23,7 @@ tasks:
     local: true
 
   test-e2e:
-    command: 'jest --config jest.config.js --detectOpenHandles --forceExit'
+    command: 'jest --config test/jest.config.js --logHeapUsage'
     inputs:
       - 'test/app.e2e-spec.ts'
 

@@ -13,7 +13,7 @@ export class R2Service extends S3Client implements OnModuleInit {
     }
 
     async uploadFile(file: Buffer, fileName: string) {
-        return await this.send(
+        return this.send(
             new PutObjectCommand({
                 Bucket: 'eva-uni',
                 Key: fileName,

@@ -1,21 +1,31 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { StudentService } from '../modules/student/student.service';
+import { TeacherService } from '../modules/teacher/teacher.service';
 import type { JWTPayload } from './interfaces/jwt-payload.interface';
-import type { Student } from '@prisma/client';
+import type { Student, Teacher } from '@prisma/client';
 import bcrypt from 'bcrypt';
+
 @Injectable()
 export class AuthService {
     constructor(
         private jwtService: JwtService,
-        private studentsService: StudentService
+        private studentsService: StudentService,
+        private teachersService: TeacherService
     ) {}
 
-    async genAccToken(student: Student) {
+    /**
+     * Generates an access token for the user
+     * also checks if the user is a teacher or a student and adds the isEmployee property to the payload
+     *
+     * @param {Student | Teacher} user - The user to generate the token for
+     * @returns - The access token
+     */
+    genAccToken(user: Student | Teacher) {
         const payload: JWTPayload = {
-            email: student.email,
-            id: student.id,
-            role: student.role
+            email: user.email,
+            id: user.id,
+            isEmployee: Boolean((user as Teacher).active)
         };
         return {
             access_token: this.jwtService.sign(payload)
@@ -23,14 +33,15 @@ export class AuthService {
     }
 
     async comparePassword(password: string, hash: string) {
-        return await bcrypt.compare(password, hash);
+        return bcrypt.compare(password, hash);
     }
 
-    async validateStudent(email: string, password: string) {
-        const student = await this.studentsService.getStudent({ email });
-        if (student && (await this.comparePassword(password, student.password))) {
-            return student;
-        }
-        return null;
+    async validate(email: string, password: string) {
+        const user =
+            (await this.studentsService.get({ email })) ??
+            (await this.teachersService.get({ email }));
+
+        if (!user) return null;
+        return (await this.comparePassword(password, user.password)) ? user : null;
     }
 }

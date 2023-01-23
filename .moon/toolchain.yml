@@ -2,7 +2,7 @@ node:
   version: '18.12.1'
   packageManager: 'npm'
   addEnginesConstraint: true
-  dedupeOnLockfileChange: true
+  dedupeOnLockfileChange: false
   syncProjectWorkspaceDependencies: true
 
 typescript:

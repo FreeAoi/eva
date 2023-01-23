@@ -7,6 +7,10 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+generator dbml {
+  provider = "prisma-dbml-generator"
+}
+
 model Career {
   id       Int       @id @default(autoincrement())
   name     String
@@ -22,26 +26,26 @@ model Task {
   title       String
   description String
 
-  maxScore  Int
+  maxScore Int
 
   courseId String
   course   Course @relation(fields: [courseId], references: [id])
 
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
-  //dueDate     DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  dueDate   DateTime
 
   submissions TaskSubmission[]
   attachments TaskAttachment[]
 }
 
 model TaskAttachment {
-  id               Int             @id @default(autoincrement())
-  name             String
-  url              String
-  
-  taskId           Int?
-  task             Task?            @relation(fields: [taskId], references: [id])
+  id   Int    @id @default(autoincrement())
+  name String
+  url  String
+
+  taskId Int?
+  task   Task? @relation(fields: [taskId], references: [id])
 
   TaskSubmission   TaskSubmission? @relation(fields: [taskSubmissionId], references: [id])
   taskSubmissionId Int?
@@ -53,45 +57,63 @@ model TaskSubmission {
   taskId Int
   task   Task @relation(fields: [taskId], references: [id])
 
-  studentId String
-  student   Student @relation(fields: [studentId], references: [id])
-
+  studentId   String
+  student     Student          @relation(fields: [studentId], references: [id])
   attachments TaskAttachment[]
 
-  score Int
+  score       Int      @default(0)
+  comment     String   @default("")
+  submittedAt DateTime @default(now())
+  qualified   Boolean  @default(false)
+
+  teacherId String?
+  teacher   Teacher? @relation(fields: [teacherId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Course {
-  id             String          @id
-  name           String
-  credits        Int
-  instructor     String
-  careerId       Int?
-  career         Career?         @relation(fields: [careerId], references: [id])
-  tasks          Task[]
-  students       Student[]
+  id      String @id
+  name    String
+  credits Int
+
+  careerId Int
+  career   Career @relation(fields: [careerId], references: [id])
+
+  tasks    Task[]
+  students Student[]
+
+  teacherId String
+  teacher   Teacher @relation(fields: [teacherId], references: [id])
 }
 
-model Student {
-  id             String           @id
-  email          String           @unique
-  password       String
-  firstName      String
-  lastName       String
-  role           Role             @default(STUDENT)
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
-  careerId       Int?
-  career         Career?          @relation(fields: [careerId], references: [id])
+model Teacher {
+  id        String   @id
+  email     String   @unique
+  password  String
+  firstName String
+  lastName  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  active   Boolean  @default(true)
+
   courses        Course[]
-  submissions    TaskSubmission[]
+  califiedSubmissions TaskSubmission[]
 }
+model Student {
+  id        String   @id
+  email     String   @unique
+  password  String
+  firstName String
+  lastName  String
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-enum Role {
-  STUDENT
-  ADMIN
-  TEACHER
+  careerId    Int
+  career      Career           @relation(fields: [careerId], references: [id])
+  submissions TaskSubmission[]
+  courses     Course[]
 }

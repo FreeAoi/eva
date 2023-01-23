@@ -12,9 +12,7 @@ import {
 import { CreateTaskDTO } from './dto/create-task.dto';
 import { TaskService } from './task.service';
 import { AuthGuard } from '@nestjs/passport';
-import { RolesGuard } from '../../common/guards/roles.guard';
-import { Roles } from '../../common/decorators/metadata/user-roles.decorator';
-import { Role } from '../../common/constants/roles.enum';
+import { RoleGuard } from '../../common/guards/roles.guard';
 import { CurrentUser } from '../../common/decorators/requests/user-current.decorator';
 import {
     FilesInterceptor,
@@ -30,8 +28,7 @@ export class TaskController {
     constructor(private taskService: TaskService) {}
 
     @Post()
-    @Roles(Role.ADMIN, Role.TEACHER)
-    @UseGuards(AuthGuard('jwt'), RolesGuard)
+    @UseGuards(AuthGuard('jwt'), RoleGuard)
     @UseInterceptors(FilesInterceptor())
     async createTask(
         @UploadedFiles() files: FileUpload[],
@@ -42,15 +39,13 @@ export class TaskController {
     }
 
     @Get(':taskId')
-    @Roles(Role.ADMIN, Role.TEACHER, Role.STUDENT)
-    @UseGuards(AuthGuard('jwt'), RolesGuard)
+    @UseGuards(AuthGuard('jwt'), RoleGuard)
     async getTask(@Param() params: CheckTaskDTO) {
         return this.taskService.getTask(params.taskId);
     }
 
     @Post(':taskId/submit')
-    @Roles(Role.STUDENT)
-    @UseGuards(AuthGuard('jwt'), RolesGuard)
+    @UseGuards(AuthGuard('jwt'))
     @UseInterceptors(FilesInterceptor())
     async submitTask(
         @UploadedFiles() files: FileUpload[],
@@ -65,16 +60,17 @@ export class TaskController {
     }
 
     @Patch(':taskId/submit/:submitId')
-    @Roles(Role.TEACHER)
-    @UseGuards(AuthGuard('jwt'), RolesGuard)
+    @UseGuards(AuthGuard('jwt'))
     async evaluateSubmission(
         @Param() params: CheckSubmitDTO,
-        @Body() data: UpdateSubmissionDTO
+        @Body() data: UpdateSubmissionDTO,
+        @CurrentUser() user: JWTPayload
     ) {
         return this.taskService.evaluateSubmission({
             submitId: params.submitId,
             taskId: params.taskId,
-            score: data.score
+            score: data.score,
+            teacherId: user.id
         });
     }
 }

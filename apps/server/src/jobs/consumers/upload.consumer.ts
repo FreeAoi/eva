@@ -17,21 +17,21 @@ export class UploadConsumer {
 
         for (const attachment of attachments) {
             const URI = studentId
-                ? `assignment_${taskId}/${studentId}/${attachment.filename}`
-                : `assignment_${taskId}/${attachment.filename}`;
+                ? `assignment_${taskId}/${studentId}/${attachment.name}`
+                : `assignment_${taskId}/${attachment.name}`;
             await this.storageService.uploadFile(Buffer.from(attachment.buffer), URI);
-            attachmentarr.push({ filename: attachment.filename, URI });
+            attachmentarr.push({ filename: attachment.name, URI });
         }
 
         if (studentId) this.createSubmissionAttachment(taskId, attachmentarr, studentId);
         else this.createTaskAttachment(taskId, attachmentarr);
     }
 
-    private createTaskAttachment(
+    private async createTaskAttachment(
         taskId: number,
         attachments: { filename: string; URI: string }[]
     ) {
-        return this.prismaService.taskAttachment.createMany({
+        await this.prismaService.taskAttachment.createMany({
             data: attachments.map((attachment) => ({
                 task: {
                     connect: {
@@ -44,12 +44,12 @@ export class UploadConsumer {
         });
     }
 
-    private createSubmissionAttachment(
+    private async createSubmissionAttachment(
         taskId: number,
         attachments: { filename: string; URI: string }[],
         studentId: string
     ) {
-        this.prismaService.taskSubmission.create({
+        await this.prismaService.taskSubmission.create({
             data: {
                 task: {
                     connect: {
@@ -88,7 +88,7 @@ export class UploadConsumer {
 
 interface JobData {
     attachments: {
-        filename: string;
+        name: string;
         buffer: Buffer;
     }[];
     taskId: number;

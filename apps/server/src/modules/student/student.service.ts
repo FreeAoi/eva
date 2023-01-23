@@ -11,38 +11,6 @@ export class StudentService {
     constructor(private prisma: PrismaService, private cache: CacheService) {}
 
     /**
-     * Search for a student by email or id in the cache
-     * student:emails is a sorted set with the format email:studentId
-     *
-     * @async
-     * @param {Object} options
-     * @param {string} [options.email] email of the student
-     * @param {string} [options.id] id of the student
-     * @returns {Promise<Student | null>} Student or null if not found
-     */
-    async getStudentFromCache({
-        email,
-        id
-    }: {
-        email?: string;
-        id?: string;
-    }): Promise<Student | null> {
-        let studentId = id;
-
-        if (email) {
-            const cachedId = await this.cache.zrangebylex(
-                'student:emails',
-                `[${email}`,
-                `[${email}\xff`
-            );
-            studentId = cachedId[0]?.split(':')[1];
-        }
-
-        const cachedStudent = await this.cache.get(`student:${studentId}`);
-        return cachedStudent ? JSON.parse(cachedStudent) : null;
-    }
-
-    /**
      * Get a student by email or id
      *
      * @async
@@ -51,8 +19,10 @@ export class StudentService {
      * @param {string} [options.id] id of the student
      * @returns {Promise<Student | null>} Student or null if not found
      */
-    async getStudent(opts: { email?: string; id?: string }): Promise<Student | null> {
-        let student = await this.getStudentFromCache(opts);
+    async get(opts: { email?: string; id?: string }): Promise<Student | null> {
+        let student = await this.cache.getUser({ ...opts, key: 'student' });
+
+        console.log(student);
 
         if (!student) {
             student = await this.prisma.student.findUnique({

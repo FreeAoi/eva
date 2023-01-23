@@ -10,7 +10,7 @@ export class IsStudent implements ValidatorConstraintInterface {
 
     async validate(id: string): Promise<boolean> {
         console.log('Validating student', id);
-        const student = await this.studentService.getStudent({ id });
+        const student = await this.studentService.get({ id });
         if (!student) throw new NotFoundException(`Student with id ${id} not found`);
         return true;
     }
