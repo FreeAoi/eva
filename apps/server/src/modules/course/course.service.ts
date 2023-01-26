@@ -1,12 +1,12 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../../providers/database/prisma.service';
-import { CacheService } from '../../providers/cache/redis.service';
+import { RedisService } from '../../providers/cache/redis.service';
 import type { CreateCourseDTO } from './dto/create-course.dto';
 import type { UpdateCourseDTO } from './dto/update-course.dto';
 
 @Injectable()
 export class CourseService {
-    constructor(private prisma: PrismaService, private cache: CacheService) {}
+    constructor(private prisma: PrismaService, private cache: RedisService) {}
 
     /**
      * Create a course

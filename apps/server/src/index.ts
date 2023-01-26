@@ -33,6 +33,7 @@ async function bootstrap() {
             }
         })
     );
+
     app.setGlobalPrefix('api');
     app.enableCors();
 

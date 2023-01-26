@@ -4,10 +4,10 @@ import type { S3ClientConfig } from '@aws-sdk/client-s3';
 
 @Global()
 @Module({})
-export class S3Module {
+export class R2Module {
     static forRoot(options: S3ClientConfig): DynamicModule {
         return {
-            module: S3Module,
+            module: R2Module,
             providers: [
                 {
                     provide: 'OPTIONS',

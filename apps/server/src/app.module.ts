@@ -6,29 +6,29 @@ import { PrismaModule } from './providers/database/prisma.module';
 import { RedisModule } from './providers/cache/redis.module';
 import { TaskModule } from './modules/task/task.module';
 import { BullModule } from '@nestjs/bull';
-import { S3Module } from './providers/storage/r2.module';
+import { R2Module } from './providers/storage/r2.module';
 import { IsStudent } from './common/decorators/validation/studentExists';
 import { CourseExists } from './common/decorators/validation/courseExists';
 import { TaskExists } from './common/decorators/validation/taskExists';
 
 @Module({
     imports: [
-        CourseModule,
         PrismaModule,
+        CourseModule,
         StudentModule,
-        AuthModule,
         TaskModule,
+        AuthModule,
+        RedisModule.forRoot({
+            host: 'localhost',
+            port: 6379
+        }),
         BullModule.forRoot({
             redis: {
                 host: 'localhost',
                 port: 6379
             }
         }),
-        RedisModule.forRoot({
-            host: 'localhost',
-            port: 6379
-        }),
-        S3Module.forRoot({
+        R2Module.forRoot({
             region: 'auto',
             endpoint: process.env.R2_ENDPOINT,
             credentials: {

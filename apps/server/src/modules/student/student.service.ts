@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../providers/database/prisma.service';
-import { CacheService } from '../../providers/cache/redis.service';
+import { RedisService } from '../../providers/cache/redis.service';
 import bcrypt from 'bcrypt';
 
 import type { RegisterStudentDTO } from './dto/register.dto';
@@ -8,7 +8,7 @@ import type { Student } from '@prisma/client';
 
 @Injectable()
 export class StudentService {
-    constructor(private prisma: PrismaService, private cache: CacheService) {}
+    constructor(private prisma: PrismaService, private cache: RedisService) {}
 
     /**
      * Get a student by email or id
@@ -21,8 +21,6 @@ export class StudentService {
      */
     async get(opts: { email?: string; id?: string }): Promise<Student | null> {
         let student = await this.cache.getUser({ ...opts, key: 'student' });
-
-        console.log(student);
 
         if (!student) {
             student = await this.prisma.student.findUnique({

@@ -3,7 +3,7 @@ import { PrismaService } from '../../providers/database/prisma.service';
 import type { CreateTaskDTO } from './dto/create-task.dto';
 import type { FileUpload } from '../../common/interceptors/files.interceptor';
 import { UploadProducer } from '../../jobs/producers/upload.producer';
-import { CacheService } from '../../providers/cache/redis.service';
+import { RedisService } from '../../providers/cache/redis.service';
 import type { Task } from '@prisma/client';
 
 @Injectable()
@@ -11,7 +11,7 @@ export class TaskService {
     constructor(
         private prismaService: PrismaService,
         private upload: UploadProducer,
-        private cache: CacheService
+        private cache: RedisService
     ) {}
 
     async createTask(data: CreateTaskDTO, files: FileUpload[], courseId: string) {

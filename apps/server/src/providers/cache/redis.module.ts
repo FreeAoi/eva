@@ -1,5 +1,5 @@
 import { Global, Module } from '@nestjs/common';
-import { CacheService } from './redis.service';
+import { RedisService } from './redis.service';
 import type { DynamicModule } from '@nestjs/common';
 import type { RedisOptions } from 'ioredis';
 
@@ -14,9 +14,9 @@ export class RedisModule {
                     provide: 'OPTIONS',
                     useValue: options
                 },
-                CacheService
+                RedisService
             ],
-            exports: [CacheService]
+            exports: [RedisService]
         };
     }
 }

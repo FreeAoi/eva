@@ -3,9 +3,7 @@
 	"version": "1.0.0",
 	"main": "build/src/index.js",
 	"license": "ISC",
-	"scripts": {
-		"test:e2e": "jest --config ./jest.config.js"
-	},
+	"type": "commonjs",
 	"dependencies": {
 		"@aws-sdk/client-s3": "^3.238.0",
 		"@fastify/multipart": "^7.3.0",
@@ -32,6 +30,7 @@
 		"rxjs": "^7.5.7"
 	},
 	"devDependencies": {
+		"fastify": "^4.10.2",
 		"@compodoc/compodoc": "^1.1.19",
 		"@nestjs/testing": "^9.2.1",
 		"@swc/cli": "^0.1.57",
@@ -42,9 +41,8 @@
 		"@types/jest": "^29.2.6",
 		"@types/morgan": "^1.9.3",
 		"@types/passport-jwt": "^3.0.7",
-		"fastify": "^4.10.2",
 		"form-data": "^4.0.0",
-		"jest": "^29.3.1",
+		"jest": "^29.4.0",
 		"prisma": "^4.9.0",
 		"prisma-dbml-generator": "^0.10.0"
 	},
