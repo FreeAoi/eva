@@ -25,7 +25,7 @@ export class AuthService {
         const payload: JWTPayload = {
             email: user.email,
             id: user.id,
-            isEmployee: Boolean((user as Teacher).active)
+            role: user.role
         };
         return {
             access_token: this.jwtService.sign(payload)

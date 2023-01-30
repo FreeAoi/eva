@@ -33,7 +33,7 @@ async function main() {
             firstName: 'Rodolfo',
             lastName: 'Gonzalez',
             id: '2022-0381U',
-            active: true
+            faculty: 'Ciencias'
         }
     });
 

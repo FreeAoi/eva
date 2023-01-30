@@ -19,7 +19,15 @@ export class RedisService extends ioredis {
      * @param {string} options.key key of the user (student or teacher)
      * @returns
      */
-    async getUser({ email, id, key }: { email?: string; id?: string; key: string }) {
+    async getUser<T>({
+        email,
+        id,
+        key
+    }: {
+        email?: string;
+        id?: string;
+        key: string;
+    }): Promise<T | null> {
         if (email) {
             const cached = await this.zrangebylex(
                 `${key}:emails`,

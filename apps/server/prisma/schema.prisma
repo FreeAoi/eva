@@ -12,13 +12,27 @@ generator dbml {
 }
 
 model Career {
-  id       Int       @id @default(autoincrement())
-  name     String
-  courses  Course[]
+  id   Int    @id @default(autoincrement())
+  name String
+
+  groups   Group[]
   students Student[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Course {
+  id   String @id
+  name String
+
+  groupId String
+  group   Group @relation(fields: [groupId], references: [id])
+
+  teacherId String
+  teacher   Teacher @relation(fields: [teacherId], references: [id])
+
+  tasks Task[]
 }
 
 model Task {
@@ -29,26 +43,15 @@ model Task {
   maxScore Int
 
   courseId String
-  course   Course @relation(fields: [courseId], references: [id])
+  course   Course  @relation(fields: [courseId], references: [id])
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
   dueDate   DateTime
+  deleted   DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
+  attachments Attachment[]
   submissions TaskSubmission[]
-  attachments TaskAttachment[]
-}
-
-model TaskAttachment {
-  id   Int    @id @default(autoincrement())
-  name String
-  url  String
-
-  taskId Int?
-  task   Task? @relation(fields: [taskId], references: [id])
-
-  TaskSubmission   TaskSubmission? @relation(fields: [taskSubmissionId], references: [id])
-  taskSubmissionId Int?
 }
 
 model TaskSubmission {
@@ -57,14 +60,13 @@ model TaskSubmission {
   taskId Int
   task   Task @relation(fields: [taskId], references: [id])
 
-  studentId   String
-  student     Student          @relation(fields: [studentId], references: [id])
-  attachments TaskAttachment[]
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id])
 
-  score       Int      @default(0)
-  comment     String   @default("")
-  submittedAt DateTime @default(now())
-  qualified   Boolean  @default(false)
+  score   Int     @default(0)
+  comment String?
+
+  attachments Attachment[]
 
   teacherId String?
   teacher   Teacher? @relation(fields: [teacherId], references: [id])
@@ -73,47 +75,69 @@ model TaskSubmission {
   updatedAt DateTime @updatedAt
 }
 
-model Course {
-  id      String @id
-  name    String
-  credits Int
+model Attachment {
+  id   Int    @id @default(autoincrement())
+  name String
+  url  String
+
+  taskId Int?
+  task   Task? @relation(fields: [taskId], references: [id])
+
+  submissionId Int?
+  submission   TaskSubmission? @relation(fields: [submissionId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Group {
+  id   String    @id
+  name String
 
   careerId Int
   career   Career @relation(fields: [careerId], references: [id])
 
-  tasks    Task[]
   students Student[]
+  courses  Course[]
 
-  teacherId String
-  teacher   Teacher @relation(fields: [teacherId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Student {
+  id    String @id
+  email String  @unique
+  firstName String
+  lastName  String
+  password String
+  role  String  @default("STUDENT")
+
+  groupId String?
+  group   Group? @relation(fields: [groupId], references: [id])
+
+  careerId Int
+  career   Career @relation(fields: [careerId], references: [id])
+
+  deleted         DateTime?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  taskSubmissions TaskSubmission[]
 }
 
 model Teacher {
-  id        String   @id
-  email     String   @unique
-  password  String
+  id      String  @id
+  email   String  @unique
   firstName String
   lastName  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  password String
+  role    String  @default("TEACHER")
 
-  active   Boolean  @default(true)
 
-  courses        Course[]
-  califiedSubmissions TaskSubmission[]
-}
-model Student {
-  id        String   @id
-  email     String   @unique
-  password  String
-  firstName String
-  lastName  String
-  
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  faculty String
+  courses Course[]
 
-  careerId    Int
-  career      Career           @relation(fields: [careerId], references: [id])
-  submissions TaskSubmission[]
-  courses     Course[]
+  deleted        DateTime?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  qualifiedTasks TaskSubmission[]
 }

@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { ValidatorConstraint, ValidatorConstraintInterface } from 'class-validator';
-import { TaskService } from '../../../modules/task/task.service';
+import { TaskService } from '../../modules/task/task.service';
 
 @ValidatorConstraint({ name: 'TaskExists', async: true })
 @Injectable()

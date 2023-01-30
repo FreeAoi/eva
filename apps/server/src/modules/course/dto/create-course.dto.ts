@@ -1,7 +1,7 @@
 /* eslint-disable indent */
 
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateCourseDTO {
     @IsString()
@@ -20,14 +20,6 @@ export class CreateCourseDTO {
     })
     name: string;
 
-    @IsNumber()
-    @IsNotEmpty()
-    @ApiProperty({
-        description: 'Course credits',
-        example: 4
-    })
-    credits: number;
-
     @IsString()
     @IsNotEmpty()
     @ApiProperty({
@@ -36,10 +28,11 @@ export class CreateCourseDTO {
     })
     teacherId: string;
 
-    @IsNumber()
+    @IsString()
     @IsNotEmpty()
     @ApiProperty({
-        description: 'Career id'
+        description: 'Group id',
+        example: 'ICS-1'
     })
-    careerId: number;
+    groupId: string;
 }

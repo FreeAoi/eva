@@ -23,15 +23,16 @@ export class UploadConsumer {
             attachmentarr.push({ filename: attachment.name, URI });
         }
 
-        if (studentId) this.createSubmissionAttachment(taskId, attachmentarr, studentId);
-        else this.createTaskAttachment(taskId, attachmentarr);
+        if (studentId)
+            await this.createSubmissionAttachment(taskId, attachmentarr, studentId);
+        else await this.createTaskAttachment(taskId, attachmentarr);
     }
 
     private async createTaskAttachment(
         taskId: number,
         attachments: { filename: string; URI: string }[]
     ) {
-        await this.prismaService.taskAttachment.createMany({
+        await this.prismaService.attachment.createMany({
             data: attachments.map((attachment) => ({
                 task: {
                     connect: {

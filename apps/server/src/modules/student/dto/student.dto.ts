@@ -5,11 +5,13 @@ import { Exclude } from 'class-transformer';
 export class StudentDTO implements Student {
     id: string;
     email: string;
-
     firstName: string;
     lastName: string;
     createdAt: Date;
     updatedAt: Date;
+    role: string;
+    groupId: string | null;
+    deleted: Date | null;
 
     @Exclude()
     careerId: number;

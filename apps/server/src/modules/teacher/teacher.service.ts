@@ -8,7 +8,7 @@ export class TeacherService {
     constructor(private prisma: PrismaService, private cache: RedisService) {}
 
     async get(opts: { email?: string; id?: string }): Promise<Teacher | null> {
-        let teacher = await this.cache.getUser({ ...opts, key: 'teacher' });
+        let teacher = await this.cache.getUser<Teacher>({ ...opts, key: 'teacher' });
 
         if (!teacher) {
             teacher = await this.prisma.teacher.findUnique({

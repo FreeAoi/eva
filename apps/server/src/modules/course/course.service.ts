@@ -23,10 +23,9 @@ export class CourseService {
             data: {
                 name: data.name,
                 id: data.courseId,
-                credits: data.credits,
-                career: {
+                group: {
                     connect: {
-                        id: data.careerId
+                        id: data.groupId
                     }
                 },
                 teacher: {
@@ -50,27 +49,16 @@ export class CourseService {
      * @returns {Promise<Course>} Updated course
      */
     async updateCourse(courseId: string, data: UpdateCourseDTO) {
-        const { connect, disconnect, ...rest } = data;
-
         const course = await this.prisma.course.update({
             where: {
                 id: courseId
             },
             data: {
-                ...rest,
-                students: {
-                    connect: connect?.map((id) => ({ id })),
-                    disconnect: disconnect?.map((id) => ({ id }))
-                }
+                ...data
             }
         });
 
         await this.cache.set(`course:${course.id}`, JSON.stringify(course));
-
-        return {
-            added: connect?.length,
-            removed: disconnect?.length,
-            ...course
-        };
+        return course;
     }
 }

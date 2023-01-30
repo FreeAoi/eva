@@ -1,4 +1,5 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import type { JWTPayload } from '../../authentication/interfaces/jwt-payload.interface';
 
 @Injectable()
 export class RoleGuard implements CanActivate {
@@ -9,7 +10,8 @@ export class RoleGuard implements CanActivate {
      * @returns {boolean} - Whether the user has the required roles
      */
     canActivate(context: ExecutionContext): boolean {
-        const { user } = context.switchToHttp().getRequest();
-        return user.isEmployee;
+        const { user }: { user: JWTPayload } = context.switchToHttp().getRequest();
+
+        return user.role !== 'STUDENT';
     }
 }

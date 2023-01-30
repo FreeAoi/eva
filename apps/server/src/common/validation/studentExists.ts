@@ -1,11 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { ValidatorConstraint, ValidatorConstraintInterface } from 'class-validator';
-import { StudentService } from '../../../modules/student/student.service';
+import { StudentService } from '../../modules/student/student.service';
 
 @ValidatorConstraint({ name: 'isStudent', async: true })
 @Injectable()
-export class IsStudent implements ValidatorConstraintInterface {
+export class StudentExists implements ValidatorConstraintInterface {
     constructor(private studentService: StudentService) {}
 
     async validate(id: string): Promise<boolean> {

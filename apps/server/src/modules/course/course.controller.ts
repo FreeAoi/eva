@@ -37,6 +37,7 @@ export class CourseController {
     @ApiForbiddenResponse({ description: 'Not enough permissions' })
     @ApiNotFoundResponse({ description: 'Course not found' })
     async updateCourse(@Body() data: UpdateCourseDTO, @Param() params: CheckCourseDTO) {
+        console.log(this.coursesService);
         return this.coursesService.updateCourse(params.courseId, data);
     }
 }

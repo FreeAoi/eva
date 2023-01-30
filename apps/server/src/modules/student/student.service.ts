@@ -14,13 +14,14 @@ export class StudentService {
      * Get a student by email or id
      *
      * @async
-     * @param {Object} options
-     * @param {string} [options.email] email of the student
-     * @param {string} [options.id] id of the student
+     * @param {object} [opts] options to get the student
+     * @param {string} [opts.email] email of the student
+     * @param {string} [opts.id] id of the student
      * @returns {Promise<Student | null>} Student or null if not found
+     * @param opts
      */
     async get(opts: { email?: string; id?: string }): Promise<Student | null> {
-        let student = await this.cache.getUser({ ...opts, key: 'student' });
+        let student = await this.cache.getUser<Student>({ ...opts, key: 'student' });
 
         if (!student) {
             student = await this.prisma.student.findUnique({
@@ -42,7 +43,7 @@ export class StudentService {
      * Register a student in the database and hashing the password
      *
      * @async
-     * @param {RegisterDTO} data register data of the student
+     * @param {RegisterStudentDTO} data register data of the student
      * @returns {Promise<Student>} Student created
      */
     async registerStudent(data: RegisterStudentDTO) {

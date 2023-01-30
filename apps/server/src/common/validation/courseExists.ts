@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { ValidatorConstraint, ValidatorConstraintInterface } from 'class-validator';
-import { RedisService } from '../../../providers/cache/redis.service';
-import { PrismaService } from '../../../providers/database/prisma.service';
+import { RedisService } from '../../providers/cache/redis.service';
+import { PrismaService } from '../../providers/database/prisma.service';
 
 @ValidatorConstraint({ name: 'CourseExists', async: true })
 @Injectable()
@@ -13,7 +13,7 @@ export class CourseExists implements ValidatorConstraintInterface {
         const cachedCourse = await this.cache.get(`course:${id}`);
         console.log(cachedCourse);
         if (!cachedCourse) {
-            const course = await this.prismaService.course.findUnique({
+            const course = await this.prismaService.class.findUnique({
                 where: { id },
                 select: { id: true }
             });

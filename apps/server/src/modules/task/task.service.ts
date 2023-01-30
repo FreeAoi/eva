@@ -103,7 +103,6 @@ export class TaskService {
             },
             data: {
                 score,
-                qualified: true,
                 teacher: {
                     connect: {
                         id: teacherId
