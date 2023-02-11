@@ -3,6 +3,7 @@ import { PrismaService } from '../../providers/database/prisma.service';
 import { RedisService } from '../../providers/cache/redis.service';
 import type { CreateCourseDTO } from './dto/create-course.dto';
 import type { UpdateCourseDTO } from './dto/update-course.dto';
+import type { CourseDTO } from './dto/course.dto';
 
 @Injectable()
 export class CourseService {
@@ -55,10 +56,40 @@ export class CourseService {
             },
             data: {
                 ...data
+            },
+            include: {
+                teacher: {
+                    select: {
+                        id: true,
+                        email: true
+                    }
+                }
             }
         });
 
         await this.cache.set(`course:${course.id}`, JSON.stringify(course));
+        return course;
+    }
+
+    async getCourse(courseId: string): Promise<CourseDTO> {
+        const cachedCourse = await this.cache.get(`course:${courseId}`);
+        if (cachedCourse) return JSON.parse(cachedCourse);
+
+        const course = await this.prisma.course.findUniqueOrThrow({
+            where: {
+                id: courseId
+            },
+            include: {
+                teacher: {
+                    select: {
+                        id: true,
+                        email: true
+                    }
+                }
+            }
+        });
+
+        await this.cache.set(`course:${courseId}`, JSON.stringify(course));
         return course;
     }
 }

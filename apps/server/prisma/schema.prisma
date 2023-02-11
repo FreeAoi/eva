@@ -32,6 +32,11 @@ model Course {
   teacherId String
   teacher   Teacher @relation(fields: [teacherId], references: [id])
 
+  about String?
+
+  generalObjective String
+  specificObjective String
+
   tasks Task[]
 }
 

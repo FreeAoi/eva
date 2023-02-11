@@ -1,5 +1,6 @@
 import NextAuth, { NextAuthOptions } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
+import restClient from '../../../src';
 
 export const AuthOptions: NextAuthOptions = {
     session: {
@@ -14,35 +15,32 @@ export const AuthOptions: NextAuthOptions = {
                 password: {}
             },
             async authorize(credentials) {
-                const user = await fetch(`${process.env.API_URL}/auth/login`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
+                const auth = await restClient.auth.authControllerLogin({
+                    body: {
                         email: credentials?.email,
                         password: credentials?.password
-                    })
+                    }
                 });
 
-                const data = await user.json();
-                if (data.error) throw new Error(data.error);
+                if (!auth.accessToken) {
+                    throw new Error('Credenciales de usuario invalidas.');
+                }
 
-                const student = await (
-                    await fetch(`${process.env.API_URL}/student`, {
-                        headers: {
-                            Authorization: `Bearer ${data.access_token}`
-                        }
-                    })
-                ).json();
+                const student = await restClient.student.studentControllerGetMe({
+                    headers: {
+                        Authorization: `Bearer ${auth.accessToken}`
+                    }
+                });
 
                 return {
                     id: student.id,
-                    name: student.name,
+                    name: student.firstName,
                     email: student.email,
-                    role: student.role,
-                    career: student.career,
-                    accessToken: data.access_token
+                    acess_token: auth.accessToken,
+                    courses: student.group.courses.map((course) => ({
+                        id: course.id,
+                        name: course.name
+                    }))
                 };
             }
         })

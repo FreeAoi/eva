@@ -14,6 +14,15 @@ export class GroupService {
                 students: {
                     connect: data.students.map((id) => ({ id }))
                 }
+            },
+            include: {
+                students: {
+                    select: {
+                        id: true,
+                        email: true
+                    }
+                },
+                courses: true
             }
         });
     }
@@ -22,6 +31,15 @@ export class GroupService {
         return this.prisma.group.findUnique({
             where: {
                 id
+            },
+            include: {
+                students: {
+                    select: {
+                        id: true,
+                        email: true
+                    }
+                },
+                courses: true
             }
         });
     }
@@ -31,7 +49,16 @@ export class GroupService {
             where: {
                 id
             },
-            data
+            data,
+            include: {
+                students: {
+                    select: {
+                        id: true,
+                        email: true
+                    }
+                },
+                courses: true
+            }
         });
     }
 }

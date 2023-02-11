@@ -25,7 +25,15 @@ export class StudentService {
 
         if (!student) {
             student = await this.prisma.student.findUnique({
-                where: opts
+                where: opts,
+                include: {
+                    career: true,
+                    group: {
+                        include: {
+                            courses: true
+                        }
+                    }
+                }
             });
 
             if (!student) return null;

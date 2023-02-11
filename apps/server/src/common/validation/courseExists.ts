@@ -11,15 +11,13 @@ export class CourseExists implements ValidatorConstraintInterface {
 
     async validate(id: string): Promise<boolean> {
         const cachedCourse = await this.cache.get(`course:${id}`);
-        console.log(cachedCourse);
         if (!cachedCourse) {
-            const course = await this.prismaService.class.findUnique({
+            const course = await this.prismaService.course.findUnique({
                 where: { id },
                 select: { id: true }
             });
 
             if (!course) throw new NotFoundException('Course not found');
-            await this.cache.set(`course:${id}`, JSON.stringify(course));
         }
 
         return true;

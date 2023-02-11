@@ -8,9 +8,9 @@ export default function App({ Component, pageProps }: AppProps) {
         <SessionProvider session={pageProps.session}>
             <Nav />
 
-            <div className="h-11/12">
+            <main className="container">
                 <Component {...pageProps} />
-            </div>
+            </main>
         </SessionProvider>
     );
 }

@@ -1,25 +1,55 @@
 /* eslint-disable indent */
-import type { Student } from '@prisma/client';
-import { Exclude } from 'class-transformer';
+import { ApiProperty, PickType } from '@nestjs/swagger';
+import { Exclude, Expose, Type } from 'class-transformer';
+import { CourseEntity } from '../../../providers/database/entities/course.entity';
+import { GroupEntity } from '../../../providers/database/entities/group.entity';
+import { StudentEntity } from '../../../providers/database/entities/student.entity';
 
-export class StudentDTO implements Student {
-    id: string;
-    email: string;
-    firstName: string;
-    lastName: string;
-    createdAt: Date;
-    updatedAt: Date;
-    role: string;
-    groupId: string | null;
-    deleted: Date | null;
+@Exclude()
+class CourseInGroupInStudent extends PickType(CourseEntity, [
+    'id',
+    'name',
+    'teacherId'
+]) {}
 
-    @Exclude()
-    careerId: number;
+@Exclude()
+class GroupInStudent extends PickType(GroupEntity, ['id', 'name']) {
+    @ApiProperty({
+        description: 'Group courses',
+        type: [CourseInGroupInStudent]
+    })
+    @Type(() => CourseInGroupInStudent)
+    @Expose()
+    courses: CourseInGroupInStudent[];
+}
 
-    @Exclude()
-    password: string;
+@Exclude()
+export class StudentDTO extends PickType(StudentEntity, [
+    'id',
+    'email',
+    'firstName',
+    'lastName',
+    'groupId'
+]) {
+    @ApiProperty({
+        description: 'Student career data'
+    })
+    @Expose()
+    career: {
+        id: number;
+        name: string;
+    };
 
-    constructor(partial: Partial<StudentDTO>) {
-        Object.assign(this, partial);
+    @ApiProperty({
+        description: 'Student group data',
+        type: GroupInStudent
+    })
+    @Expose()
+    @Type(() => GroupInStudent)
+    group: GroupInStudent;
+
+    constructor(student: Partial<StudentDTO>) {
+        super();
+        Object.assign(this, student);
     }
 }

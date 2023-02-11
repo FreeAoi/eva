@@ -37,7 +37,41 @@ async function main() {
         }
     });
 
-    console.log({ career, student, teacher });
+    const group = await prisma.group.create({
+        data: {
+            name: 'A',
+            id: '1M3-CO',
+            career: {
+                connect: {
+                    id: career.id
+                }
+            },
+            students: {
+                connect: {
+                    id: student.id
+                }
+            }
+        }
+    });
+
+    const course = await prisma.course.create({
+        data: {
+            name: 'Programacion 1',
+            group: {
+                connect: {
+                    id: group.id
+                }
+            },
+            teacher: {
+                connect: {
+                    id: teacher.id
+                }
+            },
+            id: 'BEAU'
+        }
+    });
+
+    console.log({ career, student, teacher, group, course });
 }
 
 main()

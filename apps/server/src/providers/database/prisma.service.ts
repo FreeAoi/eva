@@ -12,19 +12,19 @@ export class PrismaService
         super({
             log: [
                 {
-                    emit: 'stdout',
+                    emit: 'event',
                     level: 'query'
                 },
                 {
-                    emit: 'stdout',
+                    emit: 'event',
                     level: 'error'
                 },
                 {
-                    emit: 'stdout',
+                    emit: 'event',
                     level: 'info'
                 },
                 {
-                    emit: 'stdout',
+                    emit: 'event',
                     level: 'warn'
                 }
             ]
@@ -32,7 +32,6 @@ export class PrismaService
     }
 
     async onModuleInit() {
-        //4.
         this.$on('error', (event) => {
             this.logger.error(event);
         });

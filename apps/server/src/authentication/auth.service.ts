@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { StudentService } from '../modules/student/student.service';
 import { TeacherService } from '../modules/teacher/teacher.service';
-import type { JWTPayload } from './interfaces/jwt-payload.interface';
+import type { JWTPayload } from './dto/jwt-payload.dto';
 import type { Student, Teacher } from '@prisma/client';
 import bcrypt from 'bcrypt';
 

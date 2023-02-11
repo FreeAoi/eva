@@ -1,23 +1,13 @@
 import type { GetServerSidePropsContext } from 'next';
-import { getToken } from 'next-auth/jwt';
+import { getServerSession, Session } from 'next-auth';
 import Head from 'next/head';
-import CourseCard from '../components/coursecard';
 import Link from 'next/link';
-import { useSession } from 'next-auth/react';
+import CourseCard from '../components/coursecard';
+import { AuthOptions } from './api/auth/[...nextauth]';
 
-interface DataProps {
-    career: string;
-    courses: {
-        name: string;
-        id: string;
-    }[];
-}
-
-export default function MyScreen(props: { data: DataProps }) {
-    const { data: session } = useSession();
-
+export default function MyScreen(props: Session) {
     return (
-        <main>
+        <div>
             <Head>
                 <title>Virtual</title>
                 <link rel="icon" href="/favicon.ico" />
@@ -26,15 +16,16 @@ export default function MyScreen(props: { data: DataProps }) {
             <div className="p-3 h-screen flex">
                 <div className="w-full lg:w-4/5 m-1">
                     <h1 className="text-base sm:text-2xl text-indigo-900 font-regular">
-                        Cursos a los que has accedido recientemente
+                        Cursos del semestre actual
                     </h1>
                     <div>
-                        {props.data.courses.map((course) => {
+                        {props.user.courses.map((course) => {
                             return (
                                 <CourseCard
                                     name={course.name}
+                                    id={course.id}
                                     key={course.id}
-                                    career={session?.user.career as string}
+                                    career="Ingeniería en Sistemas Computacionales"
                                 />
                             );
                         })}
@@ -109,25 +100,14 @@ export default function MyScreen(props: { data: DataProps }) {
                     </div>
                 </div>
             </div>
-        </main>
+        </div>
     );
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-    const session = await getToken({ req: context.req });
-
-    console.log(process.env.API_URL);
-    const data = await (
-        await fetch(`${process.env.API_URL}/student/courses`, {
-            headers: {
-                Authorization: `Bearer ${session?.user.accessToken}`
-            }
-        })
-    ).json();
+    const session = await getServerSession(context.req, context.res, AuthOptions);
 
     return {
-        props: {
-            data
-        }
+        props: session
     };
 }

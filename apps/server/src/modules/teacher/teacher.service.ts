@@ -18,6 +18,7 @@ export class TeacherService {
             });
 
             if (!teacher) return null;
+
             await Promise.all([
                 this.cache.set(`teacher:${teacher.id}`, JSON.stringify(teacher)),
                 this.cache.zadd('teacher:emails', 0, `${teacher.email}:${teacher.id}`)

@@ -1,5 +1,5 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
-import type { JWTPayload } from '../../authentication/interfaces/jwt-payload.interface';
+import type { JWTPayload } from '../../authentication/dto/jwt-payload.dto';
 
 @Injectable()
 export class RoleGuard implements CanActivate {

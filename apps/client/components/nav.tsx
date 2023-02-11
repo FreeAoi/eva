@@ -12,14 +12,18 @@ export default function Nav() {
     return (
         <nav className="flex items-center justify-between bg-blue-900 p-4 h-14">
             <div className="flex items-center">
-                <Image src={logoUNI} alt="logo" width={45} height={45} />
+                <Image
+                    src={logoUNI}
+                    alt="logo"
+                    className="w-auto"
+                    width={45}
+                    height={45}
+                />
                 <span className="font-semibold text-xl tracking-tight ml-2 text-white">
                     Virtual
                 </span>
             </div>
-            {status === 'authenticated' && (
-                <MyDropdown name={data.user.name} role={data.user.role} />
-            )}
+            {status === 'authenticated' && <MyDropdown name={data.user.name} />}
             {router.pathname != 'login' && status == 'unauthenticated' && (
                 <div>
                     <Link

@@ -21,7 +21,7 @@ import {
 import { CheckCourseDTO } from '../course/dto/check-course.dto';
 import { CheckTaskDTO } from './dto/check-task.dto';
 import { CheckSubmitDTO, UpdateSubmissionDTO } from './dto/evaluate-task.dto';
-import type { JWTPayload } from '../../authentication/interfaces/jwt-payload.interface';
+import type { JWTPayload } from '../../authentication/dto/jwt-payload.dto';
 
 @Controller('course/:courseId/task')
 export class TaskController {
