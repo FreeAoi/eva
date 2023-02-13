@@ -38,7 +38,7 @@ import { TaskExists } from './common/validation/taskExists';
         })
     ],
     controllers: [],
-    providers: [StudentExists, CourseExists, TaskExists]
+    providers: [StudentExists, TaskExists, CourseExists]
 })
 class AppModule {}
 
