@@ -28,8 +28,7 @@ export class StudentDTO extends PickType(StudentEntity, [
     'id',
     'email',
     'firstName',
-    'lastName',
-    'groupId'
+    'lastName'
 ]) {
     @ApiProperty({
         description: 'Student career data'
@@ -42,10 +41,11 @@ export class StudentDTO extends PickType(StudentEntity, [
 
     @ApiProperty({
         description: 'Student group data',
-        type: GroupInStudent
+        type: GroupInStudent,
+        writeOnly: true
     })
-    @Expose()
     @Type(() => GroupInStudent)
+    @Expose()
     group: GroupInStudent;
 
     constructor(student: Partial<StudentDTO>) {

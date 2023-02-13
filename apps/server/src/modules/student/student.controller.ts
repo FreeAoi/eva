@@ -10,8 +10,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { StudentService } from './student.service';
-import { RegisterStudentDTO } from './dto/register.dto';
-import { RoleGuard } from '../../common/guards/roles.guard';
+import { RegisterStudentDTO } from './dto/register-student.dto';
 import { CurrentUser } from '../../common/decorators/requests/user-current.decorator';
 import { ApiAcceptedResponse, ApiTags } from '@nestjs/swagger';
 import type { JWTPayload } from '../../authentication/dto/jwt-payload.dto';
@@ -40,7 +39,6 @@ export class StudentController {
     }
 
     @Post('create')
-    @UseGuards(AuthGuard('jwt'), RoleGuard)
     @UseInterceptors(ClassSerializerInterceptor)
     @ApiAcceptedResponse({
         description: 'Student created',

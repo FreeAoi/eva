@@ -2,12 +2,14 @@
 import type { Student } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
+import { IsEmail, IsEmpty, IsNumber, IsString, IsStrongPassword } from 'class-validator';
 
 export class StudentEntity implements Student {
     @ApiProperty({
         example: '2022-0381U',
         description: 'Student id'
     })
+    @IsString()
     @Expose()
     id: string;
 
@@ -15,6 +17,7 @@ export class StudentEntity implements Student {
         example: 'uwu@gmail.com',
         description: 'Student email'
     })
+    @IsEmail()
     @Expose()
     email: string;
 
@@ -22,6 +25,7 @@ export class StudentEntity implements Student {
         example: 'John',
         description: 'Student first name'
     })
+    @IsString()
     @Expose()
     firstName: string;
 
@@ -29,6 +33,7 @@ export class StudentEntity implements Student {
         example: 'Doe',
         description: 'Student last name'
     })
+    @IsString()
     @Expose()
     lastName: string;
 
@@ -37,6 +42,7 @@ export class StudentEntity implements Student {
         description: 'Student role',
         default: 'STUDENT'
     })
+    @IsEmpty()
     @Expose()
     role: string;
 
@@ -44,6 +50,7 @@ export class StudentEntity implements Student {
         example: '1M3-CO',
         description: 'Student group id'
     })
+    @IsString()
     @Expose()
     groupId: string | null;
 
@@ -51,6 +58,7 @@ export class StudentEntity implements Student {
         example: 1,
         description: 'Student career id'
     })
+    @IsNumber()
     @Expose()
     careerId: number;
 
@@ -58,6 +66,7 @@ export class StudentEntity implements Student {
         example: '2021-01-01',
         description: 'Date when student was deleted'
     })
+    @IsEmpty()
     @Expose()
     deleted: Date | null;
 
@@ -65,6 +74,7 @@ export class StudentEntity implements Student {
         example: '2021-01-01',
         description: 'Date when student was created'
     })
+    @IsEmpty()
     @Expose()
     createdAt: Date;
 
@@ -72,8 +82,16 @@ export class StudentEntity implements Student {
         example: '2021-01-01',
         description: 'Date when student was updated'
     })
+    @IsEmpty()
     @Expose()
     updatedAt: Date;
 
+    @ApiProperty({
+        example: 'somepassword',
+        description: 'Student password',
+        writeOnly: true
+    })
+    @IsString()
+    @IsStrongPassword()
     password: string;
 }

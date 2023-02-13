@@ -3,7 +3,7 @@ import { PrismaService } from '../../providers/database/prisma.service';
 import { RedisService } from '../../providers/cache/redis.service';
 import bcrypt from 'bcrypt';
 
-import type { RegisterStudentDTO } from './dto/register.dto';
+import type { RegisterStudentDTO } from './dto/register-student.dto';
 import type { Student } from '@prisma/client';
 
 @Injectable()
@@ -67,6 +67,9 @@ export class StudentService {
                         id: careerId
                     }
                 }
+            },
+            include: {
+                career: true
             }
         });
 
