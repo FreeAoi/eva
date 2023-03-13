@@ -3,19 +3,12 @@ import { PrismaService } from '../../providers/database/prisma.service';
 import { RedisService } from '../../providers/cache/redis.service';
 import type { CreateCourseDTO } from './dto/create-course.dto';
 import type { UpdateCourseDTO } from './dto/update-course.dto';
-import type { CourseDTO } from './dto/course.dto';
+import type { Course } from '@prisma/client';
 
 @Injectable()
 export class CourseService {
     constructor(private prisma: PrismaService, private cache: RedisService) {}
 
-    /**
-     * Create a course
-     *
-     * @async
-     * @param {CreateCourseDTO} data data to create
-     * @returns {Promise<Course>} Created course
-     */
     async createCourse(data: CreateCourseDTO) {
         const cachedCourse = await this.cache.exists(`course:${data.courseId}`);
         if (cachedCourse) throw new BadRequestException('Course already exists');
@@ -34,21 +27,17 @@ export class CourseService {
                         id: data.teacherId
                     }
                 }
+            },
+            include: {
+                teacher: true,
+                tasks: true
             }
         });
 
-        await this.cache.set(`course:${course.id}`, JSON.stringify(course));
+        await this.cache.set(`course:${course.id}`, JSON.stringify(course), 'EX', 60 * 5);
         return course;
     }
 
-    /**
-     * Update a course
-     *
-     * @async
-     * @param {string} courseId id of the course
-     * @param {UpdateCourseDTO} data data to update
-     * @returns {Promise<Course>} Updated course
-     */
     async updateCourse(courseId: string, data: UpdateCourseDTO) {
         const course = await this.prisma.course.update({
             where: {
@@ -58,38 +47,31 @@ export class CourseService {
                 ...data
             },
             include: {
-                teacher: {
-                    select: {
-                        id: true,
-                        email: true
-                    }
-                }
+                teacher: true,
+                tasks: true
             }
         });
 
-        await this.cache.set(`course:${course.id}`, JSON.stringify(course));
+        await this.cache.set(`course:${course.id}`, JSON.stringify(course), 'EX', 60 * 5);
         return course;
     }
 
-    async getCourse(courseId: string): Promise<CourseDTO> {
-        const cachedCourse = await this.cache.get(`course:${courseId}`);
-        if (cachedCourse) return JSON.parse(cachedCourse);
+    async getCourse(courseId: string) {
+        const cachedCourse = await this.cache.retrieve<Course>(`course:${courseId}`);
+        if (cachedCourse) return cachedCourse;
 
-        const course = await this.prisma.course.findUniqueOrThrow({
+        const course = await this.prisma.course.findUnique({
             where: {
                 id: courseId
             },
             include: {
-                teacher: {
-                    select: {
-                        id: true,
-                        email: true
-                    }
-                }
+                teacher: true,
+                tasks: true
             }
         });
+        if (!course) throw new BadRequestException('Course not found');
 
-        await this.cache.set(`course:${courseId}`, JSON.stringify(course));
+        await this.cache.set(`course:${course.id}`, JSON.stringify(course), 'EX', 60 * 5);
         return course;
     }
 }

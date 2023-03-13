@@ -18,13 +18,15 @@ Table Course {
   group Group [not null]
   teacherId String [not null]
   teacher Teacher [not null]
+  about String
+  generalObjective String
+  specificObjective String
   tasks Task [not null]
 }
 
 Table Task {
   id Int [pk, increment]
   title String [not null]
-  description String [not null]
   maxScore Int [not null]
   courseId String [not null]
   course Course [not null]
@@ -43,6 +45,7 @@ Table TaskSubmission {
   studentId String [not null]
   student Student [not null]
   score Int [not null, default: 0]
+  qualified Boolean [not null, default: false]
   comment String
   attachments Attachment [not null]
   teacherId String
@@ -80,7 +83,10 @@ Table Student {
   firstName String [not null]
   lastName String [not null]
   password String [not null]
-  role String [not null, default: 'STUDENT']
+  description String
+  city String
+  avatar String [not null, default: 'https://secure.gravatar.com/avatar/9e1cae43686b4e7202116ba6b1a83b6b?s=100&d=mm']
+  role Role [not null, default: 'STUDENT']
   groupId String
   group Group
   careerId Int [not null]
@@ -97,13 +103,19 @@ Table Teacher {
   firstName String [not null]
   lastName String [not null]
   password String [not null]
-  role String [not null, default: 'TEACHER']
+  role Role [not null, default: 'TEACHER']
+  avatar String [not null, default: 'https://secure.gravatar.com/avatar/9e1cae43686b4e7202116ba6b1a83b6b?s=100&d=mm']
   faculty String [not null]
   courses Course [not null]
   deleted DateTime
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
   qualifiedTasks TaskSubmission [not null]
+}
+
+Enum Role {
+  STUDENT
+  TEACHER
 }
 
 Ref: Course.groupId > Group.id

@@ -20,17 +20,17 @@ import { exists, mapValues } from '../runtime';
  */
 export interface TeacherInCourse {
     /**
-     * Teacher id
+     * Teacher first name
      * @type {string}
      * @memberof TeacherInCourse
      */
-    id: string;
+    firstName: string;
     /**
-     * Teacher email
+     * Teacher last name
      * @type {string}
      * @memberof TeacherInCourse
      */
-    email: string;
+    lastName: string;
 }
 
 /**
@@ -38,8 +38,8 @@ export interface TeacherInCourse {
  */
 export function instanceOfTeacherInCourse(value: object): boolean {
     let isInstance = true;
-    isInstance = isInstance && 'id' in value;
-    isInstance = isInstance && 'email' in value;
+    isInstance = isInstance && 'firstName' in value;
+    isInstance = isInstance && 'lastName' in value;
 
     return isInstance;
 }
@@ -56,8 +56,8 @@ export function TeacherInCourseFromJSONTyped(
         return json;
     }
     return {
-        id: json['id'],
-        email: json['email']
+        firstName: json['firstName'],
+        lastName: json['lastName']
     };
 }
 
@@ -69,7 +69,7 @@ export function TeacherInCourseToJSON(value?: TeacherInCourse | null): any {
         return null;
     }
     return {
-        id: value.id,
-        email: value.email
+        firstName: value.firstName,
+        lastName: value.lastName
     };
 }

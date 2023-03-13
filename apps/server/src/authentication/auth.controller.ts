@@ -20,8 +20,6 @@ export default class AuthController {
             data.password
         );
         if (!userAuthenticated) throw new HttpException('Invalid credentials', 401);
-        const x = this.authService.genAccToken(userAuthenticated);
-        console.log(x);
-        return x;
+        return this.authService.genAccToken(userAuthenticated);
     }
 }

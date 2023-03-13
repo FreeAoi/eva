@@ -8,17 +8,11 @@ export class RedisService extends ioredis {
         super(options);
     }
 
-    /**
-     *
-     * Search for a user by email or id in the cache
-     * key:emails is a sorted set with the format email:id
-     *
-     * @param {Object} options
-     * @param {string} [options.email] email of the user
-     * @param {string} [options.id] id of the user
-     * @param {string} options.key key of the user (student or teacher)
-     * @returns
-     */
+    async retrieve<T>(cacheKey: string): Promise<T | null> {
+        const cachedData = await this.get(cacheKey);
+        return cachedData ? JSON.parse(cachedData) : null;
+    }
+
     async getUser<T>({
         email,
         id,
@@ -37,7 +31,6 @@ export class RedisService extends ioredis {
             id = cached[0]?.split(':')[1];
         }
 
-        const cachedUser = await this.get(`${key}:${id}`);
-        return cachedUser ? JSON.parse(cachedUser) : null;
+        return await this.retrieve<T>(`${key}:${id}`);
     }
 }

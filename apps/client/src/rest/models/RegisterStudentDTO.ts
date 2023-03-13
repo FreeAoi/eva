@@ -20,72 +20,54 @@ import { exists, mapValues } from '../runtime';
  */
 export interface RegisterStudentDTO {
     /**
-     * User email
+     * Student id
+     * @type {string}
+     * @memberof RegisterStudentDTO
+     */
+    id: string;
+    /**
+     * Student email
      * @type {string}
      * @memberof RegisterStudentDTO
      */
     email: string;
     /**
-     * User password
-     * @type {string}
-     * @memberof RegisterStudentDTO
-     */
-    password: string;
-    /**
-     * User first name
+     * Student first name
      * @type {string}
      * @memberof RegisterStudentDTO
      */
     firstName: string;
     /**
-     * User last name
+     * Student last name
      * @type {string}
      * @memberof RegisterStudentDTO
      */
     lastName: string;
     /**
-     * User career id
+     * Student career id
      * @type {number}
      * @memberof RegisterStudentDTO
      */
     careerId: number;
     /**
-     * User role
+     * Student password
      * @type {string}
      * @memberof RegisterStudentDTO
      */
-    role: RegisterStudentDTORoleEnum;
-    /**
-     * User student id
-     * @type {string}
-     * @memberof RegisterStudentDTO
-     */
-    id: string;
+    password: string;
 }
-
-/**
- * @export
- */
-export const RegisterStudentDTORoleEnum = {
-    Admin: 'ADMIN',
-    Teacher: 'TEACHER',
-    Student: 'STUDENT'
-} as const;
-export type RegisterStudentDTORoleEnum =
-    (typeof RegisterStudentDTORoleEnum)[keyof typeof RegisterStudentDTORoleEnum];
 
 /**
  * Check if a given object implements the RegisterStudentDTO interface.
  */
 export function instanceOfRegisterStudentDTO(value: object): boolean {
     let isInstance = true;
+    isInstance = isInstance && 'id' in value;
     isInstance = isInstance && 'email' in value;
-    isInstance = isInstance && 'password' in value;
     isInstance = isInstance && 'firstName' in value;
     isInstance = isInstance && 'lastName' in value;
     isInstance = isInstance && 'careerId' in value;
-    isInstance = isInstance && 'role' in value;
-    isInstance = isInstance && 'id' in value;
+    isInstance = isInstance && 'password' in value;
 
     return isInstance;
 }
@@ -102,13 +84,12 @@ export function RegisterStudentDTOFromJSONTyped(
         return json;
     }
     return {
+        id: json['id'],
         email: json['email'],
-        password: json['password'],
         firstName: json['firstName'],
         lastName: json['lastName'],
         careerId: json['careerId'],
-        role: json['role'],
-        id: json['id']
+        password: json['password']
     };
 }
 
@@ -120,12 +101,11 @@ export function RegisterStudentDTOToJSON(value?: RegisterStudentDTO | null): any
         return null;
     }
     return {
+        id: value.id,
         email: value.email,
-        password: value.password,
         firstName: value.firstName,
         lastName: value.lastName,
         careerId: value.careerId,
-        role: value.role,
-        id: value.id
+        password: value.password
     };
 }

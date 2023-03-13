@@ -13,15 +13,12 @@
  */
 
 import * as runtime from '../runtime';
-import type { UpdateSubmissionDTO } from '../models';
-import { UpdateSubmissionDTOFromJSON, UpdateSubmissionDTOToJSON } from '../models';
+import type { TaskDTO } from '../models';
+import { TaskDTOFromJSON, TaskDTOToJSON } from '../models';
 
-export interface TaskControllerCreateTaskRequest {
-    body: object;
-}
-
-export interface TaskControllerEvaluateSubmissionRequest {
-    updateSubmissionDTO: UpdateSubmissionDTO;
+export interface TaskControllerGetTaskRequest {
+    taskId: number;
+    authorization: string;
 }
 
 /**
@@ -33,73 +30,23 @@ export interface TaskControllerEvaluateSubmissionRequest {
 export interface DefaultApiInterface {
     /**
      *
-     * @param {object} body
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApiInterface
-     */
-    taskControllerCreateTaskRaw(
-        requestParameters: TaskControllerCreateTaskRequest,
-        initOverrides?: RequestInit | runtime.InitOverrideFunction
-    ): Promise<runtime.ApiResponse<void>>;
-
-    /**
-     */
-    taskControllerCreateTask(
-        requestParameters: TaskControllerCreateTaskRequest,
-        initOverrides?: RequestInit | runtime.InitOverrideFunction
-    ): Promise<void>;
-
-    /**
-     *
-     * @param {UpdateSubmissionDTO} updateSubmissionDTO
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApiInterface
-     */
-    taskControllerEvaluateSubmissionRaw(
-        requestParameters: TaskControllerEvaluateSubmissionRequest,
-        initOverrides?: RequestInit | runtime.InitOverrideFunction
-    ): Promise<runtime.ApiResponse<void>>;
-
-    /**
-     */
-    taskControllerEvaluateSubmission(
-        requestParameters: TaskControllerEvaluateSubmissionRequest,
-        initOverrides?: RequestInit | runtime.InitOverrideFunction
-    ): Promise<void>;
-
-    /**
-     *
+     * @param {number} taskId Task id
+     * @param {string} authorization Bearer token
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApiInterface
      */
     taskControllerGetTaskRaw(
+        requestParameters: TaskControllerGetTaskRequest,
         initOverrides?: RequestInit | runtime.InitOverrideFunction
-    ): Promise<runtime.ApiResponse<void>>;
+    ): Promise<runtime.ApiResponse<TaskDTO>>;
 
     /**
      */
     taskControllerGetTask(
+        requestParameters: TaskControllerGetTaskRequest,
         initOverrides?: RequestInit | runtime.InitOverrideFunction
-    ): Promise<void>;
-
-    /**
-     *
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApiInterface
-     */
-    taskControllerSubmitTaskRaw(
-        initOverrides?: RequestInit | runtime.InitOverrideFunction
-    ): Promise<runtime.ApiResponse<void>>;
-
-    /**
-     */
-    taskControllerSubmitTask(
-        initOverrides?: RequestInit | runtime.InitOverrideFunction
-    ): Promise<void>;
+    ): Promise<TaskDTO>;
 }
 
 /**
@@ -108,59 +55,24 @@ export interface DefaultApiInterface {
 export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
     /**
      */
-    async taskControllerCreateTaskRaw(
-        requestParameters: TaskControllerCreateTaskRequest,
+    async taskControllerGetTaskRaw(
+        requestParameters: TaskControllerGetTaskRequest,
         initOverrides?: RequestInit | runtime.InitOverrideFunction
-    ): Promise<runtime.ApiResponse<void>> {
-        if (requestParameters.body === null || requestParameters.body === undefined) {
+    ): Promise<runtime.ApiResponse<TaskDTO>> {
+        if (requestParameters.taskId === null || requestParameters.taskId === undefined) {
             throw new runtime.RequiredError(
-                'body',
-                'Required parameter requestParameters.body was null or undefined when calling taskControllerCreateTask.'
+                'taskId',
+                'Required parameter requestParameters.taskId was null or undefined when calling taskControllerGetTask.'
             );
         }
 
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        headerParameters['Content-Type'] = 'application/json';
-
-        const response = await this.request(
-            {
-                path: `/api/course/{courseId}/task`,
-                method: 'POST',
-                headers: headerParameters,
-                query: queryParameters,
-                body: requestParameters.body as any
-            },
-            initOverrides
-        );
-
-        return new runtime.VoidApiResponse(response);
-    }
-
-    /**
-     */
-    async taskControllerCreateTask(
-        requestParameters: TaskControllerCreateTaskRequest,
-        initOverrides?: RequestInit | runtime.InitOverrideFunction
-    ): Promise<void> {
-        await this.taskControllerCreateTaskRaw(requestParameters, initOverrides);
-    }
-
-    /**
-     */
-    async taskControllerEvaluateSubmissionRaw(
-        requestParameters: TaskControllerEvaluateSubmissionRequest,
-        initOverrides?: RequestInit | runtime.InitOverrideFunction
-    ): Promise<runtime.ApiResponse<void>> {
         if (
-            requestParameters.updateSubmissionDTO === null ||
-            requestParameters.updateSubmissionDTO === undefined
+            requestParameters.authorization === null ||
+            requestParameters.authorization === undefined
         ) {
             throw new runtime.RequiredError(
-                'updateSubmissionDTO',
-                'Required parameter requestParameters.updateSubmissionDTO was null or undefined when calling taskControllerEvaluateSubmission.'
+                'authorization',
+                'Required parameter requestParameters.authorization was null or undefined when calling taskControllerGetTask.'
             );
         }
 
@@ -168,43 +80,19 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
 
         const headerParameters: runtime.HTTPHeaders = {};
 
-        headerParameters['Content-Type'] = 'application/json';
+        if (
+            requestParameters.authorization !== undefined &&
+            requestParameters.authorization !== null
+        ) {
+            headerParameters['Authorization'] = String(requestParameters.authorization);
+        }
 
         const response = await this.request(
             {
-                path: `/api/course/{courseId}/task/{taskId}/submit/{submitId}`,
-                method: 'PATCH',
-                headers: headerParameters,
-                query: queryParameters,
-                body: UpdateSubmissionDTOToJSON(requestParameters.updateSubmissionDTO)
-            },
-            initOverrides
-        );
-
-        return new runtime.VoidApiResponse(response);
-    }
-
-    /**
-     */
-    async taskControllerEvaluateSubmission(
-        requestParameters: TaskControllerEvaluateSubmissionRequest,
-        initOverrides?: RequestInit | runtime.InitOverrideFunction
-    ): Promise<void> {
-        await this.taskControllerEvaluateSubmissionRaw(requestParameters, initOverrides);
-    }
-
-    /**
-     */
-    async taskControllerGetTaskRaw(
-        initOverrides?: RequestInit | runtime.InitOverrideFunction
-    ): Promise<runtime.ApiResponse<void>> {
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        const response = await this.request(
-            {
-                path: `/api/course/{courseId}/task/{taskId}`,
+                path: `/api/task/{taskId}`.replace(
+                    `{${'taskId'}}`,
+                    encodeURIComponent(String(requestParameters.taskId))
+                ),
                 method: 'GET',
                 headers: headerParameters,
                 query: queryParameters
@@ -212,44 +100,21 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
             initOverrides
         );
 
-        return new runtime.VoidApiResponse(response);
+        return new runtime.JSONApiResponse(response, (jsonValue) =>
+            TaskDTOFromJSON(jsonValue)
+        );
     }
 
     /**
      */
     async taskControllerGetTask(
+        requestParameters: TaskControllerGetTaskRequest,
         initOverrides?: RequestInit | runtime.InitOverrideFunction
-    ): Promise<void> {
-        await this.taskControllerGetTaskRaw(initOverrides);
-    }
-
-    /**
-     */
-    async taskControllerSubmitTaskRaw(
-        initOverrides?: RequestInit | runtime.InitOverrideFunction
-    ): Promise<runtime.ApiResponse<void>> {
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        const response = await this.request(
-            {
-                path: `/api/course/{courseId}/task/{taskId}/submit`,
-                method: 'POST',
-                headers: headerParameters,
-                query: queryParameters
-            },
+    ): Promise<TaskDTO> {
+        const response = await this.taskControllerGetTaskRaw(
+            requestParameters,
             initOverrides
         );
-
-        return new runtime.VoidApiResponse(response);
-    }
-
-    /**
-     */
-    async taskControllerSubmitTask(
-        initOverrides?: RequestInit | runtime.InitOverrideFunction
-    ): Promise<void> {
-        await this.taskControllerSubmitTaskRaw(initOverrides);
+        return await response.value();
     }
 }

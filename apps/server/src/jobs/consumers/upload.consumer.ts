@@ -10,7 +10,7 @@ export class UploadConsumer {
         private prismaService: PrismaService
     ) {}
 
-    @Process()
+    @Process('task')
     async transcode(job: Job) {
         const { taskId, attachments, studentId } = job.data as JobData;
         const attachmentarr: { filename: string; URI: string }[] = [];
@@ -50,6 +50,7 @@ export class UploadConsumer {
         attachments: { filename: string; URI: string }[],
         studentId: string
     ) {
+        console.log(attachments);
         await this.prismaService.taskSubmission.create({
             data: {
                 task: {
@@ -73,6 +74,14 @@ export class UploadConsumer {
                 score: 0
             }
         });
+    }
+
+    @Process('avatar')
+    async uploadAvatar(job: Job) {
+        const { attachment, studentId } = job.data;
+        console.log(attachment, studentId);
+        const URI = `avatar/${studentId}`;
+        await this.storageService.uploadFile(Buffer.from(attachment.buffer), URI);
     }
 
     @OnQueueError()

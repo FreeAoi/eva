@@ -1,16 +1,19 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-import { BadRequestException, ValidationPipe } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
+import {
+    BadRequestException,
+    ClassSerializerInterceptor,
+    ValidationPipe
+} from '@nestjs/common';
+import { NestFactory, Reflector } from '@nestjs/core';
+import type { NestFastifyApplication } from '@nestjs/platform-fastify';
 import { FastifyAdapter } from '@nestjs/platform-fastify';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { useContainer } from 'class-validator';
+import morgan from 'morgan';
 import AppModule from './app.module';
 import { AppClusterService } from './cluster';
-import morgan from 'morgan';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import fastifyMultipart from '@fastify/multipart';
-import type { NestFastifyApplication } from '@nestjs/platform-fastify';
-import { useContainer } from 'class-validator';
 
 async function bootstrap() {
     const app = await NestFactory.create<NestFastifyApplication>(
@@ -18,7 +21,6 @@ async function bootstrap() {
         new FastifyAdapter()
     );
 
-    await app.register(fastifyMultipart);
     app.use(morgan('dev'));
     app.useGlobalPipes(
         new ValidationPipe({
@@ -31,6 +33,11 @@ async function bootstrap() {
                 if (!err) return new BadRequestException(errors);
                 return new BadRequestException(Object.values(err)[0]);
             }
+        })
+    );
+    app.useGlobalInterceptors(
+        new ClassSerializerInterceptor(app.get(Reflector), {
+            excludeExtraneousValues: true
         })
     );
 

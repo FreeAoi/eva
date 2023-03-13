@@ -10,6 +10,7 @@ import { R2Module } from './providers/storage/r2.module';
 import { StudentExists } from './common/validation/studentExists';
 import { CourseExists } from './common/validation/courseExists';
 import { TaskExists } from './common/validation/taskExists';
+import { FastifyMulterModule } from '@nest-lab/fastify-multer';
 
 @Module({
     imports: [
@@ -35,7 +36,8 @@ import { TaskExists } from './common/validation/taskExists';
                 accessKeyId: process.env.R2_KEY_ID,
                 secretAccessKey: process.env.R2_SECREY_KEY
             }
-        })
+        }),
+        FastifyMulterModule
     ],
     controllers: [],
     providers: [StudentExists, TaskExists, CourseExists]

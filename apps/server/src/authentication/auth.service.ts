@@ -14,13 +14,6 @@ export class AuthService {
         private teachersService: TeacherService
     ) {}
 
-    /**
-     * Generates an access token for the user
-     * also checks if the user is a teacher or a student and adds the isEmployee property to the payload
-     *
-     * @param {Student | Teacher} user - The user to generate the token for
-     * @returns - The access token
-     */
     genAccToken(user: Student | Teacher) {
         const payload: JWTPayload = {
             email: user.email,
@@ -37,9 +30,10 @@ export class AuthService {
     }
 
     async validate(email: string, password: string) {
-        const user =
-            (await this.studentsService.get({ email })) ??
-            (await this.teachersService.get({ email }));
+        const user = await Promise.any([
+            this.studentsService.get({ email }),
+            this.teachersService.get({ email })
+        ]);
 
         if (!user) return null;
         return (await this.comparePassword(password, user.password)) ? user : null;

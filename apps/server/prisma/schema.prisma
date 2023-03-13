@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["views"]
 }
 
 datasource db {
@@ -27,28 +28,27 @@ model Course {
   name String
 
   groupId String
-  group   Group @relation(fields: [groupId], references: [id])
+  group   Group  @relation(fields: [groupId], references: [id])
 
   teacherId String
   teacher   Teacher @relation(fields: [teacherId], references: [id])
 
   about String?
 
-  generalObjective String
-  specificObjective String
+  generalObjective  String?
+  specificObjective String?
 
   tasks Task[]
 }
 
 model Task {
-  id          Int    @id @default(autoincrement())
-  title       String
-  description String
+  id    Int    @id @default(autoincrement())
+  title String
 
   maxScore Int
 
   courseId String
-  course   Course  @relation(fields: [courseId], references: [id])
+  course   Course @relation(fields: [courseId], references: [id])
 
   dueDate   DateTime
   deleted   DateTime?
@@ -68,8 +68,9 @@ model TaskSubmission {
   studentId String
   student   Student @relation(fields: [studentId], references: [id])
 
-  score   Int     @default(0)
-  comment String?
+  score     Int     @default(0)
+  qualified Boolean @default(false)
+  comment   String?
 
   attachments Attachment[]
 
@@ -96,7 +97,7 @@ model Attachment {
 }
 
 model Group {
-  id   String    @id
+  id   String @id
   name String
 
   careerId Int
@@ -110,15 +111,20 @@ model Group {
 }
 
 model Student {
-  id    String @id
-  email String  @unique
-  firstName String
-  lastName  String
-  password String
-  role  String  @default("STUDENT")
+  id          String  @id
+  email       String  @unique
+  firstName   String
+  lastName    String
+  password    String
+
+  description String?
+  city        String?
+
+  avatar      String  @default("https://secure.gravatar.com/avatar/9e1cae43686b4e7202116ba6b1a83b6b?s=100&d=mm")
+  role        Role    @default(STUDENT)
 
   groupId String?
-  group   Group? @relation(fields: [groupId], references: [id])
+  group   Group?  @relation(fields: [groupId], references: [id])
 
   careerId Int
   career   Career @relation(fields: [careerId], references: [id])
@@ -130,13 +136,13 @@ model Student {
 }
 
 model Teacher {
-  id      String  @id
-  email   String  @unique
+  id        String @id
+  email     String @unique
   firstName String
   lastName  String
-  password String
-  role    String  @default("TEACHER")
-
+  password  String
+  role      Role @default(TEACHER)
+  avatar    String @default("https://secure.gravatar.com/avatar/9e1cae43686b4e7202116ba6b1a83b6b?s=100&d=mm")
 
   faculty String
   courses Course[]
@@ -145,4 +151,9 @@ model Teacher {
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
   qualifiedTasks TaskSubmission[]
+}
+
+enum Role {
+  STUDENT
+  TEACHER
 }

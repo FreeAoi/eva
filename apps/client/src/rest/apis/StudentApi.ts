@@ -25,6 +25,13 @@ export interface StudentControllerRegisterStudentRequest {
     registerStudentDTO: RegisterStudentDTO;
 }
 
+export interface StudentControllerUpdateStudentRequest {
+    password?: string;
+    description?: string | null;
+    city?: string | null;
+    avatar?: Blob;
+}
+
 /**
  * StudentApi - interface
  *
@@ -64,6 +71,28 @@ export interface StudentApiInterface {
      */
     studentControllerRegisterStudent(
         requestParameters: StudentControllerRegisterStudentRequest,
+        initOverrides?: RequestInit | runtime.InitOverrideFunction
+    ): Promise<StudentDTO>;
+
+    /**
+     *
+     * @param {string} [password] Student password
+     * @param {string} [description] Student description
+     * @param {string} [city] Student description
+     * @param {Blob} [avatar] user avatar
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof StudentApiInterface
+     */
+    studentControllerUpdateStudentRaw(
+        requestParameters: StudentControllerUpdateStudentRequest,
+        initOverrides?: RequestInit | runtime.InitOverrideFunction
+    ): Promise<runtime.ApiResponse<StudentDTO>>;
+
+    /**
+     */
+    studentControllerUpdateStudent(
+        requestParameters: StudentControllerUpdateStudentRequest,
         initOverrides?: RequestInit | runtime.InitOverrideFunction
     ): Promise<StudentDTO>;
 }
@@ -150,6 +179,75 @@ export class StudentApi extends runtime.BaseAPI implements StudentApiInterface {
         initOverrides?: RequestInit | runtime.InitOverrideFunction
     ): Promise<StudentDTO> {
         const response = await this.studentControllerRegisterStudentRaw(
+            requestParameters,
+            initOverrides
+        );
+        return await response.value();
+    }
+
+    /**
+     */
+    async studentControllerUpdateStudentRaw(
+        requestParameters: StudentControllerUpdateStudentRequest,
+        initOverrides?: RequestInit | runtime.InitOverrideFunction
+    ): Promise<runtime.ApiResponse<StudentDTO>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const consumes: runtime.Consume[] = [{ contentType: 'multipart/form-data' }];
+        // @ts-ignore: canConsumeForm may be unused
+        const canConsumeForm = runtime.canConsumeForm(consumes);
+
+        let formParams: { append(param: string, value: any): any };
+        let useForm = false;
+        // use FormData to transmit files using content-type "multipart/form-data"
+        useForm = canConsumeForm;
+        if (useForm) {
+            formParams = new FormData();
+        } else {
+            formParams = new URLSearchParams();
+        }
+
+        if (requestParameters.password !== undefined) {
+            formParams.append('password', requestParameters.password as any);
+        }
+
+        if (requestParameters.description !== undefined) {
+            formParams.append('description', requestParameters.description as any);
+        }
+
+        if (requestParameters.city !== undefined) {
+            formParams.append('city', requestParameters.city as any);
+        }
+
+        if (requestParameters.avatar !== undefined) {
+            formParams.append('avatar', requestParameters.avatar as any);
+        }
+
+        const response = await this.request(
+            {
+                path: `/api/student/me`,
+                method: 'PUT',
+                headers: headerParameters,
+                query: queryParameters,
+                body: formParams
+            },
+            initOverrides
+        );
+
+        return new runtime.JSONApiResponse(response, (jsonValue) =>
+            StudentDTOFromJSON(jsonValue)
+        );
+    }
+
+    /**
+     */
+    async studentControllerUpdateStudent(
+        requestParameters: StudentControllerUpdateStudentRequest = {},
+        initOverrides?: RequestInit | runtime.InitOverrideFunction
+    ): Promise<StudentDTO> {
+        const response = await this.studentControllerUpdateStudentRaw(
             requestParameters,
             initOverrides
         );

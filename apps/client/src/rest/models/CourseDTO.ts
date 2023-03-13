@@ -13,6 +13,37 @@
  */
 
 import { exists, mapValues } from '../runtime';
+import type { CourseDTOAbout } from './CourseDTOAbout';
+import {
+    CourseDTOAboutFromJSON,
+    CourseDTOAboutFromJSONTyped,
+    CourseDTOAboutToJSON
+} from './CourseDTOAbout';
+import type { CourseDTOGeneralObjective } from './CourseDTOGeneralObjective';
+import {
+    CourseDTOGeneralObjectiveFromJSON,
+    CourseDTOGeneralObjectiveFromJSONTyped,
+    CourseDTOGeneralObjectiveToJSON
+} from './CourseDTOGeneralObjective';
+import type { CourseDTOSpecificObjective } from './CourseDTOSpecificObjective';
+import {
+    CourseDTOSpecificObjectiveFromJSON,
+    CourseDTOSpecificObjectiveFromJSONTyped,
+    CourseDTOSpecificObjectiveToJSON
+} from './CourseDTOSpecificObjective';
+import type { CourseDTOTeacher } from './CourseDTOTeacher';
+import {
+    CourseDTOTeacherFromJSON,
+    CourseDTOTeacherFromJSONTyped,
+    CourseDTOTeacherToJSON
+} from './CourseDTOTeacher';
+import type { TaskInCourse } from './TaskInCourse';
+import {
+    TaskInCourseFromJSON,
+    TaskInCourseFromJSONTyped,
+    TaskInCourseToJSON
+} from './TaskInCourse';
+
 /**
  *
  * @export
@@ -32,11 +63,35 @@ export interface CourseDTO {
      */
     name: string;
     /**
-     * Teacher data
-     * @type {object}
+     *
+     * @type {CourseDTOAbout}
      * @memberof CourseDTO
      */
-    teacher: object;
+    about: CourseDTOAbout | null;
+    /**
+     *
+     * @type {CourseDTOGeneralObjective}
+     * @memberof CourseDTO
+     */
+    generalObjective: CourseDTOGeneralObjective;
+    /**
+     *
+     * @type {CourseDTOSpecificObjective}
+     * @memberof CourseDTO
+     */
+    specificObjective: CourseDTOSpecificObjective;
+    /**
+     *
+     * @type {CourseDTOTeacher}
+     * @memberof CourseDTO
+     */
+    teacher: CourseDTOTeacher;
+    /**
+     * Courses tasks
+     * @type {Array<TaskInCourse>}
+     * @memberof CourseDTO
+     */
+    tasks: Array<TaskInCourse>;
 }
 
 /**
@@ -46,7 +101,11 @@ export function instanceOfCourseDTO(value: object): boolean {
     let isInstance = true;
     isInstance = isInstance && 'id' in value;
     isInstance = isInstance && 'name' in value;
+    isInstance = isInstance && 'about' in value;
+    isInstance = isInstance && 'generalObjective' in value;
+    isInstance = isInstance && 'specificObjective' in value;
     isInstance = isInstance && 'teacher' in value;
+    isInstance = isInstance && 'tasks' in value;
 
     return isInstance;
 }
@@ -65,7 +124,11 @@ export function CourseDTOFromJSONTyped(
     return {
         id: json['id'],
         name: json['name'],
-        teacher: json['teacher']
+        about: CourseDTOAboutFromJSON(json['about']),
+        generalObjective: CourseDTOGeneralObjectiveFromJSON(json['generalObjective']),
+        specificObjective: CourseDTOSpecificObjectiveFromJSON(json['specificObjective']),
+        teacher: CourseDTOTeacherFromJSON(json['teacher']),
+        tasks: (json['tasks'] as Array<any>).map(TaskInCourseFromJSON)
     };
 }
 
@@ -79,6 +142,10 @@ export function CourseDTOToJSON(value?: CourseDTO | null): any {
     return {
         id: value.id,
         name: value.name,
-        teacher: value.teacher
+        about: CourseDTOAboutToJSON(value.about),
+        generalObjective: CourseDTOGeneralObjectiveToJSON(value.generalObjective),
+        specificObjective: CourseDTOSpecificObjectiveToJSON(value.specificObjective),
+        teacher: CourseDTOTeacherToJSON(value.teacher),
+        tasks: (value.tasks as Array<any>).map(TaskInCourseToJSON)
     };
 }

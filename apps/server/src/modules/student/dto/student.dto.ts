@@ -1,18 +1,16 @@
 /* eslint-disable indent */
 import { ApiProperty, PickType } from '@nestjs/swagger';
-import { Exclude, Expose, Type } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
 import { CourseEntity } from '../../../providers/database/entities/course.entity';
 import { GroupEntity } from '../../../providers/database/entities/group.entity';
 import { StudentEntity } from '../../../providers/database/entities/student.entity';
 
-@Exclude()
 class CourseInGroupInStudent extends PickType(CourseEntity, [
     'id',
     'name',
     'teacherId'
 ]) {}
 
-@Exclude()
 class GroupInStudent extends PickType(GroupEntity, ['id', 'name']) {
     @ApiProperty({
         description: 'Group courses',
@@ -23,12 +21,15 @@ class GroupInStudent extends PickType(GroupEntity, ['id', 'name']) {
     courses: CourseInGroupInStudent[];
 }
 
-@Exclude()
 export class StudentDTO extends PickType(StudentEntity, [
     'id',
     'email',
     'firstName',
-    'lastName'
+    'lastName',
+    'description',
+    'avatar',
+    'role',
+    'city'
 ]) {
     @ApiProperty({
         description: 'Student career data'
@@ -41,8 +42,7 @@ export class StudentDTO extends PickType(StudentEntity, [
 
     @ApiProperty({
         description: 'Student group data',
-        type: GroupInStudent,
-        writeOnly: true
+        type: GroupInStudent
     })
     @Type(() => GroupInStudent)
     @Expose()

@@ -33,29 +33,47 @@ export interface StudentDTO {
      */
     id: string;
     /**
-     * Student name
-     * @type {string}
-     * @memberof StudentDTO
-     */
-    firstName: string;
-    /**
-     * Student surname
-     * @type {string}
-     * @memberof StudentDTO
-     */
-    lastName: string;
-    /**
      * Student email
      * @type {string}
      * @memberof StudentDTO
      */
     email: string;
     /**
-     * Student group id
-     * @type {object}
+     * Student first name
+     * @type {string}
      * @memberof StudentDTO
      */
-    groupId: object;
+    firstName: string;
+    /**
+     * Student last name
+     * @type {string}
+     * @memberof StudentDTO
+     */
+    lastName: string;
+    /**
+     * Student role
+     * @type {string}
+     * @memberof StudentDTO
+     */
+    role: StudentDTORoleEnum;
+    /**
+     * Student description
+     * @type {string}
+     * @memberof StudentDTO
+     */
+    description: string | null;
+    /**
+     * Student description
+     * @type {string}
+     * @memberof StudentDTO
+     */
+    city: string | null;
+    /**
+     * Student avatar
+     * @type {string}
+     * @memberof StudentDTO
+     */
+    avatar: string;
     /**
      * Student career data
      * @type {object}
@@ -71,15 +89,28 @@ export interface StudentDTO {
 }
 
 /**
+ * @export
+ */
+export const StudentDTORoleEnum = {
+    Student: 'STUDENT',
+    Teacher: 'TEACHER'
+} as const;
+export type StudentDTORoleEnum =
+    (typeof StudentDTORoleEnum)[keyof typeof StudentDTORoleEnum];
+
+/**
  * Check if a given object implements the StudentDTO interface.
  */
 export function instanceOfStudentDTO(value: object): boolean {
     let isInstance = true;
     isInstance = isInstance && 'id' in value;
+    isInstance = isInstance && 'email' in value;
     isInstance = isInstance && 'firstName' in value;
     isInstance = isInstance && 'lastName' in value;
-    isInstance = isInstance && 'email' in value;
-    isInstance = isInstance && 'groupId' in value;
+    isInstance = isInstance && 'role' in value;
+    isInstance = isInstance && 'description' in value;
+    isInstance = isInstance && 'city' in value;
+    isInstance = isInstance && 'avatar' in value;
     isInstance = isInstance && 'career' in value;
     isInstance = isInstance && 'group' in value;
 
@@ -99,10 +130,13 @@ export function StudentDTOFromJSONTyped(
     }
     return {
         id: json['id'],
+        email: json['email'],
         firstName: json['firstName'],
         lastName: json['lastName'],
-        email: json['email'],
-        groupId: json['groupId'],
+        role: json['role'],
+        description: json['description'],
+        city: json['city'],
+        avatar: json['avatar'],
         career: json['career'],
         group: StudentDTOGroupFromJSON(json['group'])
     };
@@ -117,10 +151,13 @@ export function StudentDTOToJSON(value?: StudentDTO | null): any {
     }
     return {
         id: value.id,
+        email: value.email,
         firstName: value.firstName,
         lastName: value.lastName,
-        email: value.email,
-        groupId: value.groupId,
+        role: value.role,
+        description: value.description,
+        city: value.city,
+        avatar: value.avatar,
         career: value.career,
         group: StudentDTOGroupToJSON(value.group)
     };

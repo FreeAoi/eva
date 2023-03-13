@@ -1,5 +1,5 @@
 /* eslint-disable indent */
-import type { Student } from '@prisma/client';
+import { Role, Student } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 import { IsEmail, IsEmpty, IsNumber, IsString, IsStrongPassword } from 'class-validator';
@@ -38,13 +38,14 @@ export class StudentEntity implements Student {
     lastName: string;
 
     @ApiProperty({
-        example: 'STUDENT',
         description: 'Student role',
-        default: 'STUDENT'
+        type: 'enum',
+        enum: Role,
+        example: Role.STUDENT
     })
     @IsEmpty()
     @Expose()
-    role: string;
+    role: Role;
 
     @ApiProperty({
         example: '1M3-CO',
@@ -94,4 +95,30 @@ export class StudentEntity implements Student {
     @IsString()
     @IsStrongPassword()
     password: string;
+
+    @ApiProperty({
+        example: 'some description',
+        description: 'Student description',
+        nullable: true,
+        type: 'string'
+    })
+    @Expose()
+    @IsString()
+    description: string | null;
+
+    @ApiProperty({
+        example: 'some description',
+        description: 'Student description',
+        nullable: true,
+        type: 'string'
+    })
+    @Expose()
+    @IsString()
+    city: string | null;
+
+    @ApiProperty({
+        description: 'Student avatar'
+    })
+    @Expose()
+    avatar: string;
 }

@@ -1,57 +1,63 @@
 /* eslint-disable indent */
 import { ApiProperty } from '@nestjs/swagger';
-import type { Teacher } from '@prisma/client';
-import { Exclude } from 'class-transformer';
-import { CourseEntity } from './course.entity';
+import { Expose } from 'class-transformer';
+import { Teacher, Role } from '@prisma/client';
 
 export class TeacherEntity implements Teacher {
     @ApiProperty({
         example: '2022-0381U',
         description: 'Teacher id'
     })
+    @Expose()
     id: string;
 
     @ApiProperty({
         example: 'federicoxd@gmail.com',
         description: 'Teacher email'
     })
+    @Expose()
     email: string;
 
     @ApiProperty({
         example: 'Federico',
         description: 'Teacher first name'
     })
+    @Expose()
     firstName: string;
 
     @ApiProperty({
         example: 'Diaz',
         description: 'Teacher last name'
     })
+    @Expose()
     lastName: string;
 
-    @Exclude()
-    password: string;
-
     @ApiProperty({
-        example: 'TEACHER',
+        example: Role.TEACHER,
         description: 'Teacher role',
-        default: 'TEACHER'
+        default: Role.TEACHER,
+        type: 'enum',
+        enum: Role
     })
-    role: string;
+    @Expose()
+    role: Role;
 
     @ApiProperty({
         example: 'FACULTAD DE INGENIERIA',
         description: 'Teacher faculty'
     })
+    @Expose()
     faculty: string;
 
+    @ApiProperty({
+        example: 'avatar',
+        description: 'Teacher avatar'
+    })
+    @Expose()
+    avatar: string;
+
+    password: string;
     deleted: Date | null;
     createdAt: Date;
     updatedAt: Date;
-
-    @ApiProperty({
-        description: 'Courses assigned to the teacher',
-        type: [CourseEntity]
-    })
-    courses: CourseEntity[];
 }

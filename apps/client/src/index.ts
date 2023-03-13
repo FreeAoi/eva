@@ -7,9 +7,9 @@ const configuration = new rest.Configuration({
 const restClient = {
     student: new rest.StudentApi(configuration),
     course: new rest.CourseApi(configuration),
-    group: new rest.GroupApi(configuration),
     auth: new rest.AuthenticationApi(configuration),
-    default: new rest.DefaultApi(configuration)
+    task: new rest.TaskApi(configuration),
+    teacher: new rest.TeacherApi(configuration)
 };
 
 export default restClient;

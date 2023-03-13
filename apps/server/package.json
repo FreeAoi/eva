@@ -4,17 +4,20 @@
 	"main": "build/src/index.js",
 	"license": "ISC",
 	"type": "commonjs",
+	"scripts": {
+		"dev": "nodemon --config nodemon.json"
+	},
 	"dependencies": {
 		"@aws-sdk/client-s3": "^3.238.0",
-		"@fastify/multipart": "^7.3.0",
 		"@fastify/static": "^6.6.0",
+		"@nest-lab/fastify-multer": "^1.1.0",
 		"@nestjs/bull": "^0.6.2",
 		"@nestjs/common": "^9.2.1",
 		"@nestjs/core": "^9.2.1",
 		"@nestjs/jwt": "^10.0.1",
 		"@nestjs/passport": "^9.0.0",
-		"@nestjs/platform-fastify": "^9.2.1",
-		"@nestjs/swagger": "^6.1.4",
+		"@nestjs/platform-fastify": "^9.3.8",
+		"@nestjs/swagger": "^6.2.1",
 		"@prisma/client": "^4.9.0",
 		"bcrypt": "^5.1.0",
 		"bull": "^4.10.2",
@@ -30,7 +33,6 @@
 		"rxjs": "^7.5.7"
 	},
 	"devDependencies": {
-		"fastify": "^4.10.2",
 		"@compodoc/compodoc": "^1.1.19",
 		"@nestjs/testing": "^9.2.1",
 		"@swc/cli": "^0.1.57",
@@ -40,13 +42,15 @@
 		"@types/bull": "^4.10.0",
 		"@types/jest": "^29.2.6",
 		"@types/morgan": "^1.9.3",
+		"@types/multer": "^1.4.7",
 		"@types/passport-jwt": "^3.0.7",
+		"fastify": "^4.10.2",
 		"form-data": "^4.0.0",
 		"jest": "^29.4.0",
 		"prisma": "^4.9.0",
 		"prisma-dbml-generator": "^0.10.0"
 	},
 	"prisma": {
-		"seed": "swc prisma/seed.ts --out-dir build/prisma && node build/prisma/seed.js"
+		"seed": "node prisma/seed.js"
 	}
 }
