@@ -11,7 +11,7 @@ const logger: Middleware = async (url, init, next) => {
 
 const fetcher = Fetcher.for<paths>();
 fetcher.configure({
-    baseUrl: 'http://localhost:3001',
+    baseUrl: process.env.API_URL,
     use: [logger]
 });
 
