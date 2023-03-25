@@ -1,32 +1,27 @@
 import { getServerSession } from 'next-auth';
 import Link from 'next/link';
 import CourseCard from './courseCard';
-import restClient from '../../src';
+import { getUser } from '../../src/rest';
 import { AuthOptions } from '../../src/pages/api/auth/[...nextauth]';
-
-import type { StudentDTO, TeacherDTO } from '../../src/rest';
+import type { components } from '../../src/rest/api';
 
 export default async function MyScreen() {
     const session = await getServerSession(AuthOptions);
     if (!session) return null;
 
-    const data =
-        session.user.role === 'STUDENT'
-            ? await restClient.student.studentControllerGetMe({
-                headers: {
-                    Authorization: `Bearer ${session?.user.acess_token}`
-                }
-            })
-            : await restClient.teacher.teacherControllerGetTeacher({
-                headers: {
-                    Authorization: `Bearer ${session?.user.acess_token}`
-                }
-            });
+    const { data } = await getUser(session.user.role)(
+        {},
+        {
+            headers: {
+                Authorization: `Bearer ${session.user.acess_token}`
+            }
+        }
+    );
 
     const courses =
         session.user.role === 'STUDENT'
-            ? (data as StudentDTO).group.courses
-            : (data as TeacherDTO).courses;
+            ? (data as components['schemas']['StudentDTO']).group.courses
+            : (data as components['schemas']['TeacherDTO']).courses;
 
     return (
         <div>

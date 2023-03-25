@@ -1,9 +1,8 @@
 import { getServerSession, Session } from 'next-auth';
 import CourseSVG from './courseSVG';
 import { AuthOptions } from '../../../src/pages/api/auth/[...nextauth]';
-import restClient from '../../../src';
+import rest from '../../../src/rest';
 import CourseTab from './courseTab';
-import type { ResponseError } from '../../../src/rest';
 
 export default async function ViewCourse({
     searchParams
@@ -11,18 +10,20 @@ export default async function ViewCourse({
     searchParams: { [key: string]: string | string[] | undefined };
 }) {
     const session = await getServerSession(AuthOptions);
-    const course = await restClient.course
-        .courseControllerGetCourse({
-            courseId: searchParams.id,
-            authorization: `Bearer ${session?.user.acess_token}`
-        })
-        .catch((err: ResponseError) => {
-            console.log(err);
-        });
-
-    if (!course) {
-        return <div>Course not found</div>;
-    }
+    const tabIndex = parseInt(searchParams.tabIndex as string) || 0;
+    const { data: course } = await rest
+        .path('/api/course/{courseId}')
+        .method('get')
+        .create()(
+            {
+                courseId: searchParams.id as string
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${session?.user.acess_token}`
+                }
+            }
+        );
 
     return (
         <div>
@@ -31,7 +32,11 @@ export default async function ViewCourse({
                     <CourseSVG name={course.name} career="Ing. en computación" />
                 </div>
                 <div className="my-2">
-                    <CourseTab course={course} session={session as Session} />
+                    <CourseTab
+                        course={course}
+                        session={session as Session}
+                        index={tabIndex}
+                    />
                 </div>
             </div>
         </div>

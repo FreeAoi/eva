@@ -1,6 +1,6 @@
 import { getServerSession } from 'next-auth';
 import Image from 'next/image';
-import restClient from '../../../src';
+import rest from '../../../src/rest';
 import { AuthOptions } from '../../../src/pages/api/auth/[...nextauth]';
 import ProfileTab from './profileTab';
 
@@ -9,11 +9,14 @@ export default async function Page() {
 
     if (session?.user.role !== 'STUDENT') return null;
 
-    const user = await restClient.student.studentControllerGetMe({
-        headers: {
-            Authorization: `Bearer ${session?.user.acess_token as string}`
+    const { data: user } = await rest.path('/api/student/me').method('get').create()(
+        {},
+        {
+            headers: {
+                Authorization: `Bearer ${session?.user.acess_token}`
+            }
         }
-    });
+    );
 
     return (
         <div className="grid grid-cols-3 m-5">

@@ -3,10 +3,13 @@
 import { Tab } from '@headlessui/react';
 import Link from 'next/link';
 import { useState } from 'react';
-import type { StudentDTO } from '../../../src/rest';
 import { useRouter } from 'next/navigation';
+import type { components } from '../../../src/rest/api';
 
-export default function ProfileTab(props: { user: StudentDTO; token: string }) {
+export default function ProfileTab(props: {
+    user: components['schemas']['StudentDTO'];
+    token: string;
+}) {
     const [selectedFile, setSelectedFile] = useState<FileList | null>(null);
     const [description, setDescription] = useState(props.user.description || '');
     const [city, setCity] = useState(props.user.city || '');
@@ -21,6 +24,7 @@ export default function ProfileTab(props: { user: StudentDTO; token: string }) {
             formData.append('avatar', selectedFile[0]);
         }
 
+        // todo: change to use rest
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/student/me`, {
             method: 'PUT',
             headers: {

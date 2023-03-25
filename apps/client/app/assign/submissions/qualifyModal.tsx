@@ -3,26 +3,38 @@
 import { Fragment, useRef, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { PaperAirplaneIcon } from '@heroicons/react/24/outline';
-import { useRouter } from 'next/navigation';
 import rest from '../../../src/rest';
+import { useRouter } from 'next/navigation';
 
-export default function MyModal(props: { taskId: number; accessToken: string }) {
+interface QualifyModalProps {
+    taskId: number;
+    submissionId: number;
+    accessToken: string;
+}
+
+export default function QualifyModal(props: QualifyModalProps) {
     const [open, setOpen] = useState(false);
-    const [file, setFile] = useState<FileList | null>(null);
+    const [qualification, setQualification] = useState(0);
+    const [comment, setComment] = useState('');
     const cancelButtonRef = useRef(null);
     const router = useRouter();
     const submit = async () => {
-        const formData = new FormData();
-        if (!file) return;
-        formData.append('file', file[0]);
-        formData.append('taskId', props.taskId.toString());
-
-        const uploadFile = rest.path('/api/task/{taskId}/submit').method('post').create();
-        await uploadFile(formData, {
-            headers: {
-                Authorization: `Bearer ${props.accessToken}`
-            }
-        });
+        await rest
+            .path('/api/task/{taskId}/submissions/{submissionId}')
+            .method('post')
+            .create()(
+                {
+                    taskId: props.taskId as unknown as string,
+                    submissionId: props.submissionId as unknown as string,
+                    comment,
+                    score: qualification
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${props.accessToken}`
+                    }
+                }
+            );
 
         setOpen(false);
         router.refresh();
@@ -32,10 +44,10 @@ export default function MyModal(props: { taskId: number; accessToken: string }) 
         <div>
             <button
                 type="button"
-                className="inline-flex items-center px-4 py-1 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-700 hover:bg-indigo-800"
+                className="text-sm font-medium text-indigo-700"
                 onClick={() => setOpen(true)}
             >
-                Subir archivo
+                Editar
             </button>
             <Transition.Root show={open} as={Fragment}>
                 <Dialog
@@ -91,11 +103,26 @@ export default function MyModal(props: { taskId: number; accessToken: string }) 
                                                 </div>
                                                 <div className="mt-2">
                                                     <input
-                                                        onChange={(
-                                                            e: React.ChangeEvent<HTMLInputElement>
-                                                        ) => setFile(e.target.files)}
-                                                        type="file"
-                                                        className="border-gray-200 focus:outline-none w-full cursor-pointer rounded-lg border-[1.5px] font-medium outline-none transition file:mr-5 file:border-collapse file:cursor-pointer file:border-0 file:border-solid file:bg-[#F5F7FD] file:py-3 file:px-5"
+                                                        type="number"
+                                                        className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                                                        placeholder="Calificación"
+                                                        value={qualification}
+                                                        onChange={(e) =>
+                                                            setQualification(
+                                                                +e.target.value
+                                                            )
+                                                        }
+                                                    />
+                                                </div>
+                                                <div className="mt-2">
+                                                    <input
+                                                        type="text"
+                                                        className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                                                        placeholder="Comentario"
+                                                        value={comment}
+                                                        onChange={(e) =>
+                                                            setComment(e.target.value)
+                                                        }
                                                     />
                                                 </div>
                                             </div>
@@ -115,7 +142,7 @@ export default function MyModal(props: { taskId: number; accessToken: string }) 
                                             onClick={() => setOpen(false)}
                                             ref={cancelButtonRef}
                                         >
-                                            Cancel
+                                            Cancelar
                                         </button>
                                     </div>
                                 </Dialog.Panel>

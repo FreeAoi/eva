@@ -1,5 +1,5 @@
 import { getServerSession } from 'next-auth';
-import restClient from '../../../src';
+import rest from '../../../src/rest';
 import { AuthOptions } from '../../../src/pages/api/auth/[...nextauth]';
 import humanizeDuration from 'humanize-duration';
 import dynamic from 'next/dynamic';
@@ -12,11 +12,18 @@ export default async function ViewCourse({
     searchParams: { [key: string]: string | string[] | undefined };
 }) {
     const session = await getServerSession(AuthOptions);
-    const data = await restClient.task.taskControllerGetTask({
-        taskId: searchParams.id as string,
-        authorization: `Bearer ${session?.user.acess_token}`,
-        filter: session?.user.id
-    });
+
+    const { data } = await rest.path('/api/task/{taskId}').method('get').create()(
+        {
+            taskId: searchParams.id as string,
+            filter: session?.user.id
+        },
+        {
+            headers: {
+                Authorization: `Bearer ${session?.user.acess_token}`
+            }
+        }
+    );
 
     const submission = Array.isArray(data.submissions) ? data.submissions[0] : false;
     const overDate = new Date(data.dueDate).getTime() < Date.now();
@@ -151,6 +158,14 @@ export default async function ViewCourse({
                             <th className="p-3 bg-gray-100 w-3/4 font-normal">
                                 {submission && submission.qualified
                                     ? `${submission.teacher.firstName} ${submission.teacher.lastName}`
+                                    : ''}
+                            </th>
+                        </tr>
+                        <tr className="border-b border-gray-300 text-left">
+                            <th className="p-3 bg-gray-100 w-1/4">Comentario</th>
+                            <th className="p-3 bg-gray-100 w-3/4 font-normal">
+                                {submission && submission.qualified
+                                    ? `${submission.comment}`
                                     : ''}
                             </th>
                         </tr>

@@ -20,7 +20,8 @@ export class StudentSubmissionDTO extends PickType(TaskSubmissionEntity, [
     'comment',
     'createdAt',
     'updatedAt',
-    'qualified'
+    'qualified',
+    'studentId'
 ] as const) {
     @ApiProperty({
         description: 'Task submission attachments',
@@ -34,13 +35,17 @@ export class StudentSubmissionDTO extends PickType(TaskSubmissionEntity, [
         type: TeacherSubmissionDTO
     })
     @Expose()
-    teacher: TeacherSubmissionDTO;
+    teacher: TeacherSubmissionDTO | null;
+
+    constructor(submission: Partial<StudentSubmissionDTO>) {
+        super();
+        Object.assign(this, submission);
+    }
 }
 
 export class TaskDTO extends PickType(TaskEntity, [
     'id',
     'title',
-    'description',
     'dueDate',
     'maxScore'
 ] as const) {

@@ -6,6 +6,7 @@ import { RoleGuard } from '../../common/guards/roles.guard';
 import { UpdateCourseDTO } from './dto/update-course.dto';
 import { CheckCourseDTO } from './dto/check-course.dto';
 import {
+    ApiBearerAuth,
     ApiForbiddenResponse,
     ApiHeader,
     ApiNotFoundResponse,
@@ -49,9 +50,14 @@ export class CourseController {
     }
 
     @Get(':courseId')
-    @ApiHeader({ name: 'Authorization', description: 'Bearer token', required: true })
-    @ApiParam({ name: 'courseId', description: 'Course id', example: 'CS-101' })
+    @ApiParam({
+        name: 'courseId',
+        description: 'Course id',
+        example: 'CS-101',
+        type: String
+    })
     @ApiOkResponse({ description: 'Course data', type: CourseDTO })
+    @ApiBearerAuth()
     async getCourse(@Param() params: CheckCourseDTO) {
         const course = await this.coursesService.getCourse(params.courseId);
         const crs = new CourseDTO(course);

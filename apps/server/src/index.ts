@@ -49,6 +49,7 @@ async function bootstrap() {
     const config = new DocumentBuilder()
         .setTitle('EVA API')
         .setDescription('The EVA API documentation')
+        .addBearerAuth()
         .build();
 
     const document = SwaggerModule.createDocument(app, config);

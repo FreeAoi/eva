@@ -1,6 +1,6 @@
 import NextAuth, { NextAuthOptions } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
-import restClient from '../../..';
+import rest from '../../../rest';
 import type { Role } from '../../../../types/next-auth';
 
 export const AuthOptions: NextAuthOptions = {
@@ -16,39 +16,48 @@ export const AuthOptions: NextAuthOptions = {
                 password: {}
             },
             async authorize(credentials) {
-                const auth = await restClient.auth
-                    .authControllerLogin({
-                        body: {
-                            email: credentials?.email,
-                            password: credentials?.password
-                        }
-                    })
-                    .catch(() => ({ accessToken: null }));
-
-                if (!auth.accessToken) {
+                if (!credentials) {
                     throw new Error('Credenciales de usuario invalidas.');
                 }
 
-                const user = await Promise.any([
-                    restClient.student.studentControllerGetMe({
-                        headers: {
-                            Authorization: `Bearer ${auth.accessToken}`
+                const { data, ok } = await rest
+                    .path('/api/auth/login')
+                    .method('post')
+                    .create()({
+                        email: credentials.email,
+                        password: credentials.password
+                    });
+
+                if (!ok) {
+                    throw new Error('Credenciales de usuario invalidas.');
+                }
+
+                const { data: user } = await Promise.any([
+                    rest.path('/api/student/me').method('get').create()(
+                        {},
+                        {
+                            headers: {
+                                Authorization: `Bearer ${data.access_token}`
+                            }
                         }
-                    }),
-                    restClient.teacher.teacherControllerGetTeacher({
-                        headers: {
-                            Authorization: `Bearer ${auth.accessToken}`
+                    ),
+                    rest.path('/api/teacher').method('get').create()(
+                        {},
+                        {
+                            headers: {
+                                Authorization: `Bearer ${data.access_token}`
+                            }
                         }
-                    })
+                    )
                 ]);
-                console.log(user);
+
                 return {
                     id: user.id,
                     role: user.role as Role,
                     name: user.firstName,
                     email: user.email,
                     avatar: user.avatar,
-                    acess_token: auth.accessToken
+                    acess_token: data.access_token
                 };
             }
         })
