@@ -22,5 +22,10 @@ tasks:
       - 'src/index'
     local: true
 
+  test-e2e:
+    command: 'jest --config test/jest.config.js --logHeapUsage'
+    inputs:
+      - 'test/app.e2e-spec.ts'
+
   start:
     command: 'node build/index.js'

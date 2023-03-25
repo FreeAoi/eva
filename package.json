@@ -1,7 +1,7 @@
 {
   "name": "eva-uni",
   "version": "1.0.0",
-  "description": "",
+  "description": ">EVA -> Entorno Virtual de Aprendizaje *(Virtual Learning Environment)*",
   "scripts": {
     "client:dev": "moon run client:dev",
     "lint": "moon run :lint",
@@ -12,22 +12,35 @@
     "server:dev": "moon run server:dev"
   },
   "workspaces": [
-    "apps/*"
+    "apps/client",
+    "apps/server"
   ],
   "license": "ISC",
   "devDependencies": {
-    "@moonrepo/cli": "^0.20.2",
+    "@moonrepo/cli": "^0.21.1",
+    "@typescript-eslint/eslint-plugin": "^5.47.0",
+    "@typescript-eslint/parser": "^5.47.0",
     "eslint": "^8.28.0",
     "eslint-config-moon": "^1.4.1",
     "eslint-config-next": "^13.0.6",
     "husky": "^8.0.2",
     "lint-staged": "^13.0.4",
     "prettier": "^2.8.0",
-    "tsconfig-moon": "^1.2.1",
     "typescript": "^4.9.3"
   },
   "engines": {
     "node": "18.12.1"
   },
-  "packageManager": "npm@8.19.2"
+  "packageManager": "npm@8.19.2",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FreeAoi/eva-uni.git"
+  },
+  "keywords": [],
+  "author": "",
+  "bugs": {
+    "url": "https://github.com/FreeAoi/eva-uni/issues"
+  },
+  "homepage": "https://github.com/FreeAoi/eva-uni#readme"
 }

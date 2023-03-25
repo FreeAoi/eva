@@ -1,20 +1,17 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
-import { Role } from '../constants/roles.enum';
+import type { JWTPayload } from '../../authentication/dto/jwt-payload.dto';
 
 @Injectable()
-export class RolesGuard implements CanActivate {
-    constructor(private reflector: Reflector) {}
-
+export class RoleGuard implements CanActivate {
+    /**
+     * Checks if the user is an employee like a teacher or an admin
+     *
+     * @param context - The execution context
+     * @returns {boolean} - Whether the user has the required roles
+     */
     canActivate(context: ExecutionContext): boolean {
-        const requiredRoles = this.reflector.getAllAndOverride<Role[]>(
-            'roles',
-            [context.getHandler(), context.getClass()]
-        );
-        if (!requiredRoles) {
-            return true;
-        }
-        const { user } = context.switchToHttp().getRequest();
-        return requiredRoles.includes(user.role);
+        const { user }: { user: JWTPayload } = context.switchToHttp().getRequest();
+
+        return user.role !== 'STUDENT';
     }
 }

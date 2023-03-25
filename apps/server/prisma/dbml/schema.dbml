@@ -1,0 +1,141 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Table Career {
+  id Int [pk, increment]
+  name String [not null]
+  groups Group [not null]
+  students Student [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Table Course {
+  id String [pk]
+  name String [not null]
+  groupId String [not null]
+  group Group [not null]
+  teacherId String [not null]
+  teacher Teacher [not null]
+  about String
+  generalObjective String
+  specificObjective String
+  tasks Task [not null]
+}
+
+Table Task {
+  id Int [pk, increment]
+  title String [not null]
+  maxScore Int [not null]
+  courseId String [not null]
+  course Course [not null]
+  dueDate DateTime [not null]
+  deleted DateTime
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  attachments Attachment [not null]
+  submissions TaskSubmission [not null]
+}
+
+Table TaskSubmission {
+  id Int [pk, increment]
+  taskId Int [not null]
+  task Task [not null]
+  studentId String [not null]
+  student Student [not null]
+  score Int [not null, default: 0]
+  qualified Boolean [not null, default: false]
+  comment String
+  attachments Attachment [not null]
+  teacherId String
+  teacher Teacher
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Table Attachment {
+  id Int [pk, increment]
+  name String [not null]
+  url String [not null]
+  taskId Int
+  task Task
+  submissionId Int
+  submission TaskSubmission
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Table Group {
+  id String [pk]
+  name String [not null]
+  careerId Int [not null]
+  career Career [not null]
+  students Student [not null]
+  courses Course [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Table Student {
+  id String [pk]
+  email String [unique, not null]
+  firstName String [not null]
+  lastName String [not null]
+  password String [not null]
+  description String
+  city String
+  avatar String [not null, default: 'https://secure.gravatar.com/avatar/9e1cae43686b4e7202116ba6b1a83b6b?s=100&d=mm']
+  role Role [not null, default: 'STUDENT']
+  groupId String
+  group Group
+  careerId Int [not null]
+  career Career [not null]
+  deleted DateTime
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  taskSubmissions TaskSubmission [not null]
+}
+
+Table Teacher {
+  id String [pk]
+  email String [unique, not null]
+  firstName String [not null]
+  lastName String [not null]
+  password String [not null]
+  role Role [not null, default: 'TEACHER']
+  avatar String [not null, default: 'https://secure.gravatar.com/avatar/9e1cae43686b4e7202116ba6b1a83b6b?s=100&d=mm']
+  faculty String [not null]
+  courses Course [not null]
+  deleted DateTime
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  qualifiedTasks TaskSubmission [not null]
+}
+
+Enum Role {
+  STUDENT
+  TEACHER
+}
+
+Ref: Course.groupId > Group.id
+
+Ref: Course.teacherId > Teacher.id
+
+Ref: Task.courseId > Course.id
+
+Ref: TaskSubmission.taskId > Task.id
+
+Ref: TaskSubmission.studentId > Student.id
+
+Ref: TaskSubmission.teacherId > Teacher.id
+
+Ref: Attachment.taskId > Task.id
+
+Ref: Attachment.submissionId > TaskSubmission.id
+
+Ref: Group.careerId > Career.id
+
+Ref: Student.groupId > Group.id
+
+Ref: Student.careerId > Career.id

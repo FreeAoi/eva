@@ -3,13 +3,14 @@
   "compilerOptions": {
     "module": "CommonJS",
     "outDir": "build",
-    "importsNotUsedAsValues": "preserve",
     "strictPropertyInitialization": false,
     "allowSyntheticDefaultImports": true
   },
   "include": [
     "src",
-    "**/*.ts"
+    "**/*.ts",
+    "prisma/seed.js",
+    "prisma/seed.js"
   ],
   "exclude": [
     "node_modules",

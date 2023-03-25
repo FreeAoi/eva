@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars,@typescript-eslint/no-empty-interface */
 import NextAuth, { DefaultSession, User } from 'next-auth';
 import { JWT } from 'next-auth/jwt';
+import type { CourseInGroupInStudent } from '../src/rest';
 
-enum Roles {
-    ADMIN = 'ADMIN',
+export enum Role {
     STUDENT = 'STUDENT',
     TEACHER = 'TEACHER'
 }
@@ -13,9 +13,9 @@ declare module 'next-auth' {
         id: string;
         name: string;
         email: string;
-        role: Roles;
-        career: string;
-        accessToken: string;
+        avatar: string;
+        role: Role;
+        acess_token: string;
     }
 
     interface Session {
@@ -26,9 +26,5 @@ declare module 'next-auth' {
 declare module 'next-auth/jwt' {
     interface JWT {
         user: User & DefaultSession['user'];
-        /*user: {
-            id: string;
-            accessToken: string;
-        } & DefaultSession['user'];*/
     }
 }

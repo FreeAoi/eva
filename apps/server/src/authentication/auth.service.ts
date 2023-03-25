@@ -1,38 +1,41 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { Student } from '@prisma/client';
-import { StudentsService } from '../modules/students/students.service';
-import { JWTPayload } from './interfaces/jwt-payload.interface';
+import { StudentService } from '../modules/student/student.service';
+import { TeacherService } from '../modules/teacher/teacher.service';
+import type { JWTPayload } from './dto/jwt-payload.dto';
+import type { Student, Teacher } from '@prisma/client';
+import bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
     constructor(
         private jwtService: JwtService,
-        private studentsService: StudentsService
+        private studentsService: StudentService,
+        private teachersService: TeacherService
     ) {}
 
-    async genAccToken(student: Student) {
+    genAccToken(user: Student | Teacher) {
         const payload: JWTPayload = {
-            email: student.email,
-            id: student.id,
-            role: student.role
+            email: user.email,
+            id: user.id,
+            role: user.role
         };
         return {
             access_token: this.jwtService.sign(payload)
         };
     }
 
-    async validateStudent(email: string, password: string) {
-        const student = await this.studentsService.getStudentByEmail(email);
-        if (
-            student &&
-            (await this.studentsService.comparePassword(
-                password,
-                student.password
-            ))
-        ) {
-            return student;
-        }
-        return null;
+    async comparePassword(password: string, hash: string) {
+        return bcrypt.compare(password, hash);
+    }
+
+    async validate(email: string, password: string) {
+        const user = await Promise.any([
+            this.studentsService.get({ email }),
+            this.teachersService.get({ email })
+        ]);
+
+        if (!user) return null;
+        return (await this.comparePassword(password, user.password)) ? user : null;
     }
 }

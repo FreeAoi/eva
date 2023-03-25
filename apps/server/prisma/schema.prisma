@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["views"]
 }
 
 datasource db {
@@ -7,10 +8,15 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+generator dbml {
+  provider = "prisma-dbml-generator"
+}
+
 model Career {
-  id       Int       @id @default(autoincrement())
-  name     String
-  courses  Course[]
+  id   Int    @id @default(autoincrement())
+  name String
+
+  groups   Group[]
   students Student[]
 
   createdAt DateTime @default(now())
@@ -18,43 +24,136 @@ model Career {
 }
 
 model Course {
-  id           String        @id
-  name         String
-  credits      Int
-  instructor   String
-  careerId     Int?
-  career       Career?       @relation(fields: [careerId], references: [id])
-  performances Performance[]
-  students     Student[]
+  id   String @id
+  name String
+
+  groupId String
+  group   Group  @relation(fields: [groupId], references: [id])
+
+  teacherId String
+  teacher   Teacher @relation(fields: [teacherId], references: [id])
+
+  about String?
+
+  generalObjective  String?
+  specificObjective String?
+
+  tasks Task[]
 }
 
-model Performance {
-  studentId String
-  courseId  String
-  note      Int
-  course    Course  @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+model Task {
+  id    Int    @id @default(autoincrement())
+  title String
 
-  @@id([studentId, courseId])
+  maxScore Int
+
+  courseId String
+  course   Course @relation(fields: [courseId], references: [id])
+
+  dueDate   DateTime
+  deleted   DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  attachments Attachment[]
+  submissions TaskSubmission[]
+}
+
+model TaskSubmission {
+  id Int @id @default(autoincrement())
+
+  taskId Int
+  task   Task @relation(fields: [taskId], references: [id])
+
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id])
+
+  score     Int     @default(0)
+  qualified Boolean @default(false)
+  comment   String?
+
+  attachments Attachment[]
+
+  teacherId String?
+  teacher   Teacher? @relation(fields: [teacherId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Attachment {
+  id   Int    @id @default(autoincrement())
+  name String
+  url  String
+
+  taskId Int?
+  task   Task? @relation(fields: [taskId], references: [id])
+
+  submissionId Int?
+  submission   TaskSubmission? @relation(fields: [submissionId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Group {
+  id   String @id
+  name String
+
+  careerId Int
+  career   Career @relation(fields: [careerId], references: [id])
+
+  students Student[]
+  courses  Course[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Student {
-  id           String        @id
-  email        String        @unique
-  password     String
-  firstName    String
-  lastName     String
-  role         Role          @default(STUDENT)
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  careerId     Int?
-  career       Career?       @relation(fields: [careerId], references: [id])
-  performances Performance[]
-  courses      Course[]
+  id          String  @id
+  email       String  @unique
+  firstName   String
+  lastName    String
+  password    String
+
+  description String?
+  city        String?
+
+  avatar      String  @default("https://secure.gravatar.com/avatar/9e1cae43686b4e7202116ba6b1a83b6b?s=100&d=mm")
+  role        Role    @default(STUDENT)
+
+  groupId String?
+  group   Group?  @relation(fields: [groupId], references: [id])
+
+  careerId Int
+  career   Career @relation(fields: [careerId], references: [id])
+
+  deleted         DateTime?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  taskSubmissions TaskSubmission[]
+}
+
+model Teacher {
+  id        String @id
+  email     String @unique
+  firstName String
+  lastName  String
+  password  String
+  role      Role @default(TEACHER)
+  avatar    String @default("https://secure.gravatar.com/avatar/9e1cae43686b4e7202116ba6b1a83b6b?s=100&d=mm")
+
+  faculty String
+  courses Course[]
+
+  deleted        DateTime?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  qualifiedTasks TaskSubmission[]
 }
 
 enum Role {
   STUDENT
-  ADMIN
   TEACHER
 }

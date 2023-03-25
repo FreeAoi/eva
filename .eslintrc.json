@@ -14,6 +14,10 @@
 		"arrow-parens": "warn",
 		"indent": ["error", 4],
 		"quotes": ["error", "single"],
-		"semi": ["error", "always"]
+		"semi": ["error", "always"],
+		"@typescript-eslint/no-unused-vars": ["error", {
+			"ignoreRestSiblings": true
+		}],
+		"@typescript-eslint/ban-ts-comment": "off"
 	}
 }

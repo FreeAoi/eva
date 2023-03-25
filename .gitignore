@@ -2,10 +2,13 @@
 .moon/cache
 .moon/docker
 node_modules
+
+# things
 build/
 .env
 .idea
 .vscode
+documentation
 
 # next.js
 .next/
@@ -30,3 +33,5 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+*.code-workspace
