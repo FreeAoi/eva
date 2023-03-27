@@ -17,6 +17,7 @@ export default function AssignCreatePage({
     const [taskScore, setTaskScore] = useState('');
     const [taskDueDate, setTaskDueDate] = useState('');
     const router = useRouter();
+    console.log(courseId);
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -27,6 +28,7 @@ export default function AssignCreatePage({
         formData.append('maxScore', taskScore);
         formData.append('dueDate', new Date(taskDueDate).toISOString());
         formData.append('courseId', courseId);
+        console.log(courseId, formData.get('courseId'));
 
         await rest.path('/api/task').method('post').create({
             courseId: 1,
