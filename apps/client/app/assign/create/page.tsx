@@ -4,20 +4,17 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import rest from '../../../src/rest';
+import { useSearchParams } from 'next/navigation';
 
-export default function AssignCreatePage({
-    searchParams,
-}: {
-    searchParams: { [key: string]: string | string[] | undefined };
-}) {
+export default function AssignCreatePage() {
     const { data: session } = useSession();
-    const courseId = searchParams.course as string;
+    const params = useSearchParams();
 
     const [taskName, setTaskName] = useState('');
     const [taskScore, setTaskScore] = useState('');
     const [taskDueDate, setTaskDueDate] = useState('');
     const router = useRouter();
-    console.log(courseId);
+    console.log(params.get('course'));
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -27,8 +24,8 @@ export default function AssignCreatePage({
         formData.append('title', taskName);
         formData.append('maxScore', taskScore);
         formData.append('dueDate', new Date(taskDueDate).toISOString());
-        formData.append('courseId', courseId);
-        console.log(courseId, formData.get('courseId'));
+        formData.append('courseId', params.get('course') as string);
+        console.log(formData.get('courseId'));
 
         await rest.path('/api/task').method('post').create({
             courseId: 1,
@@ -38,7 +35,7 @@ export default function AssignCreatePage({
             },
         });
 
-        router.push(`/course/view?id=${courseId}&tabIndex=4`);
+        router.push(`/course/view?id=${params.get('course')}&tabIndex=4`);
     };
 
     return (
