@@ -11,18 +11,18 @@ function classNames(...classes: string[]) {
 
 export default function NavDropdown(data: { name: string; avatar: string }) {
     return (
-        <Menu as="div" className="relative inline-block text-left">
+        <Menu as='div' className='relative inline-block text-left'>
             <div>
-                <Menu.Button className="flex items-center text-white mr-6">
+                <Menu.Button className='flex items-center text-white mr-6'>
                     <Image
                         src={data.avatar}
-                        alt="avatar"
-                        className="w-auto rounded-full"
+                        alt='avatar'
+                        className='w-auto rounded-full'
                         width={30}
                         height={30}
                         priority
                     />
-                    <span className="font-normal text-base tracking-tight ml-2">
+                    <span className='font-normal text-base tracking-tight ml-2'>
                         {data.name}
                     </span>
                 </Menu.Button>
@@ -30,19 +30,19 @@ export default function NavDropdown(data: { name: string; avatar: string }) {
 
             <Transition
                 as={Fragment}
-                enter="transition ease-out duration-100"
-                enterFrom="transform opacity-0 scale-95"
-                enterTo="transform opacity-100 scale-100"
-                leave="transition ease-in duration-75"
-                leaveFrom="transform opacity-100 scale-100"
-                leaveTo="transform opacity-0 scale-95"
+                enter='transition ease-out duration-100'
+                enterFrom='transform opacity-0 scale-95'
+                enterTo='transform opacity-100 scale-100'
+                leave='transition ease-in duration-75'
+                leaveFrom='transform opacity-100 scale-100'
+                leaveTo='transform opacity-0 scale-95'
             >
-                <Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                    <div className="py-1">
+                <Menu.Items className='absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none'>
+                    <div className='py-1'>
                         <Menu.Item>
                             {({ active }) => (
                                 <Link
-                                    href="/my"
+                                    href='/my'
                                     className={classNames(
                                         active
                                             ? 'bg-gray-100 text-gray-900'
@@ -57,7 +57,7 @@ export default function NavDropdown(data: { name: string; avatar: string }) {
                         <Menu.Item>
                             {({ active }) => (
                                 <a
-                                    href="/user/profile"
+                                    href='/user/profile'
                                     className={classNames(
                                         active
                                             ? 'bg-gray-100 text-gray-900'
@@ -72,7 +72,7 @@ export default function NavDropdown(data: { name: string; avatar: string }) {
                         <Menu.Item>
                             {({ active }) => (
                                 <Link
-                                    href="/api/auth/signout?callbackUrl=/"
+                                    href='/api/auth/signout?callbackUrl=/'
                                     className={classNames(
                                         active
                                             ? 'bg-gray-100 text-gray-900'

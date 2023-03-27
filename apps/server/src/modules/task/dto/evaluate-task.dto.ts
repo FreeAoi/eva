@@ -17,7 +17,7 @@ export class UpdateSubmissionDTO {
     @IsString()
     @ApiPropertyOptional({
         description: 'Comment for the submission',
-        example: 'Good job!'
+        example: 'Good job!',
     })
     comment: string;
 }

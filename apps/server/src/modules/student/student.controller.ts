@@ -8,7 +8,7 @@ import {
     Put,
     UploadedFile,
     UseGuards,
-    UseInterceptors
+    UseInterceptors,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { StudentService } from './student.service';
@@ -31,7 +31,7 @@ export class StudentController {
     @UseInterceptors(ClassSerializerInterceptor)
     @ApiAcceptedResponse({
         description: 'Student data',
-        type: StudentDTO
+        type: StudentDTO,
     })
     async getMe(@CurrentUser() user: JWTPayload) {
         const student = await this.studentsService.get({ id: user.id });
@@ -46,10 +46,12 @@ export class StudentController {
     @Post('create')
     @ApiAcceptedResponse({
         description: 'Student created',
-        type: StudentDTO
+        type: StudentDTO,
     })
     async registerStudent(@Body() student: RegisterStudentDTO) {
-        const studentCreated = await this.studentsService.registerStudent(student);
+        const studentCreated = await this.studentsService.registerStudent(
+            student
+        );
         return new StudentDTO(studentCreated);
     }
 
@@ -58,7 +60,7 @@ export class StudentController {
     @UseGuards(AuthGuard('jwt'))
     @ApiAcceptedResponse({
         description: 'Student updated',
-        type: StudentDTO
+        type: StudentDTO,
     })
     @ApiConsumes('multipart/form-data')
     async updateStudent(

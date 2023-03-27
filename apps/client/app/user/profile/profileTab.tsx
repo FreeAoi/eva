@@ -11,7 +11,9 @@ export default function ProfileTab(props: {
     token: string;
 }) {
     const [selectedFile, setSelectedFile] = useState<FileList | null>(null);
-    const [description, setDescription] = useState(props.user.description || '');
+    const [description, setDescription] = useState(
+        props.user.description || ''
+    );
     const [city, setCity] = useState(props.user.city || '');
     const [status, setStatus] = useState(false);
     const router = useRouter();
@@ -25,13 +27,16 @@ export default function ProfileTab(props: {
         }
 
         // todo: change to use rest
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/student/me`, {
-            method: 'PUT',
-            headers: {
-                Authorization: `Bearer ${props.token}`
-            },
-            body: formData
-        });
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/student/me`,
+            {
+                method: 'PUT',
+                headers: {
+                    Authorization: `Bearer ${props.token}`,
+                },
+                body: formData,
+            }
+        );
 
         if (response.ok) {
             setStatus(true);
@@ -41,11 +46,13 @@ export default function ProfileTab(props: {
 
     return (
         <Tab.Group>
-            <Tab.List className="flex h-auto gap-2 border-b-2 border-blue-900">
+            <Tab.List className='flex h-auto gap-2 border-b-2 border-blue-900'>
                 <Tab
                     className={({ selected }) =>
                         `${
-                            selected ? 'bg-blue-900 text-white' : 'bg-gray-300 text-black'
+                            selected
+                                ? 'bg-blue-900 text-white'
+                                : 'bg-gray-300 text-black'
                         } py-2 px-4 outline-none`
                     }
                 >
@@ -54,7 +61,9 @@ export default function ProfileTab(props: {
                 <Tab
                     className={({ selected }) =>
                         `${
-                            selected ? 'bg-blue-900 text-white' : 'bg-gray-300 text-black'
+                            selected
+                                ? 'bg-blue-900 text-white'
+                                : 'bg-gray-300 text-black'
                         } py-2 px-4 outline-none`
                     }
                 >
@@ -63,7 +72,9 @@ export default function ProfileTab(props: {
                 <Tab
                     className={({ selected }) =>
                         `${
-                            selected ? 'bg-blue-900 text-white' : 'bg-gray-300 text-black'
+                            selected
+                                ? 'bg-blue-900 text-white'
+                                : 'bg-gray-300 text-black'
                         } py-2 px-4 outline-none`
                     }
                 >
@@ -71,76 +82,76 @@ export default function ProfileTab(props: {
                 </Tab>
             </Tab.List>
             <Tab.Panels>
-                <Tab.Panel key="about">
-                    <div className="p-4">
-                        <h1 className="font-semibold">Descripcion</h1>
+                <Tab.Panel key='about'>
+                    <div className='p-4'>
+                        <h1 className='font-semibold'>Descripcion</h1>
                         <p>
                             {props.user.description ||
                                 'El usuario aún no ha actualizado su descripción.'}
                         </p>
-                        <h1 className="font-semibold mt-4">Intereses</h1>
+                        <h1 className='font-semibold mt-4'>Intereses</h1>
                         <p>El usuario aún no ha actualizado sus intereses.</p>
-                        <h1 className="font-semibold mt-4">Departamento</h1>
+                        <h1 className='font-semibold mt-4'>Departamento</h1>
                         {props.user.id}{' '}
                         {(props.user.career as Record<string, string>).name}
                     </div>
                 </Tab.Panel>
-                <Tab.Panel key="courses">
-                    <div className="p-4">
-                        <h1 className="font-semibold">Perfiles de curso</h1>
+                <Tab.Panel key='courses'>
+                    <div className='p-4'>
+                        <h1 className='font-semibold'>Perfiles de curso</h1>
                         {props.user.group.courses.map((course) => (
                             <Link
                                 href={{
                                     pathname: 'course/view',
                                     query: {
-                                        id: course.id
-                                    }
+                                        id: course.id,
+                                    },
                                 }}
                                 key={course.id}
-                                className="text-blue-900"
+                                className='text-blue-900'
                             >
                                 {course.name} ({props.user.group.id})
                             </Link>
                         ))}
                     </div>
                 </Tab.Panel>
-                <Tab.Panel key="edit">
-                    <div className="p-4">
-                        <h1 className="font-semibold">Editar perfil</h1>
+                <Tab.Panel key='edit'>
+                    <div className='p-4'>
+                        <h1 className='font-semibold'>Editar perfil</h1>
                         <textarea
-                            className="w-full h-40"
-                            placeholder="Descripción"
+                            className='w-full h-40'
+                            placeholder='Descripción'
                             value={description}
-                            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                                setDescription(e.target.value)
-                            }
+                            onChange={(
+                                e: React.ChangeEvent<HTMLTextAreaElement>
+                            ) => setDescription(e.target.value)}
                         />
                         <input
-                            className="w-full h-10 border border-gray-700 px-2 outline-none rounded-lg"
+                            className='w-full h-10 border border-gray-700 px-2 outline-none rounded-lg'
                             value={city}
-                            placeholder="Ciudad"
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                                setCity(e.target.value)
-                            }
+                            placeholder='Ciudad'
+                            onChange={(
+                                e: React.ChangeEvent<HTMLInputElement>
+                            ) => setCity(e.target.value)}
                         />
 
-                        <div className="my-3">
-                            <h1 className="font-semibold">Imagen de usuario</h1>
+                        <div className='my-3'>
+                            <h1 className='font-semibold'>Imagen de usuario</h1>
                             <input
-                                type="file"
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                                    setSelectedFile(e.target.files)
-                                }
+                                type='file'
+                                onChange={(
+                                    e: React.ChangeEvent<HTMLInputElement>
+                                ) => setSelectedFile(e.target.files)}
                             />
                         </div>
                         {status && (
-                            <p className="text-green-800 my-2">
-                                Cambios guardados correctamente, algunos cambios pueden
-                                tardar en reflejarse.
+                            <p className='text-green-800 my-2'>
+                                Cambios guardados correctamente, algunos cambios
+                                pueden tardar en reflejarse.
                             </p>
                         )}
                         <button
-                            className="bg-blue-900 text-white px-4 py-2 rounded-md"
+                            className='bg-blue-900 text-white px-4 py-2 rounded-md'
                             onClick={() => submit()}
                         >
                             Guardar

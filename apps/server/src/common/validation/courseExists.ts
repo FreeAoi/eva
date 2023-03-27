@@ -1,6 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 
-import { ValidatorConstraint, ValidatorConstraintInterface } from 'class-validator';
+import {
+    ValidatorConstraint,
+    ValidatorConstraintInterface,
+} from 'class-validator';
 import { CourseService } from '../../modules/course/course.service';
 
 @ValidatorConstraint({ name: 'CourseExists', async: true })

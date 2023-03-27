@@ -8,11 +8,11 @@ import { TeacherEntity } from '../../../providers/database/entities/teacher.enti
 
 export class TeacherSubmissionDTO extends PickType(TeacherEntity, [
     'firstName',
-    'lastName'
+    'lastName',
 ] as const) {}
 export class AttachmentSubmissionDTO extends PickType(AttachmentEntity, [
     'name',
-    'url'
+    'url',
 ] as const) {}
 export class StudentSubmissionDTO extends PickType(TaskSubmissionEntity, [
     'id',
@@ -21,18 +21,18 @@ export class StudentSubmissionDTO extends PickType(TaskSubmissionEntity, [
     'createdAt',
     'updatedAt',
     'qualified',
-    'studentId'
+    'studentId',
 ] as const) {
     @ApiProperty({
         description: 'Task submission attachments',
-        type: [AttachmentSubmissionDTO]
+        type: [AttachmentSubmissionDTO],
     })
     @Expose()
     attachments: AttachmentSubmissionDTO[];
 
     @ApiProperty({
         description: 'Teacher who qualified the submission',
-        type: TeacherSubmissionDTO
+        type: TeacherSubmissionDTO,
     })
     @Expose()
     teacher: TeacherSubmissionDTO | null;
@@ -47,12 +47,12 @@ export class TaskDTO extends PickType(TaskEntity, [
     'id',
     'title',
     'dueDate',
-    'maxScore'
+    'maxScore',
 ] as const) {
     @ApiProperty({
         description: 'Task submission',
         type: [StudentSubmissionDTO],
-        nullable: true
+        nullable: true,
     })
     @Expose()
     submissions: StudentSubmissionDTO[] | null;

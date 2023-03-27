@@ -13,7 +13,7 @@ export class UploadProducer {
     ) {
         const attachments = files.map((file) => ({
             name: file.originalname,
-            buffer: file.buffer
+            buffer: file.buffer,
         }));
 
         await this.upload.add(
@@ -26,7 +26,10 @@ export class UploadProducer {
     async uploadAvatar(file: Express.Multer.File, studentId: string) {
         await this.upload.add(
             'avatar',
-            { attachment: { name: file.originalname, buffer: file.buffer }, studentId },
+            {
+                attachment: { name: file.originalname, buffer: file.buffer },
+                studentId,
+            },
             { removeOnComplete: true }
         );
     }

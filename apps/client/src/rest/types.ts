@@ -1,4 +1,11 @@
-export type Method = 'get' | 'post' | 'put' | 'patch' | 'delete' | 'head' | 'options';
+export type Method =
+    | 'get'
+    | 'post'
+    | 'put'
+    | 'patch'
+    | 'delete'
+    | 'head'
+    | 'options';
 
 export type OpenapiPaths<Paths> = {
     [P in keyof Paths]: {
@@ -27,7 +34,10 @@ export type OpArgType<OP> = OP extends {
 }
     ? FD extends Record<string, string>
         ? FormData
-        : P & Q & (B extends Record<string, unknown> ? B[keyof B] : unknown) & RB
+        : P &
+              Q &
+              (B extends Record<string, unknown> ? B[keyof B] : unknown) &
+              RB
     : Record<string, never>;
 
 type OpResponseTypes<OP> = OP extends {
@@ -56,7 +66,9 @@ type _OpReturnType<T> = 200 extends keyof T
 
 export type OpReturnType<OP> = _OpReturnType<OpResponseTypes<OP>>;
 
-type _OpDefaultReturnType<T> = 'default' extends keyof T ? T['default'] : unknown;
+type _OpDefaultReturnType<T> = 'default' extends keyof T
+    ? T['default']
+    : unknown;
 
 export type OpDefaultReturnType<OP> = _OpDefaultReturnType<OpResponseTypes<OP>>;
 
@@ -82,7 +94,10 @@ export type CustomRequestInit = Omit<RequestInit, 'headers'> & {
     readonly headers: Headers;
 };
 
-export type Fetch = (url: string, init: CustomRequestInit) => Promise<ApiResponse>;
+export type Fetch = (
+    url: string,
+    init: CustomRequestInit
+) => Promise<ApiResponse>;
 
 export type _TypedFetch<OP> = (
     arg: OpArgType<OP>,
@@ -95,13 +110,17 @@ export type TypedFetch<OP> = _TypedFetch<OP> & {
     };
 };
 
-export type FetchArgType<F> = F extends TypedFetch<infer OP> ? OpArgType<OP> : never;
+export type FetchArgType<F> = F extends TypedFetch<infer OP>
+    ? OpArgType<OP>
+    : never;
 
 export type FetchReturnType<F> = F extends TypedFetch<infer OP>
     ? OpReturnType<OP>
     : never;
 
-export type FetchErrorType<F> = F extends TypedFetch<infer OP> ? OpErrorType<OP> : never;
+export type FetchErrorType<F> = F extends TypedFetch<infer OP>
+    ? OpErrorType<OP>
+    : never;
 
 type _CreateFetch<OP, Q = never> = [Q] extends [never]
     ? () => TypedFetch<OP>

@@ -11,11 +11,11 @@ export class R2Module {
             providers: [
                 {
                     provide: 'OPTIONS',
-                    useValue: options
+                    useValue: options,
                 },
-                R2Service
+                R2Service,
             ],
-            exports: [R2Service]
+            exports: [R2Service],
         };
     }
 }

@@ -18,10 +18,10 @@ export class AuthService {
         const payload: JWTPayload = {
             email: user.email,
             id: user.id,
-            role: user.role
+            role: user.role,
         };
         return {
-            access_token: this.jwtService.sign(payload)
+            access_token: this.jwtService.sign(payload),
         };
     }
 
@@ -32,10 +32,12 @@ export class AuthService {
     async validate(email: string, password: string) {
         const user = await Promise.any([
             this.studentsService.get({ email }),
-            this.teachersService.get({ email })
+            this.teachersService.get({ email }),
         ]);
 
         if (!user) return null;
-        return (await this.comparePassword(password, user.password)) ? user : null;
+        return (await this.comparePassword(password, user.password))
+            ? user
+            : null;
     }
 }

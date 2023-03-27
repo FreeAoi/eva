@@ -13,11 +13,11 @@ export class GroupController {
     @Get(':id')
     @ApiAcceptedResponse({
         description: 'Group data',
-        type: GroupEntity
+        type: GroupEntity,
     })
     @ApiParam({
         name: 'id',
-        description: 'Group id'
+        description: 'Group id',
     })
     async getGroup(@Param('id') id: string) {
         return this.groupService.get(id);
@@ -26,11 +26,11 @@ export class GroupController {
     @Patch(':id')
     @ApiAcceptedResponse({
         description: 'Group updated',
-        type: GroupEntity
+        type: GroupEntity,
     })
     @ApiParam({
         name: 'id',
-        description: 'Group id'
+        description: 'Group id',
     })
     async updateGroup(@Param('id') id: string, @Body() data: UpdateGroupDTO) {
         return this.groupService.update(id, data);
@@ -39,7 +39,7 @@ export class GroupController {
     @Post()
     @ApiAcceptedResponse({
         description: 'Group created',
-        type: GroupEntity
+        type: GroupEntity,
     })
     async createGroup(@Body() data: CreateGroupDTO) {
         return this.groupService.create(data);

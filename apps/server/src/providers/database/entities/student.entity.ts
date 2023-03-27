@@ -2,12 +2,18 @@
 import { Role, Student } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
-import { IsEmail, IsEmpty, IsNumber, IsString, IsStrongPassword } from 'class-validator';
+import {
+    IsEmail,
+    IsEmpty,
+    IsNumber,
+    IsString,
+    IsStrongPassword,
+} from 'class-validator';
 
 export class StudentEntity implements Student {
     @ApiProperty({
         example: '2022-0381U',
-        description: 'Student id'
+        description: 'Student id',
     })
     @IsString()
     @Expose()
@@ -15,7 +21,7 @@ export class StudentEntity implements Student {
 
     @ApiProperty({
         example: 'uwu@gmail.com',
-        description: 'Student email'
+        description: 'Student email',
     })
     @IsEmail()
     @Expose()
@@ -23,7 +29,7 @@ export class StudentEntity implements Student {
 
     @ApiProperty({
         example: 'John',
-        description: 'Student first name'
+        description: 'Student first name',
     })
     @IsString()
     @Expose()
@@ -31,7 +37,7 @@ export class StudentEntity implements Student {
 
     @ApiProperty({
         example: 'Doe',
-        description: 'Student last name'
+        description: 'Student last name',
     })
     @IsString()
     @Expose()
@@ -41,7 +47,7 @@ export class StudentEntity implements Student {
         description: 'Student role',
         type: 'enum',
         enum: Role,
-        example: Role.STUDENT
+        example: Role.STUDENT,
     })
     @IsEmpty()
     @Expose()
@@ -49,7 +55,7 @@ export class StudentEntity implements Student {
 
     @ApiProperty({
         example: '1M3-CO',
-        description: 'Student group id'
+        description: 'Student group id',
     })
     @IsString()
     @Expose()
@@ -57,7 +63,7 @@ export class StudentEntity implements Student {
 
     @ApiProperty({
         example: 1,
-        description: 'Student career id'
+        description: 'Student career id',
     })
     @IsNumber()
     @Expose()
@@ -65,7 +71,7 @@ export class StudentEntity implements Student {
 
     @ApiProperty({
         example: '2021-01-01',
-        description: 'Date when student was deleted'
+        description: 'Date when student was deleted',
     })
     @IsEmpty()
     @Expose()
@@ -73,7 +79,7 @@ export class StudentEntity implements Student {
 
     @ApiProperty({
         example: '2021-01-01',
-        description: 'Date when student was created'
+        description: 'Date when student was created',
     })
     @IsEmpty()
     @Expose()
@@ -81,7 +87,7 @@ export class StudentEntity implements Student {
 
     @ApiProperty({
         example: '2021-01-01',
-        description: 'Date when student was updated'
+        description: 'Date when student was updated',
     })
     @IsEmpty()
     @Expose()
@@ -90,7 +96,7 @@ export class StudentEntity implements Student {
     @ApiProperty({
         example: 'somepassword',
         description: 'Student password',
-        writeOnly: true
+        writeOnly: true,
     })
     @IsString()
     @IsStrongPassword()
@@ -100,7 +106,7 @@ export class StudentEntity implements Student {
         example: 'some description',
         description: 'Student description',
         nullable: true,
-        type: 'string'
+        type: 'string',
     })
     @Expose()
     @IsString()
@@ -110,14 +116,14 @@ export class StudentEntity implements Student {
         example: 'some description',
         description: 'Student description',
         nullable: true,
-        type: 'string'
+        type: 'string',
     })
     @Expose()
     @IsString()
     city: string | null;
 
     @ApiProperty({
-        description: 'Student avatar'
+        description: 'Student avatar',
     })
     @Expose()
     avatar: string;

@@ -5,14 +5,14 @@ import { IsInt, IsString } from 'class-validator';
 export class QualifySubmissionDTO {
     @ApiProperty({
         description: 'score submission',
-        type: Number
+        type: Number,
     })
     @IsInt()
     score: number;
 
     @ApiProperty({
         description: 'comment submission',
-        type: String
+        type: String,
     })
     @IsString()
     comment: string;

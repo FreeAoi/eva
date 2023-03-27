@@ -8,7 +8,7 @@ export class CreateCourseDTO {
     @IsNotEmpty()
     @ApiProperty({
         description: 'Course id',
-        example: 'CS-101'
+        example: 'CS-101',
     })
     courseId: string;
 
@@ -16,7 +16,7 @@ export class CreateCourseDTO {
     @IsNotEmpty()
     @ApiProperty({
         description: 'Course name',
-        example: 'Introduction to Computer Science'
+        example: 'Introduction to Computer Science',
     })
     name: string;
 
@@ -24,7 +24,7 @@ export class CreateCourseDTO {
     @IsNotEmpty()
     @ApiProperty({
         description: 'Course instructor id',
-        example: '2022-0381A'
+        example: '2022-0381A',
     })
     teacherId: string;
 
@@ -32,7 +32,7 @@ export class CreateCourseDTO {
     @IsNotEmpty()
     @ApiProperty({
         description: 'Group id',
-        example: 'ICS-1'
+        example: 'ICS-1',
     })
     groupId: string;
 }

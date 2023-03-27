@@ -12,53 +12,53 @@ export class GroupService {
             data: {
                 ...rest,
                 students: {
-                    connect: data.students.map((id) => ({ id }))
-                }
+                    connect: data.students.map((id) => ({ id })),
+                },
             },
             include: {
                 students: {
                     select: {
                         id: true,
-                        email: true
-                    }
+                        email: true,
+                    },
                 },
-                courses: true
-            }
+                courses: true,
+            },
         });
     }
 
     async get(id: string) {
         return this.prisma.group.findUnique({
             where: {
-                id
+                id,
             },
             include: {
                 students: {
                     select: {
                         id: true,
-                        email: true
-                    }
+                        email: true,
+                    },
                 },
-                courses: true
-            }
+                courses: true,
+            },
         });
     }
 
     async update(id: string, data: UpdateGroupDTO) {
         return this.prisma.group.update({
             where: {
-                id
+                id,
             },
             data,
             include: {
                 students: {
                     select: {
                         id: true,
-                        email: true
-                    }
+                        email: true,
+                    },
                 },
-                courses: true
-            }
+                courses: true,
+            },
         });
     }
 }

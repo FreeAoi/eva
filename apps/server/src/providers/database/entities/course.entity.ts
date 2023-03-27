@@ -6,28 +6,28 @@ import { Expose } from 'class-transformer';
 export class CourseEntity implements Course {
     @ApiProperty({
         description: 'Course id',
-        example: 'BEAU'
+        example: 'BEAU',
     })
     @Expose()
     id: string;
 
     @ApiProperty({
         description: 'Course name',
-        example: 'Bases de datos avanzadas'
+        example: 'Bases de datos avanzadas',
     })
     @Expose()
     name: string;
 
     @ApiProperty({
         description: 'Group id',
-        example: '1M3-CO'
+        example: '1M3-CO',
     })
     @Expose()
     groupId: string;
 
     @ApiProperty({
         description: 'Teacher id',
-        example: '2022-0381U'
+        example: '2022-0381U',
     })
     @Expose()
     teacherId: string;
@@ -36,7 +36,7 @@ export class CourseEntity implements Course {
         description: 'Course description',
         example: 'Some beautiful description',
         nullable: true,
-        oneOf: [{ type: 'string' }, { type: 'null' }]
+        oneOf: [{ type: 'string' }, { type: 'null' }],
     })
     @Expose()
     about: string | null;
@@ -44,7 +44,7 @@ export class CourseEntity implements Course {
     @ApiProperty({
         description: 'Course general objective',
         example: 'Some beautiful general objective',
-        oneOf: [{ type: 'string' }, { type: 'null' }]
+        oneOf: [{ type: 'string' }, { type: 'null' }],
     })
     @Expose()
     generalObjective: string | null;
@@ -52,7 +52,7 @@ export class CourseEntity implements Course {
     @ApiProperty({
         description: 'Course specific objective',
         example: 'Some beautiful specific objective',
-        oneOf: [{ type: 'string' }, { type: 'null' }]
+        oneOf: [{ type: 'string' }, { type: 'null' }],
     })
     @Expose()
     specificObjective: string | null;

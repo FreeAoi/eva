@@ -5,7 +5,7 @@ import type { CourseInGroupInStudent } from '../src/rest';
 
 export enum Role {
     STUDENT = 'STUDENT',
-    TEACHER = 'TEACHER'
+    TEACHER = 'TEACHER',
 }
 
 declare module 'next-auth' {

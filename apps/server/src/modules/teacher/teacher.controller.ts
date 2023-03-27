@@ -1,4 +1,9 @@
-import { BadRequestException, Controller, Get, UseGuards } from '@nestjs/common';
+import {
+    BadRequestException,
+    Controller,
+    Get,
+    UseGuards,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiAcceptedResponse, ApiTags } from '@nestjs/swagger';
 import { CurrentUser } from '../../common/decorators/requests/user-current.decorator';

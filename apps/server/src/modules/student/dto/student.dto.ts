@@ -8,13 +8,13 @@ import { StudentEntity } from '../../../providers/database/entities/student.enti
 class CourseInGroupInStudent extends PickType(CourseEntity, [
     'id',
     'name',
-    'teacherId'
+    'teacherId',
 ]) {}
 
 class GroupInStudent extends PickType(GroupEntity, ['id', 'name']) {
     @ApiProperty({
         description: 'Group courses',
-        type: [CourseInGroupInStudent]
+        type: [CourseInGroupInStudent],
     })
     @Type(() => CourseInGroupInStudent)
     @Expose()
@@ -29,10 +29,10 @@ export class StudentDTO extends PickType(StudentEntity, [
     'description',
     'avatar',
     'role',
-    'city'
+    'city',
 ]) {
     @ApiProperty({
-        description: 'Student career data'
+        description: 'Student career data',
     })
     @Expose()
     career: {
@@ -42,7 +42,7 @@ export class StudentDTO extends PickType(StudentEntity, [
 
     @ApiProperty({
         description: 'Student group data',
-        type: GroupInStudent
+        type: GroupInStudent,
     })
     @Type(() => GroupInStudent)
     @Expose()
