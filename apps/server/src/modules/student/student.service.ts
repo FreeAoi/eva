@@ -27,7 +27,10 @@ export class StudentService {
      * @param opts
      */
     async get(opts: { email?: string; id?: string }): Promise<Student | null> {
-        let student = await this.cache.getUser<Student>({ ...opts, key: 'student' });
+        let student = await this.cache.getUser<Student>({
+            ...opts,
+            key: 'student',
+        });
 
         if (!student) {
             student = await this.prisma.student.findUnique({
@@ -36,17 +39,24 @@ export class StudentService {
                     career: true,
                     group: {
                         include: {
-                            courses: true
-                        }
-                    }
-                }
+                            courses: true,
+                        },
+                    },
+                },
             });
 
             if (!student) return null;
 
             await Promise.all([
-                this.cache.set(`student:${student.id}`, JSON.stringify(student)),
-                this.cache.zadd('student:emails', 0, `${student.email}:${student.id}`)
+                this.cache.set(
+                    `student:${student.id}`,
+                    JSON.stringify(student)
+                ),
+                this.cache.zadd(
+                    'student:emails',
+                    0,
+                    `${student.email}:${student.id}`
+                ),
             ]);
         }
 
@@ -63,29 +73,37 @@ export class StudentService {
                 password: hashedPassword,
                 career: {
                     connect: {
-                        id: careerId
-                    }
-                }
+                        id: careerId,
+                    },
+                },
             },
             include: {
-                career: true
-            }
+                career: true,
+            },
         });
 
         await Promise.all([
             this.cache.set(`student:${student.id}`, JSON.stringify(student)),
-            this.cache.zadd('student:emails', 0, `${student.email}:${student.id}`)
+            this.cache.zadd(
+                'student:emails',
+                0,
+                `${student.email}:${student.id}`
+            ),
         ]);
 
         return student;
     }
 
-    async updateStudent(id: string, data: UpdateStudentDTO, file?: Express.Multer.File) {
+    async updateStudent(
+        id: string,
+        data: UpdateStudentDTO,
+        file?: Express.Multer.File
+    ) {
         console.log(file);
         if (file) {
             data = {
                 ...data,
-                avatar: `https://pub-c95c75d085c748ba8128bc8046a97e87.r2.dev/avatar/${id}`
+                avatar: `https://pub-c95c75d085c748ba8128bc8046a97e87.r2.dev/avatar/${id}`,
             };
 
             await this.upload.uploadAvatar(file, id);
@@ -93,24 +111,29 @@ export class StudentService {
 
         const student = await this.prisma.student.update({
             where: {
-                id
+                id,
             },
             data,
             include: {
                 career: true,
                 group: {
                     include: {
-                        courses: true
-                    }
-                }
-            }
+                        courses: true,
+                    },
+                },
+            },
         });
 
-        if (!student) throw new BadRequestException('No se ha encontrado el estudiante');
+        if (!student)
+            throw new BadRequestException('No se ha encontrado el estudiante');
 
         await Promise.all([
             this.cache.set(`student:${student.id}`, JSON.stringify(student)),
-            this.cache.zadd('student:emails', 0, `${student.email}:${student.id}`)
+            this.cache.zadd(
+                'student:emails',
+                0,
+                `${student.email}:${student.id}`
+            ),
         ]);
 
         return student;

@@ -8,7 +8,7 @@ export class UpdateStudentDTO extends PartialType(
     @ApiPropertyOptional({
         description: 'user avatar',
         type: 'string',
-        format: 'binary'
+        format: 'binary',
     })
     avatar: string;
 }

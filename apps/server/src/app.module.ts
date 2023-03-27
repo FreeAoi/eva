@@ -21,26 +21,26 @@ import { FastifyMulterModule } from '@nest-lab/fastify-multer';
         AuthModule,
         RedisModule.forRoot({
             host: 'localhost',
-            port: 6379
+            port: 6379,
         }),
         BullModule.forRoot({
             redis: {
                 host: 'localhost',
-                port: 6379
-            }
+                port: 6379,
+            },
         }),
         R2Module.forRoot({
             region: 'auto',
             endpoint: process.env.R2_ENDPOINT,
             credentials: {
                 accessKeyId: process.env.R2_KEY_ID,
-                secretAccessKey: process.env.R2_SECREY_KEY
-            }
+                secretAccessKey: process.env.R2_SECREY_KEY,
+            },
         }),
-        FastifyMulterModule
+        FastifyMulterModule,
     ],
     controllers: [],
-    providers: [StudentExists, TaskExists, CourseExists]
+    providers: [StudentExists, TaskExists, CourseExists],
 })
 class AppModule {}
 

@@ -317,7 +317,13 @@ export interface components {
             /** @description Task submission */
             submissions: components['schemas']['StudentSubmissionDTO'][] | null;
         };
-        CreateTaskDTO: Record<string, never>;
+        CreateTaskDTO: {
+            title: string;
+            maxScore: string;
+            dueDate: string;
+            /** Format: binary */
+            file: string;
+        };
         QualifySubmissionDTO: {
             /** @description score submission */
             score: number;
@@ -571,10 +577,14 @@ export interface operations {
             query: {
                 courseId: string;
             };
+            header: {
+                /** @description Bearer token */
+                Authorization: string;
+            };
         };
         requestBody: {
             content: {
-                'application/json': components['schemas']['CreateTaskDTO'];
+                'multipart/form-data': components['schemas']['CreateTaskDTO'];
             };
         };
         responses: {

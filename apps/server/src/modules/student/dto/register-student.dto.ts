@@ -7,5 +7,5 @@ export class RegisterStudentDTO extends PickType(StudentEntity, [
     'firstName',
     'lastName',
     'password',
-    'careerId'
+    'careerId',
 ]) {}

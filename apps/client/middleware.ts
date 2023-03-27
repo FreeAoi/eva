@@ -13,11 +13,11 @@ export default withAuth(
     },
     {
         pages: {
-            signIn: '/login'
-        }
+            signIn: '/login',
+        },
     }
 );
 
 export const config = {
-    matcher: ['/my/:path', '/admin/:path']
+    matcher: ['/my/:path', '/admin/:path'],
 };

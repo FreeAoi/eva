@@ -7,7 +7,7 @@ import { TeacherEntity } from '../../../providers/database/entities/teacher.enti
 class TeacherCourses extends PickType(CourseEntity, [
     'id',
     'name',
-    'teacherId'
+    'teacherId',
 ] as const) {}
 
 export class TeacherDTO extends PickType(TeacherEntity, [
@@ -16,11 +16,11 @@ export class TeacherDTO extends PickType(TeacherEntity, [
     'lastName',
     'id',
     'role',
-    'avatar'
+    'avatar',
 ] as const) {
     @ApiProperty({
         description: 'Teacher courses',
-        type: [TeacherCourses]
+        type: [TeacherCourses],
     })
     @Type(() => TeacherCourses)
     @Expose()

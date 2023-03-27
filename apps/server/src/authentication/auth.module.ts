@@ -11,12 +11,12 @@ import { JwtStrategy } from './jwt.strategy';
         StudentModule,
         JwtModule.register({
             secret: process.env.JWT_SECRET,
-            signOptions: { expiresIn: '15d' }
+            signOptions: { expiresIn: '15d' },
         }),
-        TeacherModule
+        TeacherModule,
     ],
     controllers: [AuthController],
     providers: [AuthService, JwtStrategy],
-    exports: [AuthService]
+    exports: [AuthService],
 })
 export class AuthModule {}

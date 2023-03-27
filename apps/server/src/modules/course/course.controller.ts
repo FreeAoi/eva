@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Get,
+    Param,
+    Patch,
+    Post,
+    UseGuards,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { CreateCourseDTO } from './dto/create-course.dto';
 import { CourseService } from './course.service';
@@ -13,7 +21,7 @@ import {
     ApiOkResponse,
     ApiParam,
     ApiTags,
-    ApiUnauthorizedResponse
+    ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { CourseDTO } from './dto/course.dto';
 
@@ -24,8 +32,15 @@ export class CourseController {
 
     @Post()
     @UseGuards(AuthGuard('jwt'))
-    @ApiHeader({ name: 'Authorization', description: 'Bearer token', required: true })
-    @ApiOkResponse({ description: 'Course created successfully', type: CourseDTO })
+    @ApiHeader({
+        name: 'Authorization',
+        description: 'Bearer token',
+        required: true,
+    })
+    @ApiOkResponse({
+        description: 'Course created successfully',
+        type: CourseDTO,
+    })
     @ApiUnauthorizedResponse({ description: 'Unauthorized' })
     @ApiForbiddenResponse({ description: 'Not enough permissions' })
     async createCourse(@Body() data: CreateCourseDTO) {
@@ -35,13 +50,23 @@ export class CourseController {
 
     @Patch(':courseId')
     @UseGuards(AuthGuard('jwt'), RoleGuard)
-    @ApiHeader({ name: 'Authorization', description: 'Bearer token', required: true })
+    @ApiHeader({
+        name: 'Authorization',
+        description: 'Bearer token',
+        required: true,
+    })
     @ApiParam({ name: 'courseId', description: 'Course id', example: 'CS-101' })
-    @ApiOkResponse({ description: 'Course updated successfully', type: CourseDTO })
+    @ApiOkResponse({
+        description: 'Course updated successfully',
+        type: CourseDTO,
+    })
     @ApiUnauthorizedResponse({ description: 'Unauthorized' })
     @ApiForbiddenResponse({ description: 'Not enough permissions' })
     @ApiNotFoundResponse({ description: 'Course not found' })
-    async updateCourse(@Body() data: UpdateCourseDTO, @Param() params: CheckCourseDTO) {
+    async updateCourse(
+        @Body() data: UpdateCourseDTO,
+        @Param() params: CheckCourseDTO
+    ) {
         const updatedCourse = await this.coursesService.updateCourse(
             params.courseId,
             data
@@ -54,7 +79,7 @@ export class CourseController {
         name: 'courseId',
         description: 'Course id',
         example: 'CS-101',
-        type: String
+        type: String,
     })
     @ApiOkResponse({ description: 'Course data', type: CourseDTO })
     @ApiBearerAuth()

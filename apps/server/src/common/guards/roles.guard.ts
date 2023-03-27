@@ -10,7 +10,9 @@ export class RoleGuard implements CanActivate {
      * @returns {boolean} - Whether the user has the required roles
      */
     canActivate(context: ExecutionContext): boolean {
-        const { user }: { user: JWTPayload } = context.switchToHttp().getRequest();
+        const { user }: { user: JWTPayload } = context
+            .switchToHttp()
+            .getRequest();
 
         return user.role !== 'STUDENT';
     }

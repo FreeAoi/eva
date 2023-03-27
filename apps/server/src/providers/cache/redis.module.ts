@@ -12,11 +12,11 @@ export class RedisModule {
             providers: [
                 {
                     provide: 'OPTIONS',
-                    useValue: options
+                    useValue: options,
                 },
-                RedisService
+                RedisService,
             ],
-            exports: [RedisService]
+            exports: [RedisService],
         };
     }
 }

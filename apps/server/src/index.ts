@@ -4,7 +4,7 @@ dotenv.config();
 import {
     BadRequestException,
     ClassSerializerInterceptor,
-    ValidationPipe
+    ValidationPipe,
 } from '@nestjs/common';
 import { NestFactory, Reflector } from '@nestjs/core';
 import type { NestFastifyApplication } from '@nestjs/platform-fastify';
@@ -32,12 +32,12 @@ async function bootstrap() {
                 const err = errors[0]?.constraints;
                 if (!err) return new BadRequestException(errors);
                 return new BadRequestException(Object.values(err)[0]);
-            }
+            },
         })
     );
     app.useGlobalInterceptors(
         new ClassSerializerInterceptor(app.get(Reflector), {
-            excludeExtraneousValues: true
+            excludeExtraneousValues: true,
         })
     );
 

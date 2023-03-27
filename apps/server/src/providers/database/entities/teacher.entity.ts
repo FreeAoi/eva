@@ -6,28 +6,28 @@ import { Teacher, Role } from '@prisma/client';
 export class TeacherEntity implements Teacher {
     @ApiProperty({
         example: '2022-0381U',
-        description: 'Teacher id'
+        description: 'Teacher id',
     })
     @Expose()
     id: string;
 
     @ApiProperty({
         example: 'federicoxd@gmail.com',
-        description: 'Teacher email'
+        description: 'Teacher email',
     })
     @Expose()
     email: string;
 
     @ApiProperty({
         example: 'Federico',
-        description: 'Teacher first name'
+        description: 'Teacher first name',
     })
     @Expose()
     firstName: string;
 
     @ApiProperty({
         example: 'Diaz',
-        description: 'Teacher last name'
+        description: 'Teacher last name',
     })
     @Expose()
     lastName: string;
@@ -37,21 +37,21 @@ export class TeacherEntity implements Teacher {
         description: 'Teacher role',
         default: Role.TEACHER,
         type: 'enum',
-        enum: Role
+        enum: Role,
     })
     @Expose()
     role: Role;
 
     @ApiProperty({
         example: 'FACULTAD DE INGENIERIA',
-        description: 'Teacher faculty'
+        description: 'Teacher faculty',
     })
     @Expose()
     faculty: string;
 
     @ApiProperty({
         example: 'avatar',
-        description: 'Teacher avatar'
+        description: 'Teacher avatar',
     })
     @Expose()
     avatar: string;

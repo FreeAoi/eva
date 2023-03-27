@@ -7,6 +7,6 @@ import { JobsModule } from '../../jobs/jobs.module';
     imports: [JobsModule],
     controllers: [TaskController],
     providers: [TaskService],
-    exports: [TaskService]
+    exports: [TaskService],
 })
 export class TaskModule {}

@@ -6,31 +6,31 @@ import { StudentExists } from '../../../common/validation/studentExists';
 export class CreateGroupDTO {
     @ApiProperty({
         description: 'Group name',
-        example: '1M3-CO'
+        example: '1M3-CO',
     })
     @IsString()
     id: string;
 
     @ApiProperty({
         description: 'Group name',
-        example: 'Computer science I year'
+        example: 'Computer science I year',
     })
     @IsString()
     name: string;
 
     @ApiProperty({
         description: 'Career id',
-        example: 1
+        example: 1,
     })
     @IsNumber()
     careerId: number;
 
     @ApiProperty({
         description: 'Students ids',
-        example: ['2019-12345', '2019-12346']
+        example: ['2019-12345', '2019-12346'],
     })
     @Validate(StudentExists, {
-        each: true
+        each: true,
     })
     students: string[];
 }

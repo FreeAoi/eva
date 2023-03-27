@@ -16,7 +16,7 @@ export class RedisService extends ioredis {
     async getUser<T>({
         email,
         id,
-        key
+        key,
     }: {
         email?: string;
         id?: string;

@@ -11,7 +11,8 @@ export class CourseService {
 
     async createCourse(data: CreateCourseDTO) {
         const cachedCourse = await this.cache.exists(`course:${data.courseId}`);
-        if (cachedCourse) throw new BadRequestException('Course already exists');
+        if (cachedCourse)
+            throw new BadRequestException('Course already exists');
 
         const course = await this.prisma.course.create({
             data: {
@@ -19,59 +20,76 @@ export class CourseService {
                 id: data.courseId,
                 group: {
                     connect: {
-                        id: data.groupId
-                    }
+                        id: data.groupId,
+                    },
                 },
                 teacher: {
                     connect: {
-                        id: data.teacherId
-                    }
-                }
+                        id: data.teacherId,
+                    },
+                },
             },
             include: {
                 teacher: true,
-                tasks: true
-            }
+                tasks: true,
+            },
         });
 
-        await this.cache.set(`course:${course.id}`, JSON.stringify(course), 'EX', 60 * 5);
+        await this.cache.set(
+            `course:${course.id}`,
+            JSON.stringify(course),
+            'EX',
+            60 * 5
+        );
         return course;
     }
 
     async updateCourse(courseId: string, data: UpdateCourseDTO) {
         const course = await this.prisma.course.update({
             where: {
-                id: courseId
+                id: courseId,
             },
             data: {
-                ...data
+                ...data,
             },
             include: {
                 teacher: true,
-                tasks: true
-            }
+                tasks: true,
+            },
         });
 
-        await this.cache.set(`course:${course.id}`, JSON.stringify(course), 'EX', 60 * 5);
+        await this.cache.set(
+            `course:${course.id}`,
+            JSON.stringify(course),
+            'EX',
+            60 * 5
+        );
         return course;
     }
 
     async getCourse(courseId: string) {
-        const cachedCourse = await this.cache.retrieve<Course>(`course:${courseId}`);
+        const cachedCourse = await this.cache.retrieve<Course>(
+            `course:${courseId}`
+        );
         if (cachedCourse) return cachedCourse;
 
         const course = await this.prisma.course.findUnique({
             where: {
-                id: courseId
+                id: courseId,
             },
             include: {
                 teacher: true,
-                tasks: true
-            }
+                tasks: true,
+            },
         });
         if (!course) throw new BadRequestException('Course not found');
 
-        await this.cache.set(`course:${course.id}`, JSON.stringify(course), 'EX', 60 * 5);
+        await this.cache.set(
+            `course:${course.id}`,
+            JSON.stringify(course),
+            'EX',
+            60 * 5
+        );
         return course;
     }
 }

@@ -6,6 +6,6 @@ import { CourseController } from './course.controller';
     imports: [],
     controllers: [CourseController],
     providers: [CourseService],
-    exports: [CourseService]
+    exports: [CourseService],
 })
 export class CourseModule {}

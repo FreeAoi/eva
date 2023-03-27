@@ -19,12 +19,20 @@ export class UploadConsumer {
             const URI = studentId
                 ? `assignment_${taskId}/${studentId}/${attachment.name}`
                 : `assignment_${taskId}/${attachment.name}`;
-            await this.storageService.uploadFile(Buffer.from(attachment.buffer), URI);
+
+            await this.storageService.uploadFile(
+                Buffer.from(attachment.buffer),
+                URI
+            );
             attachmentarr.push({ filename: attachment.name, URI });
         }
 
         if (studentId)
-            await this.createSubmissionAttachment(taskId, attachmentarr, studentId);
+            await this.createSubmissionAttachment(
+                taskId,
+                attachmentarr,
+                studentId
+            );
         else await this.createTaskAttachment(taskId, attachmentarr);
     }
 
@@ -36,12 +44,12 @@ export class UploadConsumer {
             data: attachments.map((attachment) => ({
                 task: {
                     connect: {
-                        id: taskId
-                    }
+                        id: taskId,
+                    },
                 },
                 name: attachment.filename,
-                url: attachment.URI
-            }))
+                url: attachment.URI,
+            })),
         });
     }
 
@@ -50,29 +58,28 @@ export class UploadConsumer {
         attachments: { filename: string; URI: string }[],
         studentId: string
     ) {
-        console.log(attachments);
         await this.prismaService.taskSubmission.create({
             data: {
                 task: {
                     connect: {
-                        id: taskId
-                    }
+                        id: taskId,
+                    },
                 },
                 student: {
                     connect: {
-                        id: studentId
-                    }
+                        id: studentId,
+                    },
                 },
                 attachments: {
                     createMany: {
                         data: attachments.map((attachment) => ({
                             name: attachment.filename,
-                            url: attachment.URI
-                        }))
-                    }
+                            url: `${process.env.R2_PUBLIC_URL}/${attachment.URI}`,
+                        })),
+                    },
                 },
-                score: 0
-            }
+                score: 0,
+            },
         });
     }
 
@@ -81,7 +88,10 @@ export class UploadConsumer {
         const { attachment, studentId } = job.data;
         console.log(attachment, studentId);
         const URI = `avatar/${studentId}`;
-        await this.storageService.uploadFile(Buffer.from(attachment.buffer), URI);
+        await this.storageService.uploadFile(
+            Buffer.from(attachment.buffer),
+            URI
+        );
     }
 
     @OnQueueError()

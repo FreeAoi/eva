@@ -6,32 +6,32 @@ import { Expose } from 'class-transformer';
 
 export class TaskEntity implements Task {
     @ApiProperty({
-        description: 'The id of the task'
+        description: 'The id of the task',
     })
     @Expose()
     id: number;
 
     @ApiProperty({
-        description: 'The title of the task'
+        description: 'The title of the task',
     })
     @Expose()
     title: string;
 
     @ApiProperty({
-        description: 'The max score of the task'
+        description: 'The max score of the task',
     })
     @Expose()
     maxScore: number;
 
     @ApiProperty({
-        description: 'The id of the course'
+        description: 'The id of the course',
     })
     @Expose()
     courseId: string;
 
     @ApiProperty({
         description: 'The due date of the task',
-        type: 'string'
+        type: 'string',
     })
     @Expose()
     dueDate: Date;
@@ -39,19 +39,19 @@ export class TaskEntity implements Task {
     @ApiProperty({
         description: 'The deleted date of the task',
         nullable: true,
-        type: Date
+        type: Date,
     })
     @Expose()
     deleted: Date | null;
 
     @ApiProperty({
-        description: 'The created date of the task'
+        description: 'The created date of the task',
     })
     @Expose()
     createdAt: Date;
 
     @ApiProperty({
-        description: 'The updated date of the task'
+        description: 'The updated date of the task',
     })
     @Expose()
     updatedAt: Date;

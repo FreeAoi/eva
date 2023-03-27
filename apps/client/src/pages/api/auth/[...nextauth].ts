@@ -6,14 +6,14 @@ import type { Role } from '../../../../types/next-auth';
 export const AuthOptions: NextAuthOptions = {
     session: {
         strategy: 'jwt',
-        maxAge: 60 * 60
+        maxAge: 60 * 60,
     },
     providers: [
         Credentials({
             name: 'Credentials',
             credentials: {
                 email: {},
-                password: {}
+                password: {},
             },
             async authorize(credentials) {
                 if (!credentials) {
@@ -24,9 +24,9 @@ export const AuthOptions: NextAuthOptions = {
                     .path('/api/auth/login')
                     .method('post')
                     .create()({
-                        email: credentials.email,
-                        password: credentials.password
-                    });
+                    email: credentials.email,
+                    password: credentials.password,
+                });
 
                 if (!ok) {
                     throw new Error('Credenciales de usuario invalidas.');
@@ -37,18 +37,18 @@ export const AuthOptions: NextAuthOptions = {
                         {},
                         {
                             headers: {
-                                Authorization: `Bearer ${data.access_token}`
-                            }
+                                Authorization: `Bearer ${data.access_token}`,
+                            },
                         }
                     ),
                     rest.path('/api/teacher').method('get').create()(
                         {},
                         {
                             headers: {
-                                Authorization: `Bearer ${data.access_token}`
-                            }
+                                Authorization: `Bearer ${data.access_token}`,
+                            },
                         }
-                    )
+                    ),
                 ]);
 
                 return {
@@ -57,10 +57,10 @@ export const AuthOptions: NextAuthOptions = {
                     name: user.firstName,
                     email: user.email,
                     avatar: user.avatar,
-                    acess_token: data.access_token
+                    acess_token: data.access_token,
                 };
-            }
-        })
+            },
+        }),
     ],
     callbacks: {
         jwt: ({ token, user }) => {
@@ -74,8 +74,8 @@ export const AuthOptions: NextAuthOptions = {
                 session.user = token.user;
             }
             return session;
-        }
-    }
+        },
+    },
 };
 
 export default NextAuth(AuthOptions);

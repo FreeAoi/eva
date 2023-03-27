@@ -6,10 +6,10 @@ import { UploadProducer } from './producers/upload.producer';
 @Module({
     imports: [
         BullModule.registerQueue({
-            name: 'upload'
-        })
+            name: 'upload',
+        }),
     ],
     providers: [UploadConsumer, UploadProducer],
-    exports: [UploadProducer]
+    exports: [UploadProducer],
 })
 export class JobsModule {}

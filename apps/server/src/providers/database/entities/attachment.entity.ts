@@ -5,19 +5,19 @@ import { Expose } from 'class-transformer';
 
 export class AttachmentEntity implements Attachment {
     @ApiProperty({
-        description: 'The id of the attachment'
+        description: 'The id of the attachment',
     })
     @Expose()
     id: number;
 
     @ApiProperty({
-        description: 'The name of the attachment'
+        description: 'The name of the attachment',
     })
     @Expose()
     name: string;
 
     @ApiProperty({
-        description: 'The url of the attachment'
+        description: 'The url of the attachment',
     })
     @Expose()
     url: string;
@@ -25,14 +25,14 @@ export class AttachmentEntity implements Attachment {
     @ApiProperty({
         description: 'The id of the task',
         nullable: true,
-        type: 'number'
+        type: 'number',
     })
     @Expose()
     taskId: number | null;
     @ApiProperty({
         description: 'The id of the submission',
         nullable: true,
-        type: 'number'
+        type: 'number',
     })
     @Expose()
     submissionId: number | null;

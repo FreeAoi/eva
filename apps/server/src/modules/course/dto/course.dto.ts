@@ -8,11 +8,11 @@ import { TeacherEntity } from '../../../providers/database/entities/teacher.enti
 export class TaskInCourse extends PickType(TaskEntity, [
     'id',
     'title',
-    'dueDate'
+    'dueDate',
 ] as const) {}
 export class TeacherInCourse extends PickType(TeacherEntity, [
     'firstName',
-    'lastName'
+    'lastName',
 ] as const) {}
 
 export class CourseDTO extends PickType(CourseEntity, [
@@ -20,11 +20,11 @@ export class CourseDTO extends PickType(CourseEntity, [
     'name',
     'generalObjective',
     'specificObjective',
-    'about'
+    'about',
 ] as const) {
     @ApiProperty({
         description: 'Teacher data',
-        type: TeacherInCourse
+        type: TeacherInCourse,
     })
     @Type(() => TeacherInCourse)
     @Expose()
@@ -32,7 +32,7 @@ export class CourseDTO extends PickType(CourseEntity, [
 
     @ApiProperty({
         description: 'Courses tasks',
-        type: [TaskInCourse]
+        type: [TaskInCourse],
     })
     @Type(() => TaskInCourse)
     @Expose()

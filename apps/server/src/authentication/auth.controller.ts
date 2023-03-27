@@ -12,14 +12,15 @@ export default class AuthController {
     @Post('login')
     @ApiAcceptedResponse({
         description: 'User authenticated',
-        type: AcessTokenDTO
+        type: AcessTokenDTO,
     })
     async login(@Body() data: LoginDTO) {
         const userAuthenticated = await this.authService.validate(
             data.email,
             data.password
         );
-        if (!userAuthenticated) throw new HttpException('Invalid credentials', 401);
+        if (!userAuthenticated)
+            throw new HttpException('Invalid credentials', 401);
         return this.authService.genAccToken(userAuthenticated);
     }
 }

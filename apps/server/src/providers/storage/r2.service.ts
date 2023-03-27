@@ -17,7 +17,7 @@ export class R2Service extends S3Client implements OnModuleInit {
             new PutObjectCommand({
                 Bucket: 'eva-uni',
                 Key: fileName,
-                Body: file
+                Body: file,
             })
         );
     }
