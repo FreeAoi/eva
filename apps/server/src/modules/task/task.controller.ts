@@ -8,7 +8,7 @@ import {
     UploadedFile,
     UploadedFiles,
     UseGuards,
-    UseInterceptors
+    UseInterceptors,
 } from '@nestjs/common';
 import { TaskService } from './task.service';
 import { AuthGuard } from '@nestjs/passport';
@@ -20,7 +20,7 @@ import {
     ApiOkResponse,
     ApiParam,
     ApiQuery,
-    ApiTags
+    ApiTags,
 } from '@nestjs/swagger';
 import { CurrentUser } from '../../common/decorators/requests/user-current.decorator';
 import { FileInterceptor, FilesInterceptor } from '@nest-lab/fastify-multer';
@@ -37,9 +37,16 @@ export class TaskController {
     @UseGuards(AuthGuard('jwt'))
     @ApiOkResponse({ description: 'Task found', type: TaskDTO })
     @ApiParam({ name: 'taskId', description: 'Task id', type: 'string' })
-    @ApiHeader({ name: 'Authorization', description: 'Bearer token', required: true })
+    @ApiHeader({
+        name: 'Authorization',
+        description: 'Bearer token',
+        required: true,
+    })
     @ApiQuery({ name: 'filter', description: 'Student id', required: false })
-    async getTask(@Param('taskId') id: string, @Query('filter') studentId: string) {
+    async getTask(
+        @Param('taskId') id: string,
+        @Query('filter') studentId: string
+    ) {
         const task = await this.taskService.getTask(Number(id), studentId);
         const dto = new TaskDTO(task);
         return dto;
@@ -47,7 +54,11 @@ export class TaskController {
 
     @Post(':taskId/submit')
     @UseGuards(AuthGuard('jwt'))
-    @ApiHeader({ name: 'Authorization', description: 'Bearer token', required: true })
+    @ApiHeader({
+        name: 'Authorization',
+        description: 'Bearer token',
+        required: true,
+    })
     @ApiParam({ name: 'taskId', description: 'Task id', type: 'string' })
     @ApiBody({
         schema: {
@@ -55,10 +66,10 @@ export class TaskController {
             properties: {
                 file: {
                     type: 'string',
-                    format: 'binary'
-                }
-            }
-        }
+                    format: 'binary',
+                },
+            },
+        },
     })
     @ApiConsumes('multipart/form-data')
     @UseInterceptors(FileInterceptor('file'))
@@ -70,13 +81,20 @@ export class TaskController {
         return this.taskService.submitTask({
             taskId: Number(id),
             studentId: user.id,
-            files: [file]
+            files: [file],
         });
     }
 
     @Post()
     @UseGuards(AuthGuard('jwt'))
     @UseInterceptors(FilesInterceptor('file'))
+    @ApiHeader({
+        name: 'Authorization',
+        description: 'Bearer token',
+        required: true,
+    })
+    @ApiBody({ type: CreateTaskDTO })
+    @ApiConsumes('multipart/form-data')
     async createTask(
         @Query('courseId') id: string,
         @UploadedFiles() file: Express.Multer.File[],
@@ -89,7 +107,7 @@ export class TaskController {
     @ApiOkResponse({
         description: 'Task found',
         type: StudentSubmissionDTO,
-        isArray: true
+        isArray: true,
     })
     @ApiParam({ name: 'taskId', description: 'Task id', type: 'string' })
     async getSubmissions(@Param('taskId') id: string) {
@@ -100,8 +118,16 @@ export class TaskController {
     @Post(':taskId/submissions/:submissionId')
     @ApiOkResponse({ description: 'Task found', type: StudentSubmissionDTO })
     @ApiParam({ name: 'taskId', description: 'Task id', type: 'string' })
-    @ApiParam({ name: 'submissionId', description: 'Submission id', type: 'string' })
-    @ApiHeader({ name: 'Authorization', description: 'Bearer token', required: true })
+    @ApiParam({
+        name: 'submissionId',
+        description: 'Submission id',
+        type: 'string',
+    })
+    @ApiHeader({
+        name: 'Authorization',
+        description: 'Bearer token',
+        required: true,
+    })
     @ApiBody({ type: QualifySubmissionDTO })
     @UseGuards(AuthGuard('jwt'))
     async qualifySubmission(
@@ -114,7 +140,7 @@ export class TaskController {
             taskId: Number(taskId),
             submitId: Number(submissionId),
             ...data,
-            teacherId: user.id
+            teacherId: user.id,
         });
         console.log(new StudentSubmissionDTO(task));
         return new StudentSubmissionDTO(task);

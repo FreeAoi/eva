@@ -17,11 +17,14 @@ import {
     OpErrorType,
     Request,
     _TypedFetch,
-    TypedFetch
+    TypedFetch,
 } from './types';
 
 const sendBody = (method: Method) =>
-    method === 'post' || method === 'put' || method === 'patch' || method === 'delete';
+    method === 'post' ||
+    method === 'put' ||
+    method === 'patch' ||
+    method === 'delete';
 
 function queryString(params: Record<string, unknown>): string {
     const qs: string[] = [];
@@ -47,7 +50,10 @@ function queryString(params: Record<string, unknown>): string {
     return '';
 }
 
-function getPath(path: string, payload: Record<string, number | string | boolean>) {
+function getPath(
+    path: string,
+    payload: Record<string, number | string | boolean>
+) {
     return path.replace(/\{([^}]+)\}/g, (_, key) => {
         const value = encodeURIComponent(payload[key]);
         delete payload[key];
@@ -55,7 +61,11 @@ function getPath(path: string, payload: Record<string, number | string | boolean
     });
 }
 
-function getQuery(method: Method, payload: Record<string, unknown>, query: string[]) {
+function getQuery(
+    method: Method,
+    payload: Record<string, unknown>,
+    query: string[]
+) {
     let queryObj: Record<string, unknown> = {};
 
     if (sendBody(method)) {
@@ -91,12 +101,16 @@ function getHeaders(body?: CustomRequestInit['body'], init?: HeadersInit) {
 function getBody(method: Method, payload: unknown): CustomRequestInit['body'] {
     if (!sendBody(method)) return;
 
-    const body = payload instanceof FormData ? payload : JSON.stringify(payload);
+    const body =
+        payload instanceof FormData ? payload : JSON.stringify(payload);
     // if delete don't send body if empty
     return method === 'delete' && body === '{}' ? undefined : body;
 }
 
-function mergeRequestInit(first?: RequestInit, second?: RequestInit): RequestInit {
+function mergeRequestInit(
+    first?: RequestInit,
+    second?: RequestInit
+): RequestInit {
     const headers = new Headers(first?.headers);
     const other = new Headers(second?.headers);
 
@@ -119,6 +133,7 @@ function getFetchParams(request: Request): {
     // cloning with Object.assign() preserves all keys
 
     // TEMP FIX for supporting FormData
+    console.log('request.baseUrl: ', request.baseUrl);
     const originalPayload = request.payload;
     if (request.payload instanceof FormData) {
         request.payload = Object.fromEntries(request.payload.entries());
@@ -136,13 +151,14 @@ function getFetchParams(request: Request): {
         originalPayload instanceof FormData ? originalPayload : payload
     );
     const headers = getHeaders(body, request.init?.headers);
+    console.log(request.baseUrl);
     const url = request.baseUrl + path + query;
 
     const init = {
         ...request.init,
         method: request.method.toUpperCase(),
         headers,
-        body
+        body,
     };
 
     return { url, init };
@@ -175,7 +191,7 @@ async function fetchJson(url: string, init: RequestInit): Promise<ApiResponse> {
         ok: response.ok,
         status: response.status,
         statusText: response.statusText,
-        data
+        data,
     };
 
     // return result except when status is not 2xx, 3xx or 4xx
@@ -233,7 +249,7 @@ function createFetch<OP>(fetch: _TypedFetch<OP>): TypedFetch<OP> {
         getActualType() {
             return {
                 status: this.status,
-                data: this.data
+                data: this.data,
             } as OpErrorType<OP>;
         }
     };
@@ -266,14 +282,14 @@ function fetcher<Paths>() {
                             queryParams: Object.keys(queryParams || {}),
                             payload,
                             init: mergeRequestInit(defaultInit, init),
-                            fetch
+                            fetch,
                         })
-                    )) as CreateFetch<M, Paths[P][M]>
-            })
-        })
+                    )) as CreateFetch<M, Paths[P][M]>,
+            }),
+        }),
     };
 }
 
 export const Fetcher = {
-    for: <Paths extends OpenapiPaths<Paths>>() => fetcher<Paths>()
+    for: <Paths extends OpenapiPaths<Paths>>() => fetcher<Paths>(),
 };

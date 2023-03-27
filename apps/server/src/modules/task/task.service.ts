@@ -3,6 +3,7 @@ import { PrismaService } from '../../providers/database/prisma.service';
 import { UploadProducer } from '../../jobs/producers/upload.producer';
 import { RedisService } from '../../providers/cache/redis.service';
 import type { CreateTaskDTO } from './dto/create-task.dto';
+import type { Prisma, Task } from '@prisma/client';
 
 @Injectable()
 export class TaskService {
@@ -13,24 +14,30 @@ export class TaskService {
     ) {}
 
     async getTask(taskId: number, filter?: string) {
+        const key = `task:${taskId}${filter ? `:${filter}` : ''}`;
+        const taskFromCache = await this.cacheService.retrieve<Task>(key);
+        if (taskFromCache) return taskFromCache;
+
         const taskFromDB = await this.prismaService.task.findUniqueOrThrow({
             where: {
-                id: taskId
+                id: taskId,
             },
             ...(filter && {
                 include: {
                     submissions: {
                         where: {
-                            studentId: filter
+                            studentId: filter,
                         },
                         include: {
                             attachments: true,
-                            teacher: true
-                        }
-                    }
-                }
-            })
+                            teacher: true,
+                        },
+                    },
+                },
+            }),
         });
+
+        await this.cacheService.set(key, JSON.stringify(taskFromDB));
 
         return taskFromDB;
     }
@@ -38,7 +45,7 @@ export class TaskService {
     async submitTask({
         taskId,
         studentId,
-        files
+        files,
     }: {
         taskId: number;
         studentId: string;
@@ -50,9 +57,8 @@ export class TaskService {
         }
 
         await this.upload.uploadAttachments(files, taskId, studentId);
-        return {
-            message: 'Task submitted successfully'
-        };
+        await this.cacheService.del(`task:${taskId}:${studentId}`);
+        return true;
     }
 
     async createTask(
@@ -60,40 +66,50 @@ export class TaskService {
         files: Express.Multer.File[],
         courseId: string
     ) {
-        console.log(courseId);
         const task = await this.prismaService.task.create({
             data: {
                 title: data.title,
                 dueDate: data.dueDate,
                 course: {
                     connect: {
-                        id: courseId
-                    }
+                        id: courseId,
+                    },
                 },
-                maxScore: +data.maxScore
-            }
+                maxScore: +data.maxScore,
+            },
         });
 
-        if (files.length > 0) await this.upload.uploadAttachments(files, task.id);
+        if (files.length > 0)
+            await this.upload.uploadAttachments(files, task.id);
         await this.cacheService.del(`course:${courseId}`);
+        await this.cacheService.set(`task:${task.id}`, JSON.stringify(task));
         return task;
     }
 
     async getSubmissions(taskId: number) {
+        const submissionsFromCache = await this.cacheService.retrieve<
+            Prisma.TaskGetPayload<{ include: { submissions: true } }>
+        >(`task:${taskId}:submissions`);
+        if (submissionsFromCache) return submissionsFromCache.submissions;
+
         const task = await this.prismaService.task.findUniqueOrThrow({
             where: {
-                id: taskId
+                id: taskId,
             },
             include: {
                 submissions: {
                     include: {
                         attachments: true,
-                        teacher: true
-                    }
-                }
-            }
+                        teacher: true,
+                    },
+                },
+            },
         });
 
+        await this.cacheService.set(
+            `task:${taskId}:submissions`,
+            JSON.stringify(task)
+        );
         return task.submissions;
     }
 
@@ -102,7 +118,7 @@ export class TaskService {
         taskId,
         comment,
         score,
-        teacherId
+        teacherId,
     }: {
         submitId: number;
         taskId: number;
@@ -112,25 +128,26 @@ export class TaskService {
     }) {
         const task = await this.prismaService.task.findUnique({
             where: {
-                id: taskId
+                id: taskId,
             },
             select: {
                 submissions: {
                     where: {
-                        id: submitId
-                    }
-                }
-            }
+                        id: submitId,
+                    },
+                },
+            },
         });
 
-        console.log(task);
         if (!task?.submissions.length) {
-            throw new BadRequestException('Invalid submid id for the specified task');
+            throw new BadRequestException(
+                'Invalid submid id for the specified task'
+            );
         }
 
         const submission = await this.prismaService.taskSubmission.update({
             where: {
-                id: submitId
+                id: submitId,
             },
             data: {
                 score,
@@ -138,16 +155,18 @@ export class TaskService {
                 qualified: true,
                 teacher: {
                     connect: {
-                        id: teacherId
-                    }
-                }
+                        id: teacherId,
+                    },
+                },
             },
             include: {
                 attachments: true,
-                teacher: true
-            }
+                teacher: true,
+            },
         });
 
+        await this.cacheService.del(`task:${taskId}:submissions`);
+        await this.cacheService.del(`task:${taskId}:${submission.studentId}`);
         return submission;
     }
 }

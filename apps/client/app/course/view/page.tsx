@@ -5,7 +5,7 @@ import rest from '../../../src/rest';
 import CourseTab from './courseTab';
 
 export default async function ViewCourse({
-    searchParams
+    searchParams,
 }: {
     searchParams: { [key: string]: string | string[] | undefined };
 }) {
@@ -15,23 +15,26 @@ export default async function ViewCourse({
         .path('/api/course/{courseId}')
         .method('get')
         .create()(
-            {
-                courseId: searchParams.id as string
+        {
+            courseId: searchParams.id as string,
+        },
+        {
+            headers: {
+                Authorization: `Bearer ${session?.user.acess_token}`,
             },
-            {
-                headers: {
-                    Authorization: `Bearer ${session?.user.acess_token}`
-                }
-            }
-        );
+        }
+    );
 
     return (
         <div>
-            <div className="m-5 min-h-screen">
-                <div className="p-3 flex justify-center bg-gray-100 border border-gray-300">
-                    <CourseSVG name={course.name} career="Ing. en computación" />
+            <div className='m-5 min-h-screen'>
+                <div className='p-3 flex justify-center bg-gray-100 border border-gray-300'>
+                    <CourseSVG
+                        name={course.name}
+                        career='Ing. en computación'
+                    />
                 </div>
-                <div className="my-2">
+                <div className='my-2'>
                     <CourseTab
                         course={course}
                         session={session as Session}

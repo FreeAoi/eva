@@ -11,11 +11,9 @@ const logger: Middleware = async (url, init, next) => {
 
 const fetcher = Fetcher.for<paths>();
 fetcher.configure({
-    baseUrl: process.env.API_URL,
-    use: [logger]
+    baseUrl: process.env.NEXT_PUBLIC_API_URL,
+    use: [logger],
 });
-
-export default fetcher;
 
 export function getUser(role: 'STUDENT' | 'TEACHER') {
     if (role === 'STUDENT') {
@@ -24,3 +22,5 @@ export function getUser(role: 'STUDENT' | 'TEACHER') {
 
     return fetcher.path('/api/teacher').method('get').create();
 }
+
+export default fetcher;
